@@ -28,3 +28,29 @@ npm run dev       # desarrollo
 npm run build     # genera build/
 npm run preview   # sirve build/ localmente
 ```
+
+## Despliegue en Netlify
+
+La configuración vive en `netlify.toml`: compila con `npm run build`, publica
+`build/`, manda todas las rutas a `index.html` (React Router resuelve en el
+cliente) y cachea los assets con hash.
+
+Para conectar el sitio:
+
+1. En Netlify → **Add new site → Import an existing project** y elegir este
+   repositorio. El comando de build y la carpeta a publicar los toma de
+   `netlify.toml`; no hace falta escribirlos.
+2. **Site configuration → Environment variables**: crear `VITE_PLATFORM_URL`
+   con la URL de la plataforma (sin barra final). Sin ella los botones
+   «Portal de acudientes» y «Pre-matrícula» quedan apuntando a
+   `http://localhost:5173`, porque Vite incrusta el valor al compilar.
+3. **Domain management**: agregar `lacolmena.edu.pa`, que es el dominio que ya
+   declaran `index.html` (canonical), `public/robots.txt` y
+   `public/sitemap.xml`.
+
+Cada push a `main` despliega producción; las demás ramas y los pull requests
+generan vistas previas, marcadas con `X-Robots-Tag: noindex` para que no las
+indexen los buscadores.
+
+Al cambiar `VITE_PLATFORM_URL` hay que volver a desplegar (**Deploys →
+Trigger deploy**): el valor viejo quedó dentro del JavaScript compilado.

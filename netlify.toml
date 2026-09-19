@@ -1,0 +1,64 @@
+# Despliegue en Netlify del sitio público de La Colmena.
+# El sitio es estático: Vite compila a build/ y Netlify lo sirve desde su CDN.
+
+[build]
+    command = "npm run build"
+    publish = "build"
+
+[build.environment]
+    NODE_VERSION = "22"
+
+# La URL de la plataforma (VITE_PLATFORM_URL) se define en
+# Site configuration → Environment variables, no aquí, porque cambia
+# entre producción y las ramas de prueba. Vite la incrusta al compilar,
+# así que al cambiarla hay que volver a desplegar.
+
+# ---------------------------------------------------------------------------
+# Redirecciones
+# ---------------------------------------------------------------------------
+
+# La landing vivía en /la-colmena dentro de la plataforma. El 301 conserva
+# los enlaces viejos para los buscadores; App.jsx además lo cubre en cliente.
+[[redirects]]
+    from = "/la-colmena"
+    to = "/"
+    status = 301
+    force = true
+
+# React Router resuelve las rutas en el navegador, así que cualquier petición
+# directa (p. ej. /reglamento, o recargar esa página) devuelve index.html.
+# Va de última: Netlify aplica la primera regla que coincide.
+[[redirects]]
+    from = "/*"
+    to = "/index.html"
+    status = 200
+
+# ---------------------------------------------------------------------------
+# Cabeceras
+# ---------------------------------------------------------------------------
+
+# Vite pone un hash en el nombre de cada asset, por eso se pueden cachear
+# para siempre: un cambio genera un nombre nuevo.
+[[headers]]
+    for = "/assets/*"
+    [headers.values]
+        Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+    for = "/*"
+    [headers.values]
+        X-Frame-Options = "SAMEORIGIN"
+        X-Content-Type-Options = "nosniff"
+        Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Las vistas previas viven en URLs *.netlify.app; sin esto Google podría
+# indexarlas y competir con lacolmena.edu.pa.
+[[context.deploy-preview.headers]]
+    for = "/*"
+    [context.deploy-preview.headers.values]
+        X-Robots-Tag = "noindex"
+
+[[context.branch-deploy.headers]]
+    for = "/*"
+    [context.branch-deploy.headers.values]
+        X-Robots-Tag = "noindex"

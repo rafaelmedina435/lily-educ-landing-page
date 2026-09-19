@@ -9,6 +9,9 @@ build
 *.local
 .env
 
+# Netlify CLI
+.netlify
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
