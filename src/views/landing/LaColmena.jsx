@@ -63,6 +63,8 @@ const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURICo
     CAMPUS.mapsQuery,
 )}`
 
+const INSTAGRAM_LINK = `https://www.instagram.com/${SCHOOL.instagram}/`
+
 /** Un teléfono panameño marcable: +507 y solo dígitos. */
 const telHref = (phone) => `tel:+507${phone.replace(/\D/g, '')}`
 
@@ -87,16 +89,18 @@ const CONTACT_CARDS = [
     {
         icon: PiEnvelopeSimpleDuotone,
         title: 'Correo',
+        copyButton: true,
         values: [{ text: SCHOOL.email, href: `mailto:${SCHOOL.email}` }],
     },
     {
         icon: PiInstagramLogoDuotone,
         title: 'Instagram',
         external: true,
+        href: INSTAGRAM_LINK,
         values: [
             {
                 text: `@${SCHOOL.instagram}`,
-                href: `https://instagram.com/${SCHOOL.instagram}`,
+                href: INSTAGRAM_LINK,
             },
         ],
     },
@@ -123,7 +127,7 @@ const JSON_LD = {
     telephone: SCHOOL.phones.map((phone) => `+507 ${phone}`),
     logo: '/img/lacolmena/logo-la-colmena.png',
     image: '/img/lacolmena/sede.jpg',
-    sameAs: [`https://instagram.com/${SCHOOL.instagram}`],
+    sameAs: [INSTAGRAM_LINK],
     address: {
         '@type': 'PostalAddress',
         streetAddress: SCHOOL.address,
@@ -1047,22 +1051,15 @@ const LaColmena = () => {
                         <SectionTitle
                             eyebrow="Contáctanos"
                             title="Estamos para atenderte"
-                            description="Toca cualquier dato: desde el celular marca o abre el correo; desde la computadora lo copia al portapapeles."
+                            description="Toca cualquier dato: desde el celular llama, abre el correo o Instagram; desde la computadora copia el teléfono al portapapeles."
                         />
 
                         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                             {CONTACT_CARDS.map((card, index) => {
                                 const Icon = card.icon
 
-                                return (
-                                    <Reveal
-                                        key={card.title}
-                                        delay={index * 70}
-                                        className="flex flex-col items-center justify-center rounded-2xl border bg-white p-7 text-center transition hover:-translate-y-1 hover:shadow-lg"
-                                        style={{
-                                            borderColor: 'rgba(46,58,51,.1)',
-                                        }}
-                                    >
+                                const contenido = (
+                                    <>
                                         <Hexagon
                                             className="mb-5 h-14 w-14 text-2xl"
                                             style={{
@@ -1083,7 +1080,14 @@ const LaColmena = () => {
 
                                         <div className="flex flex-col items-center gap-0.5">
                                             {card.values.map((value) =>
-                                                card.external ? (
+                                                card.href ? (
+                                                    <span
+                                                        key={value.text}
+                                                        className="rounded-lg px-2 py-1 text-sm text-[#4a554d] transition group-hover:underline"
+                                                    >
+                                                        {value.text}
+                                                    </span>
+                                                ) : card.external ? (
                                                     <a
                                                         key={value.text}
                                                         href={value.href}
@@ -1101,10 +1105,43 @@ const LaColmena = () => {
                                                         itemKey={`${card.title}-${value.text}`}
                                                         copiado={copiado}
                                                         onActivate={activar}
+                                                        copyButton={
+                                                            card.copyButton
+                                                        }
                                                     />
                                                 ),
                                             )}
                                         </div>
+                                    </>
+                                )
+
+                                const cardClassName =
+                                    'flex h-full flex-col items-center justify-center rounded-2xl border bg-white p-7 text-center transition hover:-translate-y-1 hover:shadow-lg'
+                                const cardStyle = {
+                                    borderColor: 'rgba(46,58,51,.1)',
+                                }
+
+                                return card.href ? (
+                                    <Reveal key={card.title} delay={index * 70}>
+                                        <a
+                                            href={card.href}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            aria-label={`${card.title}: ${card.values[0].text}`}
+                                            className={`group ${cardClassName}`}
+                                            style={cardStyle}
+                                        >
+                                            {contenido}
+                                        </a>
+                                    </Reveal>
+                                ) : (
+                                    <Reveal
+                                        key={card.title}
+                                        delay={index * 70}
+                                        className={cardClassName}
+                                        style={cardStyle}
+                                    >
+                                        {contenido}
                                     </Reveal>
                                 )
                             })}
