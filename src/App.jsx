@@ -8,6 +8,7 @@ import {
 } from 'react-router'
 import LaColmena from '@/views/landing/LaColmena'
 import Reglamento from '@/views/landing/Reglamento'
+import VidaEscolar from '@/views/landing/VidaEscolar'
 
 /**
  * Al cambiar de página se arranca arriba, o en la sección del `#hash`
@@ -34,6 +35,7 @@ const App = () => (
         <Routes>
             <Route path="/" element={<LaColmena />} />
             <Route path="/reglamento" element={<Reglamento />} />
+            <Route path="/vida-escolar" element={<VidaEscolar />} />
             {/* Ruta que tenía la landing dentro de la plataforma */}
             <Route path="/la-colmena" element={<Navigate to="/" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />

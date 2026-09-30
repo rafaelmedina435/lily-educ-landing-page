@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router'
 import classNames from 'classnames'
 import {
@@ -20,11 +20,11 @@ import {
     PiArrowRightBold,
     PiListBold,
     PiXBold,
-    PiMusicNotesDuotone,
     PiMoneyDuotone,
     PiDeviceMobileDuotone,
     PiBankDuotone,
     PiCreditCardDuotone,
+    PiPlayFill,
 } from 'react-icons/pi'
 import {
     SCHOOL,
@@ -34,12 +34,22 @@ import {
     PAYMENT_NOTES,
     PAYMENT_METHODS,
     REQUIREMENTS,
-    BAND,
+    ACTIVITIES,
     PLATFORM,
     CAMPUS,
 } from './lacolmenaData'
-import { THEME, Crest, HoneycombLayer, Hexagon, PHOTOS, Reveal } from './brand'
+import {
+    THEME,
+    Crest,
+    HoneycombLayer,
+    Hexagon,
+    PHOTOS,
+    HERO_VIDEO,
+    ANNIVERSARY_VIDEO,
+    Reveal,
+} from './brand'
 import { ContactValue, useContactAction } from './ContactAction'
+import { ActivityMedia, activityHref } from './activities'
 import Seo from '@/components/shared/Seo'
 import { PRE_ENROLLMENT_URL, SIGN_IN_URL } from '@/configs/platform.config'
 
@@ -138,6 +148,94 @@ const JSON_LD = {
     openingHours: 'Mo-Fr 07:30-14:00',
 }
 
+/**
+ * Celdas del bento de vida escolar, en el orden de `ACTIVITIES`: la
+ * primera (la banda) ocupa 2×2 y la última se estira a lo ancho para
+ * cerrar la cuadrícula de 4 columnas. Las celdas de 1×1 miden 15rem en
+ * escritorio: ahí no cabe el resumen, solo el título y «Ver más».
+ */
+const ACTIVITY_TILES = [
+    { span: 'sm:col-span-2 lg:row-span-2', size: 'large' },
+    { span: '', size: 'small' },
+    { span: '', size: 'small' },
+    { span: 'sm:col-span-2', size: 'wide' },
+]
+
+/**
+ * Tarjeta de actividad: foto a sangre con el título abajo. Con mouse,
+ * en escritorio, al pasar por encima aparece «Ver más» (y el resumen,
+ * si la celda tiene espacio); en pantallas táctiles se ven siempre.
+ */
+const ActivityTile = ({ activity, size }) => (
+    <Link
+        to={activityHref(activity)}
+        className="group relative flex w-full overflow-hidden rounded-3xl focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--lc-gold)]"
+    >
+        <ActivityMedia
+            activity={activity}
+            className="transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+        <div
+            className="absolute inset-0 transition-opacity duration-500 desk:opacity-80 desk:group-hover:opacity-100"
+            style={{
+                background:
+                    'linear-gradient(to top, rgba(34,43,38,.95) 0%, rgba(34,43,38,.55) 45%, rgba(34,43,38,.1) 100%)',
+            }}
+        />
+
+        <div
+            className={classNames(
+                'relative mt-auto w-full',
+                size === 'small' ? 'p-6' : 'p-6 sm:p-7',
+            )}
+        >
+            <span
+                className="inline-block rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em]"
+                style={{
+                    backgroundColor: 'rgba(245,197,24,.18)',
+                    color: 'var(--lc-gold-soft)',
+                }}
+            >
+                {activity.tag}
+            </span>
+            <h3
+                className={classNames(
+                    'mt-3 font-bold leading-snug text-white',
+                    size === 'large' ? 'text-2xl sm:text-3xl' : 'text-xl',
+                )}
+            >
+                {activity.title}
+            </h3>
+
+            {/* Resumen y botón: plegados hasta el hover en escritorio */}
+            <div className="grid transition-[grid-template-rows,opacity] duration-500 ease-out desk:grid-rows-[0fr] desk:opacity-0 desk:group-hover:grid-rows-[1fr] desk:group-hover:opacity-100 desk:group-focus-visible:grid-rows-[1fr] desk:group-focus-visible:opacity-100">
+                <div className="overflow-hidden">
+                    <p
+                        className={classNames(
+                            'mt-2 line-clamp-3 text-sm leading-relaxed text-white/75',
+                            size === 'large' && 'max-w-md',
+                            size === 'wide' && 'max-w-lg',
+                            size === 'small' && 'lg:hidden',
+                        )}
+                    >
+                        {activity.summary}
+                    </p>
+                    <span
+                        className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold"
+                        style={{
+                            backgroundColor: 'var(--lc-gold)',
+                            color: 'var(--lc-green-deep)',
+                        }}
+                    >
+                        Ver más
+                        <PiArrowRightBold className="transition-transform group-hover:translate-x-1" />
+                    </span>
+                </div>
+            </div>
+        </div>
+    </Link>
+)
+
 const SectionTitle = ({ eyebrow, title, description, light }) => (
     <div className="mx-auto mb-12 max-w-2xl text-center">
         {eyebrow && (
@@ -164,6 +262,73 @@ const SectionTitle = ({ eyebrow, title, description, light }) => (
         )}
     </div>
 )
+
+/**
+ * Video institucional con sonido. No descarga nada hasta que se pulsa
+ * reproducir (preload="none"); antes solo se ve el póster con el botón.
+ */
+const AnniversaryVideo = () => {
+    const videoRef = useRef(null)
+    const [started, setStarted] = useState(false)
+
+    const play = () => {
+        setStarted(true)
+        videoRef.current?.play()
+    }
+
+    return (
+        <div className="relative overflow-hidden rounded-3xl bg-black shadow-2xl">
+            <video
+                ref={videoRef}
+                className="aspect-video w-full"
+                controls={started}
+                preload="none"
+                playsInline
+                poster={ANNIVERSARY_VIDEO.poster}
+            >
+                <source src={ANNIVERSARY_VIDEO.webm} type="video/webm" />
+                <source src={ANNIVERSARY_VIDEO.mp4} type="video/mp4" />
+            </video>
+
+            {!started && (
+                <button
+                    type="button"
+                    onClick={play}
+                    className="group absolute inset-0 flex flex-col items-center justify-center gap-4 text-white"
+                    style={{
+                        background:
+                            'linear-gradient(180deg, rgba(34,43,38,.15) 0%, rgba(34,43,38,.7) 100%)',
+                    }}
+                    aria-label={`Reproducir video: ${SCHOOL.name}, 20 años`}
+                >
+                    <span
+                        className="flex h-16 w-16 items-center justify-center rounded-full shadow-xl transition group-hover:scale-110 sm:h-20 sm:w-20"
+                        style={{
+                            backgroundColor: 'var(--lc-gold)',
+                            color: 'var(--lc-green-deep)',
+                        }}
+                    >
+                        <PiPlayFill className="ml-1 text-2xl sm:text-3xl" />
+                    </span>
+                    <span className="absolute bottom-7 left-7 right-7 hidden text-left sm:block">
+                        <span
+                            className="block text-xs font-bold uppercase tracking-[0.2em]"
+                            style={{ color: 'var(--lc-gold-soft)' }}
+                        >
+                            {SCHOOL.foundedYear} – {SCHOOL.foundedYear + 20}
+                        </span>
+                        <span className="mt-1 block text-2xl font-bold">
+                            20 años sembrando el néctar de la sabiduría
+                        </span>
+                        <span className="mt-1 block text-sm text-white/70">
+                            Video · 2:22
+                        </span>
+                    </span>
+                </button>
+            )}
+        </div>
+    )
+}
 
 const LaColmena = () => {
     // Arranca cerrado: con dos columnas, una tarjeta abierta deja un
@@ -291,21 +456,34 @@ const LaColmena = () => {
                 {/* ── Hero ───────────────────────────────────────────── */}
                 <section
                     id="inicio"
-                    className="relative overflow-hidden"
+                    className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden"
                     style={{ backgroundColor: 'var(--lc-green)' }}
                 >
+                    {/* Con "reducir movimiento" activo solo queda el póster. */}
+                    <video
+                        className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        poster={HERO_VIDEO.poster}
+                        aria-hidden="true"
+                    >
+                        <source src={HERO_VIDEO.webm} type="video/webm" />
+                        <source src={HERO_VIDEO.mp4} type="video/mp4" />
+                    </video>
                     <div
-                        className="absolute inset-0 bg-cover bg-center"
+                        className="absolute inset-0 hidden bg-cover bg-center motion-reduce:block"
                         style={{
-                            backgroundImage: `url(${PHOTOS.sedeDuotono})`,
-                            opacity: 0.28,
+                            backgroundImage: `url(${HERO_VIDEO.poster})`,
                         }}
                     />
                     <div
                         className="absolute inset-0"
                         style={{
                             background:
-                                'linear-gradient(100deg, var(--lc-green) 28%, rgba(46,58,51,.82) 62%, rgba(46,58,51,.55) 100%)',
+                                'linear-gradient(100deg, rgba(46,58,51,.92) 25%, rgba(46,58,51,.7) 60%, rgba(46,58,51,.45) 100%)',
                         }}
                     />
                     <HoneycombLayer tone="light" opacity={0.07} />
@@ -314,7 +492,7 @@ const LaColmena = () => {
                         style={{ backgroundColor: 'rgba(245,197,24,.18)' }}
                     />
 
-                    <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:py-24 lg:grid-cols-[1.15fr_1fr]">
+                    <div className="relative mx-auto grid w-full max-w-6xl items-center gap-6 px-4 py-8 text-center sm:gap-8 sm:py-14 lg:grid-cols-[1.15fr_1fr] lg:gap-10 lg:py-28 lg:text-left">
                         <div>
                             <span
                                 className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em]"
@@ -326,21 +504,21 @@ const LaColmena = () => {
                                 Matrícula abierta {SCHOOL.schoolYear}
                             </span>
 
-                            <h1 className="mt-6 text-4xl font-bold leading-[1.1] text-white sm:text-5xl lg:text-6xl">
+                            <h1 className="mt-4 text-4xl font-bold leading-[1.1] text-white sm:mt-6 sm:text-5xl lg:text-6xl">
                                 {SCHOOL.motto}
                             </h1>
 
-                            <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">
+                            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/75 sm:mt-5 sm:text-lg lg:mx-0">
                                 Colegio bilingüe en {SCHOOL.city},{' '}
                                 {SCHOOL.province}. Veinte años formando
                                 estudiantes con valores, criterio y dominio del
                                 inglés — desde pre-escolar hasta bachillerato.
                             </p>
 
-                            <div className="mt-9 flex flex-wrap gap-3">
+                            <div className="mt-7 flex flex-wrap justify-center gap-3 sm:mt-9 lg:justify-start">
                                 <a
                                     href={PRE_ENROLLMENT_URL}
-                                    className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-base font-bold shadow-lg transition hover:brightness-95"
+                                    className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold shadow-lg sm:px-7 sm:py-3.5 sm:text-base transition hover:brightness-95"
                                     style={{
                                         backgroundColor: 'var(--lc-gold)',
                                         color: 'var(--lc-green-deep)',
@@ -353,7 +531,7 @@ const LaColmena = () => {
                                     href={whatsappLink}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full border-2 px-7 py-3.5 text-base font-bold text-white transition hover:bg-white/10"
+                                    className="inline-flex items-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-bold text-white sm:px-7 sm:py-3.5 sm:text-base transition hover:bg-white/10"
                                     style={{
                                         borderColor: 'rgba(255,255,255,.3)',
                                     }}
@@ -363,21 +541,22 @@ const LaColmena = () => {
                                 </a>
                             </div>
 
-                            <p className="mt-6 text-sm text-white/50">
+                            <p className="mt-5 text-sm text-white/50 sm:mt-6">
                                 Fundado en {SCHOOL.foundedYear} · {SCHOOL.city},{' '}
                                 {SCHOOL.province}
                             </p>
                         </div>
 
-                        <div className="flex justify-center lg:justify-end">
+                        {/* En móvil y tablet el escudo va arriba y más pequeño para que todo el hero entre en pantalla. */}
+                        <div className="order-first flex justify-center lg:order-last lg:justify-end">
                             <div className="relative">
                                 <div
-                                    className="absolute inset-0 -m-8 rounded-full blur-2xl"
+                                    className="absolute inset-0 -m-4 rounded-full blur-2xl lg:-m-8"
                                     style={{
                                         backgroundColor: 'rgba(245,197,24,.22)',
                                     }}
                                 />
-                                <Crest className="relative w-56 drop-shadow-2xl sm:w-72 lg:w-80" />
+                                <Crest className="relative w-28 drop-shadow-2xl sm:w-40 lg:w-80" />
                             </div>
                         </div>
                     </div>
@@ -422,27 +601,13 @@ const LaColmena = () => {
                             eyebrow="Sobre nosotros"
                             title="Una educación con valores, inteligente y creativa"
                         />
+                        <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-center">
+                            <Reveal className="relative mx-auto w-full max-w-2xl lg:mx-0">
+                                <AnniversaryVideo />
 
-                        <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-                            <Reveal className="relative mx-auto w-full max-w-sm lg:mx-0">
-                                <div className="relative overflow-hidden rounded-3xl shadow-xl">
-                                    <img
-                                        src={PHOTOS.estudiante}
-                                        alt="Estudiante de La Colmena trabajando en clase"
-                                        className="aspect-square w-full object-cover transition duration-700 hover:scale-105"
-                                    />
-                                    {/* Viñeta suave: asienta la foto y disimula el grano del escaneo */}
-                                    <div
-                                        className="pointer-events-none absolute inset-0"
-                                        style={{
-                                            background:
-                                                'radial-gradient(120% 90% at 50% 35%, transparent 45%, rgba(34,43,38,.28) 100%)',
-                                        }}
-                                    />
-                                </div>
-
+                                {/* Debajo del video, no encima, para no tapar sus controles. */}
                                 <div
-                                    className="relative -mt-10 ml-4 flex items-center gap-4 rounded-2xl p-4 shadow-lg sm:-ml-6"
+                                    className="relative mt-4 flex items-center gap-4 rounded-2xl p-4 shadow-lg"
                                     style={{
                                         backgroundColor: 'var(--lc-green)',
                                     }}
@@ -488,7 +653,7 @@ const LaColmena = () => {
                                     ))}
                                 </div>
                             </div>
-                        </div>
+                        </div>{' '}
                     </div>
                 </section>
 
@@ -625,7 +790,7 @@ const LaColmena = () => {
                         <SectionTitle
                             eyebrow="Oferta académica"
                             title="Cuatro niveles, un mismo estándar"
-                            description="Cada nivel tiene su horario, su plan de materias y su cuota. Toca un nivel para ver el detalle completo."
+                            description="Cada nivel tiene su horario y su plan de materias. Toca un nivel para ver el detalle completo."
                         />
 
                         {/* `items-start` evita que la tarjeta vecina se estire al expandir una */}
@@ -678,29 +843,6 @@ const LaColmena = () => {
                                                             }}
                                                         />
                                                         {level.schedule}
-                                                    </span>
-                                                    <span className="text-[#4a554d]">
-                                                        Matrícula{' '}
-                                                        <b
-                                                            style={{
-                                                                color: 'var(--lc-green)',
-                                                            }}
-                                                        >
-                                                            B/.{' '}
-                                                            {level.enrollment}
-                                                            .00
-                                                        </b>
-                                                    </span>
-                                                    <span className="text-[#4a554d]">
-                                                        Mensualidad{' '}
-                                                        <b
-                                                            style={{
-                                                                color: 'var(--lc-green)',
-                                                            }}
-                                                        >
-                                                            B/. {level.monthly}
-                                                            .00
-                                                        </b>
                                                     </span>
                                                 </div>
                                             </div>
@@ -761,7 +903,7 @@ const LaColmena = () => {
                     </div>
                 </section>
 
-                {/* ── Vida escolar: la banda ─────────────────────────── */}
+                {/* ── Vida escolar ───────────────────────────────────── */}
                 <section
                     id="vida"
                     style={{ backgroundColor: '#fff' }}
@@ -772,91 +914,43 @@ const LaColmena = () => {
                         <SectionTitle
                             eyebrow="Vida escolar"
                             title="Aprender también pasa fuera del aula"
-                            description="La banda del colegio acompaña los desfiles y actos cívicos, y forma en disciplina y trabajo en equipo."
+                            description="Banda de guerra, idiomas, emprendimiento y deporte: actividades que forman en disciplina, creatividad y trabajo en equipo."
                         />
 
-                        <Reveal
-                            className="overflow-hidden rounded-3xl"
-                            style={{ backgroundColor: 'var(--lc-green)' }}
-                        >
-                            <div className="grid lg:grid-cols-[1fr_.75fr]">
-                                <div className="p-8 sm:p-12">
-                                    <span
-                                        className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em]"
-                                        style={{
-                                            backgroundColor:
-                                                'rgba(245,197,24,.15)',
-                                            color: 'var(--lc-gold-soft)',
-                                        }}
-                                    >
-                                        <PiMusicNotesDuotone className="text-base" />
-                                        {BAND.tagline}
-                                    </span>
-
-                                    <h3 className="mt-5 text-2xl font-bold text-white sm:text-3xl">
-                                        {BAND.name}
-                                    </h3>
-
-                                    <p className="mt-4 max-w-xl text-base leading-relaxed text-white/75">
-                                        {BAND.description}
-                                    </p>
-
-                                    <div className="mt-7 flex flex-wrap gap-2.5">
-                                        {BAND.sections.map((item) => (
-                                            <span
-                                                key={item}
-                                                className="rounded-full px-4 py-2 text-sm font-medium text-white/90"
-                                                style={{
-                                                    backgroundColor:
-                                                        'rgba(255,255,255,.12)',
-                                                }}
-                                            >
-                                                {item}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    <ul className="mt-7 space-y-2.5">
-                                        {BAND.notes.map((note) => (
-                                            <li
-                                                key={note}
-                                                className="flex gap-3 text-sm leading-relaxed text-white/70"
-                                            >
-                                                <PiCheckCircleDuotone
-                                                    className="mt-0.5 shrink-0 text-lg"
-                                                    style={{
-                                                        color: 'var(--lc-gold)',
-                                                    }}
-                                                />
-                                                {note}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-                                <div className="relative hidden overflow-hidden lg:block">
-                                    <img
-                                        src={PHOTOS.uniforme}
-                                        alt="Escudo del Colegio Bilingüe La Colmena bordado en el suéter del uniforme"
-                                        className="h-full w-full object-cover"
-                                        style={{
-                                            objectPosition: '62% 45%',
-                                            filter: 'saturate(.8) brightness(.6)',
-                                        }}
-                                        loading="lazy"
+                        {/* Bento: la banda ocupa el bloque grande; el resto
+                            llena las celdas. Cada tarjeta lleva a su sección
+                            en /vida-escolar. */}
+                        <div className="grid gap-5 sm:grid-cols-2 lg:auto-rows-[15rem] lg:grid-cols-4">
+                            {ACTIVITIES.map((activity, i) => (
+                                <Reveal
+                                    key={activity.id}
+                                    delay={i * 100}
+                                    className={classNames(
+                                        ACTIVITY_TILES[i].span,
+                                        'flex min-h-72 lg:min-h-0',
+                                    )}
+                                >
+                                    <ActivityTile
+                                        activity={activity}
+                                        size={ACTIVITY_TILES[i].size}
                                     />
-                                    {/* Funde la foto con el verde de la tarjeta:
-                                        el escudo queda como textura, no como logo */}
-                                    <div
-                                        className="pointer-events-none absolute inset-0"
-                                        style={{
-                                            background:
-                                                'linear-gradient(to right, var(--lc-green) 0%, rgba(46,58,51,.85) 40%, rgba(46,58,51,.6) 100%)',
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </Reveal>
+                                </Reveal>
+                            ))}
+                        </div>
+
+                        <div className="mt-8 text-center">
+                            <Link
+                                to="/vida-escolar"
+                                className="inline-flex items-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-bold transition hover:bg-[var(--lc-cream)]"
+                                style={{
+                                    borderColor: 'rgba(46,58,51,.2)',
+                                    color: 'var(--lc-green)',
+                                }}
+                            >
+                                Conocer toda la vida escolar
+                                <PiArrowRightBold />
+                            </Link>
+                        </div>
                     </div>
                 </section>
 

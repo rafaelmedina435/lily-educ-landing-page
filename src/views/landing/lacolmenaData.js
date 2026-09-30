@@ -66,8 +66,6 @@ export const LEVELS = [
         name: 'Pre-escolar',
         tagline: 'Los primeros pasos, en dos idiomas',
         schedule: '8:00 a. m. — 12:00 m. d.',
-        enrollment: 180,
-        monthly: 100,
         subjects: [
             'Español',
             'Matemática',
@@ -87,8 +85,6 @@ export const LEVELS = [
         name: 'Primaria',
         tagline: 'Bases sólidas y pensamiento crítico',
         schedule: '7:30 a. m. — 2:00 p. m.',
-        enrollment: 180,
-        monthly: 110,
         subjects: [
             'Español',
             'Matemática',
@@ -112,8 +108,6 @@ export const LEVELS = [
         name: 'Pre-media',
         tagline: 'Autonomía, método y proyectos',
         schedule: '7:30 a. m. — 2:00 p. m.',
-        enrollment: 200,
-        monthly: 130,
         subjects: [
             'Español',
             'Matemática',
@@ -136,8 +130,6 @@ export const LEVELS = [
         name: 'Bachiller en Ciencias',
         tagline: 'Preparación real para la universidad',
         schedule: '7:30 a. m. — 2:00 p. m.',
-        enrollment: 200,
-        monthly: 140,
         subjects: [
             'Español',
             'Física',
@@ -171,27 +163,111 @@ export const REQUIREMENTS = [
 ]
 
 /* ------------------------------------------------------------------ *
- * Vida escolar — la banda de música
- * Es la única actividad que confirmó el colegio.
+ * Vida escolar — la banda de guerra y las demás actividades
  * ------------------------------------------------------------------ */
 
-export const BAND = {
-    name: 'Banda de música',
-    tagline: 'Disciplina que se escucha',
-    description:
-        'La banda es el sello del colegio en desfiles y actos cívicos. Los estudiantes que la integran aprenden lectura musical, marcha y trabajo en equipo, y representan a La Colmena en las fiestas patrias y en actividades de la comunidad de Aguadulce.',
-    sections: [
-        'Percusión — cajas, bombos y platillos',
-        'Liras y melódicas',
-        'Bastoneras y abanderadas',
-        'Cuerpo de banderas',
-    ],
-    notes: [
-        'Abierta a estudiantes de primaria, pre-media y media.',
-        'Ensayos en contra-jornada, coordinados con el calendario escolar.',
-        'La participación es voluntaria y se registra en el portal del acudiente.',
-    ],
-}
+/**
+ * Cada actividad tiene su tarjeta en la landing (`summary`) y su sección
+ * en `/vida-escolar#<id>` (el resto de los campos). `photo` es opcional:
+ * sin foto, la tarjeta usa el fondo verde de la marca con el icono.
+ *
+ * PENDIENTE DE CONFIRMAR con el colegio: los detalles de alemán,
+ * emprendimiento y deporte (horarios, niveles) son orientativos.
+ */
+export const ACTIVITIES = [
+    {
+        id: 'banda',
+        title: 'Banda de guerra',
+        tag: 'Tradición',
+        tagline: 'Disciplina que se escucha',
+        summary:
+            'El sello del colegio en desfiles y actos cívicos: ritmo, marcha y trabajo en equipo.',
+        description:
+            'La banda de guerra es el sello del colegio en desfiles y actos cívicos. Los estudiantes que la integran aprenden ritmo, marcha y trabajo en equipo, y representan a La Colmena en las fiestas patrias y en actividades de la comunidad de Aguadulce.',
+        highlights: [
+            'Tambores, redoblantes y bombos',
+            'Cornetas y clarines',
+            'Bastoneras y abanderadas',
+            'Cuerpo de banderas',
+        ],
+        notes: [
+            'Abierta a estudiantes de primaria, pre-media y media.',
+            'Ensayos en contra-jornada, coordinados con el calendario escolar.',
+            'La participación es voluntaria y se registra en el portal del acudiente.',
+        ],
+        icon: 'music',
+        photo: 'uniforme',
+        photoPosition: '62% 45%',
+        photoAlt:
+            'Escudo del Colegio Bilingüe La Colmena bordado en el suéter del uniforme',
+    },
+    {
+        id: 'aleman',
+        title: 'Clases de alemán',
+        tag: 'Idiomas',
+        tagline: 'Un tercer idioma para abrir más puertas',
+        summary:
+            'Además del inglés, los estudiantes suman un tercer idioma fuera del horario regular.',
+        description:
+            'Además del inglés, los estudiantes pueden sumar un tercer idioma con clases de alemán fuera del horario regular. Las clases combinan conversación, vocabulario de uso diario y cultura de los países de habla alemana, a un ritmo pensado para quienes empiezan desde cero.',
+        highlights: [
+            'Conversación',
+            'Vocabulario cotidiano',
+            'Lectura y escritura',
+            'Cultura',
+        ],
+        notes: [
+            'Se imparte fuera del horario regular de clases.',
+            'Grupos organizados por nivel y edad.',
+            'Consulte horarios y cupos en la secretaría del colegio.',
+        ],
+        icon: 'language',
+    },
+    {
+        id: 'emprendimiento',
+        title: 'Ferias de emprendimiento',
+        tag: 'Proyectos',
+        tagline: 'De la idea al primer cliente',
+        summary:
+            'Los estudiantes crean sus propios proyectos y negocios y los presentan a la comunidad.',
+        description:
+            'Los estudiantes crean sus propios proyectos y negocios, y los presentan a la comunidad escolar en nuestras ferias. El trabajo se acompaña desde las clases de Finanzas y Emprendimiento: identificar una necesidad, calcular costos, fijar precios y aprender a presentar su propuesta.',
+        highlights: [
+            'Idea y planificación',
+            'Costos y precios',
+            'Presentación al público',
+            'Trabajo en equipo',
+        ],
+        notes: [
+            'Vinculadas a Familia y Desarrollo, Finanzas y Emprendimiento.',
+            'Abiertas a las familias y a la comunidad escolar.',
+        ],
+        icon: 'store',
+        photo: 'estudiante',
+        photoPosition: '60% 40%',
+        photoAlt: 'Estudiante de La Colmena trabajando en su proyecto',
+    },
+    {
+        id: 'deporte',
+        title: 'Apoyo al deporte',
+        tag: 'Deporte',
+        tagline: 'Representar al colegio con orgullo',
+        summary:
+            'Impulsamos la práctica deportiva y acompañamos a quienes compiten por el colegio.',
+        description:
+            'Impulsamos la práctica deportiva y acompañamos a nuestros estudiantes cuando representan al colegio en competencias. Desde Educación Física se detectan y apoyan los talentos, y se promueven los valores del deporte: constancia, respeto y juego limpio.',
+        highlights: [
+            'Educación Física',
+            'Competencias intercolegiales',
+            'Juego limpio',
+        ],
+        notes: [
+            'Acompañamiento del colegio en las competencias.',
+            'Participación coordinada con el acudiente y el calendario escolar.',
+        ],
+        icon: 'sport',
+    },
+]
 
 /* ------------------------------------------------------------------ *
  * Plataforma digital — solo se menciona, sin entrar en detalles

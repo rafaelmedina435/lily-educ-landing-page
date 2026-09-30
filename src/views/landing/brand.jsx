@@ -122,6 +122,20 @@ export const PHOTOS = {
     uniforme: '/img/lacolmena/uniforme.jpg',
 }
 
+/** Video de fondo del hero: WebM (VP9) primero, MP4 (H.264) como respaldo. */
+export const HERO_VIDEO = {
+    webm: '/video/hero.webm',
+    mp4: '/video/hero.mp4',
+    poster: '/video/hero-poster.jpg',
+}
+
+/** Video de los 20 años (con sonido), en la sección "Sobre nosotros". */
+export const ANNIVERSARY_VIDEO = {
+    webm: '/video/20-anios.webm',
+    mp4: '/video/20-anios.mp4',
+    poster: '/video/20-anios-poster.jpg',
+}
+
 /** Envoltura que anima la entrada de una sección al hacer scroll. */
 export const Reveal = ({ children, delay = 0, className = '', style }) => {
     const [ref, visible] = useRevealHook()
