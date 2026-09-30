@@ -20,15 +20,11 @@ import {
     PiArrowRightBold,
     PiListBold,
     PiXBold,
-    PiMusicNotesDuotone,
     PiMoneyDuotone,
     PiDeviceMobileDuotone,
     PiBankDuotone,
     PiCreditCardDuotone,
     PiPlayFill,
-    PiTranslateDuotone,
-    PiStorefrontDuotone,
-    PiSoccerBallDuotone,
 } from 'react-icons/pi'
 import {
     SCHOOL,
@@ -38,7 +34,6 @@ import {
     PAYMENT_NOTES,
     PAYMENT_METHODS,
     REQUIREMENTS,
-    BAND,
     ACTIVITIES,
     PLATFORM,
     CAMPUS,
@@ -54,6 +49,7 @@ import {
     Reveal,
 } from './brand'
 import { ContactValue, useContactAction } from './ContactAction'
+import { ActivityMedia, activityHref } from './activities'
 import Seo from '@/components/shared/Seo'
 import { PRE_ENROLLMENT_URL, SIGN_IN_URL } from '@/configs/platform.config'
 
@@ -64,12 +60,6 @@ const BENEFIT_ICONS = {
     sparkles: PiSparkleDuotone,
     chip: PiCpuDuotone,
     school: PiGraduationCapDuotone,
-}
-
-const ACTIVITY_ICONS = {
-    language: PiTranslateDuotone,
-    store: PiStorefrontDuotone,
-    sport: PiSoccerBallDuotone,
 }
 
 const PAYMENT_ICONS = {
@@ -153,6 +143,94 @@ const JSON_LD = {
     },
     openingHours: 'Mo-Fr 07:30-14:00',
 }
+
+/**
+ * Celdas del bento de vida escolar, en el orden de `ACTIVITIES`: la
+ * primera (la banda) ocupa 2×2 y la última se estira a lo ancho para
+ * cerrar la cuadrícula de 4 columnas. Las celdas de 1×1 miden 15rem en
+ * escritorio: ahí no cabe el resumen, solo el título y «Ver más».
+ */
+const ACTIVITY_TILES = [
+    { span: 'sm:col-span-2 lg:row-span-2', size: 'large' },
+    { span: '', size: 'small' },
+    { span: '', size: 'small' },
+    { span: 'sm:col-span-2', size: 'wide' },
+]
+
+/**
+ * Tarjeta de actividad: foto a sangre con el título abajo. Con mouse,
+ * en escritorio, al pasar por encima aparece «Ver más» (y el resumen,
+ * si la celda tiene espacio); en pantallas táctiles se ven siempre.
+ */
+const ActivityTile = ({ activity, size }) => (
+    <Link
+        to={activityHref(activity)}
+        className="group relative flex w-full overflow-hidden rounded-3xl focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--lc-gold)]"
+    >
+        <ActivityMedia
+            activity={activity}
+            className="transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+        <div
+            className="absolute inset-0 transition-opacity duration-500 desk:opacity-80 desk:group-hover:opacity-100"
+            style={{
+                background:
+                    'linear-gradient(to top, rgba(34,43,38,.95) 0%, rgba(34,43,38,.55) 45%, rgba(34,43,38,.1) 100%)',
+            }}
+        />
+
+        <div
+            className={classNames(
+                'relative mt-auto w-full',
+                size === 'small' ? 'p-6' : 'p-6 sm:p-7',
+            )}
+        >
+            <span
+                className="inline-block rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em]"
+                style={{
+                    backgroundColor: 'rgba(245,197,24,.18)',
+                    color: 'var(--lc-gold-soft)',
+                }}
+            >
+                {activity.tag}
+            </span>
+            <h3
+                className={classNames(
+                    'mt-3 font-bold leading-snug text-white',
+                    size === 'large' ? 'text-2xl sm:text-3xl' : 'text-xl',
+                )}
+            >
+                {activity.title}
+            </h3>
+
+            {/* Resumen y botón: plegados hasta el hover en escritorio */}
+            <div className="grid transition-[grid-template-rows,opacity] duration-500 ease-out desk:grid-rows-[0fr] desk:opacity-0 desk:group-hover:grid-rows-[1fr] desk:group-hover:opacity-100 desk:group-focus-visible:grid-rows-[1fr] desk:group-focus-visible:opacity-100">
+                <div className="overflow-hidden">
+                    <p
+                        className={classNames(
+                            'mt-2 line-clamp-3 text-sm leading-relaxed text-white/75',
+                            size === 'large' && 'max-w-md',
+                            size === 'wide' && 'max-w-lg',
+                            size === 'small' && 'lg:hidden',
+                        )}
+                    >
+                        {activity.summary}
+                    </p>
+                    <span
+                        className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold"
+                        style={{
+                            backgroundColor: 'var(--lc-gold)',
+                            color: 'var(--lc-green-deep)',
+                        }}
+                    >
+                        Ver más
+                        <PiArrowRightBold className="transition-transform group-hover:translate-x-1" />
+                    </span>
+                </div>
+            </div>
+        </div>
+    </Link>
+)
 
 const SectionTitle = ({ eyebrow, title, description, light }) => (
     <div className="mx-auto mb-12 max-w-2xl text-center">
@@ -835,131 +913,39 @@ const LaColmena = () => {
                             description="Banda de guerra, idiomas, emprendimiento y deporte: actividades que forman en disciplina, creatividad y trabajo en equipo."
                         />
 
-                        <Reveal
-                            className="overflow-hidden rounded-3xl"
-                            style={{ backgroundColor: 'var(--lc-green)' }}
-                        >
-                            <div className="grid lg:grid-cols-[1fr_.75fr]">
-                                <div className="p-8 sm:p-12">
-                                    <span
-                                        className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em]"
-                                        style={{
-                                            backgroundColor:
-                                                'rgba(245,197,24,.15)',
-                                            color: 'var(--lc-gold-soft)',
-                                        }}
-                                    >
-                                        <PiMusicNotesDuotone className="text-base" />
-                                        {BAND.tagline}
-                                    </span>
-
-                                    <h3 className="mt-5 text-2xl font-bold text-white sm:text-3xl">
-                                        {BAND.name}
-                                    </h3>
-
-                                    <p className="mt-4 max-w-xl text-base leading-relaxed text-white/75">
-                                        {BAND.description}
-                                    </p>
-
-                                    <div className="mt-7 flex flex-wrap gap-2.5">
-                                        {BAND.sections.map((item) => (
-                                            <span
-                                                key={item}
-                                                className="rounded-full px-4 py-2 text-sm font-medium text-white/90"
-                                                style={{
-                                                    backgroundColor:
-                                                        'rgba(255,255,255,.12)',
-                                                }}
-                                            >
-                                                {item}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    <ul className="mt-7 space-y-2.5">
-                                        {BAND.notes.map((note) => (
-                                            <li
-                                                key={note}
-                                                className="flex gap-3 text-sm leading-relaxed text-white/70"
-                                            >
-                                                <PiCheckCircleDuotone
-                                                    className="mt-0.5 shrink-0 text-lg"
-                                                    style={{
-                                                        color: 'var(--lc-gold)',
-                                                    }}
-                                                />
-                                                {note}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-                                <div className="relative hidden overflow-hidden lg:block">
-                                    <img
-                                        src={PHOTOS.uniforme}
-                                        alt="Escudo del Colegio Bilingüe La Colmena bordado en el suéter del uniforme"
-                                        className="h-full w-full object-cover"
-                                        style={{
-                                            objectPosition: '62% 45%',
-                                            filter: 'saturate(.8) brightness(.6)',
-                                        }}
-                                        loading="lazy"
+                        {/* Bento: la banda ocupa el bloque grande; el resto
+                            llena las celdas. Cada tarjeta lleva a su sección
+                            en /vida-escolar. */}
+                        <div className="grid gap-5 sm:grid-cols-2 lg:auto-rows-[15rem] lg:grid-cols-4">
+                            {ACTIVITIES.map((activity, i) => (
+                                <Reveal
+                                    key={activity.id}
+                                    delay={i * 100}
+                                    className={classNames(
+                                        ACTIVITY_TILES[i].span,
+                                        'flex min-h-72 lg:min-h-0',
+                                    )}
+                                >
+                                    <ActivityTile
+                                        activity={activity}
+                                        size={ACTIVITY_TILES[i].size}
                                     />
-                                    {/* Funde la foto con el verde de la tarjeta:
-                                        el escudo queda como textura, no como logo */}
-                                    <div
-                                        className="pointer-events-none absolute inset-0"
-                                        style={{
-                                            background:
-                                                'linear-gradient(to right, var(--lc-green) 0%, rgba(46,58,51,.85) 40%, rgba(46,58,51,.6) 100%)',
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </Reveal>
+                                </Reveal>
+                            ))}
+                        </div>
 
-                        <div className="mt-6 grid gap-5 md:grid-cols-3">
-                            {ACTIVITIES.map((activity, i) => {
-                                const Icon =
-                                    ACTIVITY_ICONS[activity.icon] ||
-                                    PiSparkleDuotone
-                                return (
-                                    <Reveal
-                                        key={activity.title}
-                                        delay={i * 100}
-                                        className="rounded-3xl border p-7"
-                                        style={{
-                                            backgroundColor: 'var(--lc-cream)',
-                                            borderColor: 'rgba(46,58,51,.08)',
-                                        }}
-                                    >
-                                        <div className="flex items-center justify-between gap-3">
-                                            <span
-                                                className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl"
-                                                style={{
-                                                    backgroundColor:
-                                                        'var(--lc-green)',
-                                                    color: 'var(--lc-gold)',
-                                                }}
-                                            >
-                                                <Icon />
-                                            </span>
-                                            <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#8a948c]">
-                                                {activity.tag}
-                                            </span>
-                                        </div>
-                                        <h3
-                                            className="mt-5 text-lg font-bold"
-                                            style={{ color: 'var(--lc-green)' }}
-                                        >
-                                            {activity.title}
-                                        </h3>
-                                        <p className="mt-2 text-sm leading-relaxed text-[#5b665e]">
-                                            {activity.description}
-                                        </p>
-                                    </Reveal>
-                                )
-                            })}
+                        <div className="mt-8 text-center">
+                            <Link
+                                to="/vida-escolar"
+                                className="inline-flex items-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-bold transition hover:bg-[var(--lc-cream)]"
+                                style={{
+                                    borderColor: 'rgba(46,58,51,.2)',
+                                    color: 'var(--lc-green)',
+                                }}
+                            >
+                                Conocer toda la vida escolar
+                                <PiArrowRightBold />
+                            </Link>
                         </div>
                     </div>
                 </section>
