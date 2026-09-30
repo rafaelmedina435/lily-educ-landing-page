@@ -23,7 +23,13 @@ export const SCHOOL = {
     whatsapp: '50768454009',
 }
 
-export const ABOUT = `Colegio Bilingüe La Colmena es un colegio comprometido a brindarle a las próximas generaciones una educación con valores, inteligente, creativa y con carácter. Con 20 años de experiencia en el mundo educativo, priorizamos la calidad, la creatividad y el desarrollo personal de nuestros estudiantes. Contamos con el mejor plan de estudios, instalaciones modernas y un ambiente de aprendizaje propicio.`
+export const ABOUT = `Colegio Bilingüe La Colmena forma a las próximas generaciones con una educación basada en valores, excelencia académica, creatividad y carácter. Con más de 20 años de experiencia, ofrecemos un ambiente de aprendizaje moderno e integral que impulsa el desarrollo personal y académico de nuestros estudiantes.`
+
+/** Frases de ABOUT que se muestran en negrita. */
+export const ABOUT_HIGHLIGHTS = [
+    SCHOOL.name,
+    'más de 20 años de experiencia',
+]
 
 export const BENEFITS = [
     {

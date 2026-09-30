@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import classNames from 'classnames'
 import {
@@ -25,10 +25,15 @@ import {
     PiBankDuotone,
     PiCreditCardDuotone,
     PiPlayFill,
+    PiPauseFill,
+    PiSpeakerHighFill,
+    PiSpeakerLowFill,
+    PiSpeakerXFill,
 } from 'react-icons/pi'
 import {
     SCHOOL,
     ABOUT,
+    ABOUT_HIGHLIGHTS,
     BENEFITS,
     LEVELS,
     PAYMENT_NOTES,
@@ -264,32 +269,187 @@ const SectionTitle = ({ eyebrow, title, description, light }) => (
     </div>
 )
 
+/** Parte ABOUT dejando las frases resaltadas en las posiciones impares. */
+const ABOUT_HIGHLIGHTS_PATTERN = new RegExp(
+    `(${ABOUT_HIGHLIGHTS.map((phrase) =>
+        phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+    ).join('|')})`,
+)
+
+/** Segundos a «m:ss». */
+const formatTime = (seconds) => {
+    const total = Math.floor(seconds || 0)
+    return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`
+}
+
 /**
  * Video institucional con sonido. No descarga nada hasta que se pulsa
  * reproducir (preload="none"); antes solo se ve el póster con el botón.
+ *
+ * Usa controles propios (play/pausa, barra de avance y volumen) en vez
+ * de los del navegador, para no ofrecer pantalla completa, transmitir,
+ * ventana flotante, velocidad ni descarga. También se bloquea el menú del clic
+ * derecho, que trae «Guardar video como».
  */
 const AnniversaryVideo = () => {
     const videoRef = useRef(null)
     const [started, setStarted] = useState(false)
+    const [playing, setPlaying] = useState(false)
+    const [volume, setVolume] = useState(1)
+    const [muted, setMuted] = useState(false)
+    const [currentTime, setCurrentTime] = useState(0)
+    const [duration, setDuration] = useState(0)
 
     const play = () => {
         setStarted(true)
         videoRef.current?.play()
     }
 
+    const togglePlay = () => {
+        const video = videoRef.current
+        if (!video) return
+
+        if (video.paused) video.play()
+        else video.pause()
+    }
+
+    const toggleMute = () => {
+        const video = videoRef.current
+        if (!video) return
+
+        video.muted = !video.muted
+        // Si se había bajado a cero, al reactivar vuelve a un nivel audible
+        if (!video.muted && video.volume === 0) video.volume = 1
+    }
+
+    const changeVolume = (event) => {
+        const video = videoRef.current
+        if (!video) return
+
+        const value = Number(event.target.value)
+        video.volume = value
+        video.muted = value === 0
+    }
+
+    const seek = (event) => {
+        const video = videoRef.current
+        if (!video) return
+
+        video.currentTime = Number(event.target.value)
+    }
+
+    const silent = muted || volume === 0
+    const VolumeIcon = silent
+        ? PiSpeakerXFill
+        : volume < 0.5
+          ? PiSpeakerLowFill
+          : PiSpeakerHighFill
+
     return (
-        <div className="relative overflow-hidden rounded-3xl bg-black shadow-2xl">
+        <div
+            className="relative overflow-hidden rounded-3xl bg-black shadow-2xl"
+            onContextMenu={(event) => event.preventDefault()}
+        >
             <video
                 ref={videoRef}
                 className="aspect-video w-full"
-                controls={started}
                 preload="none"
                 playsInline
                 poster={ANNIVERSARY_VIDEO.poster}
+                controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
+                disablePictureInPicture
+                disableRemotePlayback
+                onClick={started ? togglePlay : undefined}
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onLoadedMetadata={(event) =>
+                    setDuration(event.currentTarget.duration)
+                }
+                onTimeUpdate={(event) =>
+                    setCurrentTime(event.currentTarget.currentTime)
+                }
+                onVolumeChange={(event) => {
+                    setVolume(event.currentTarget.volume)
+                    setMuted(event.currentTarget.muted)
+                }}
             >
                 <source src={ANNIVERSARY_VIDEO.webm} type="video/webm" />
                 <source src={ANNIVERSARY_VIDEO.mp4} type="video/mp4" />
             </video>
+
+            {started && (
+                <div
+                    className="absolute inset-x-0 bottom-0 px-4 pb-3 pt-10 text-white"
+                    style={{
+                        background:
+                            'linear-gradient(180deg, transparent 0%, rgba(34,43,38,.8) 100%)',
+                    }}
+                >
+                    <input
+                        type="range"
+                        min="0"
+                        max={duration || 0}
+                        step="0.1"
+                        value={currentTime}
+                        onChange={seek}
+                        className="block w-full cursor-pointer"
+                        style={{ accentColor: 'var(--lc-gold)' }}
+                        aria-label="Avance del video"
+                        aria-valuetext={`${formatTime(currentTime)} de ${formatTime(duration)}`}
+                    />
+
+                    <div className="mt-2 flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={togglePlay}
+                            className="flex h-10 w-10 items-center justify-center rounded-full transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                            style={{
+                                backgroundColor: 'var(--lc-gold)',
+                                color: 'var(--lc-green-deep)',
+                            }}
+                            aria-label={
+                                playing ? 'Pausar video' : 'Reproducir video'
+                            }
+                        >
+                            {playing ? (
+                                <PiPauseFill className="text-lg" />
+                            ) : (
+                                <PiPlayFill className="ml-0.5 text-lg" />
+                            )}
+                        </button>
+
+                        {/* La barra de volumen se despliega al pasar el mouse o enfocar el botón */}
+                        <div className="group/volume flex items-center">
+                            <button
+                                type="button"
+                                onClick={toggleMute}
+                                className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                                aria-label={
+                                    silent ? 'Activar sonido' : 'Silenciar'
+                                }
+                            >
+                                <VolumeIcon className="text-xl" />
+                            </button>
+
+                            <input
+                                type="range"
+                                min="0"
+                                max="1"
+                                step="0.05"
+                                value={silent ? 0 : volume}
+                                onChange={changeVolume}
+                                className="w-0 cursor-pointer opacity-0 transition-all duration-300 group-hover/volume:ml-1 group-hover/volume:w-24 group-hover/volume:opacity-100 group-focus-within/volume:ml-1 group-focus-within/volume:w-24 group-focus-within/volume:opacity-100"
+                                style={{ accentColor: 'var(--lc-gold)' }}
+                                aria-label="Volumen"
+                            />
+                        </div>
+
+                        <span className="ml-auto text-sm tabular-nums text-white/80">
+                            {formatTime(currentTime)} / {formatTime(duration)}
+                        </span>
+                    </div>
+                </div>
+            )}
 
             {!started && (
                 <button
@@ -608,20 +768,20 @@ const LaColmena = () => {
 
                                 {/* Debajo del video, no encima, para no tapar sus controles. */}
                                 <div
-                                    className="relative mt-4 flex items-center gap-4 rounded-2xl p-4 shadow-lg"
+                                    className="relative mt-4 flex items-center justify-center gap-4 rounded-2xl p-4 shadow-lg sm:px-6"
                                     style={{
                                         backgroundColor: 'var(--lc-green)',
                                     }}
                                 >
-                                    <Crest className="w-12 shrink-0" />
+                                    <Crest className="w-12 shrink-0 drop-shadow sm:w-14" />
                                     <div className="min-w-0">
                                         <p
-                                            className="text-sm font-bold italic leading-snug"
+                                            className="text-base font-bold italic leading-snug sm:text-xl"
                                             style={{ color: 'var(--lc-gold)' }}
                                         >
                                             «{SCHOOL.motto}»
                                         </p>
-                                        <p className="mt-0.5 text-xs text-white/60">
+                                        <p className="mt-0.5 text-xs tracking-wide text-white/60 sm:text-sm">
                                             {SCHOOL.city}, {SCHOOL.province}
                                         </p>
                                     </div>
@@ -630,7 +790,25 @@ const LaColmena = () => {
 
                             <div>
                                 <p className="text-lg leading-relaxed text-[#4a554d]">
-                                    {ABOUT}
+                                    {/* Las frases de ABOUT_HIGHLIGHTS van en negrita */}
+                                    {ABOUT.split(ABOUT_HIGHLIGHTS_PATTERN).map(
+                                        (part, index) =>
+                                            index % 2 ? (
+                                                <strong
+                                                    key={index}
+                                                    className="font-bold"
+                                                    style={{
+                                                        color: 'var(--lc-green)',
+                                                    }}
+                                                >
+                                                    {part}
+                                                </strong>
+                                            ) : (
+                                                <Fragment key={index}>
+                                                    {part}
+                                                </Fragment>
+                                            ),
+                                    )}
                                 </p>
                                 <div className="mt-8 grid gap-3 sm:grid-cols-2">
                                     {[
