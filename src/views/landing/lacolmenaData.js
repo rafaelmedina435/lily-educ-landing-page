@@ -66,8 +66,6 @@ export const LEVELS = [
         name: 'Pre-escolar',
         tagline: 'Los primeros pasos, en dos idiomas',
         schedule: '8:00 a. m. — 12:00 m. d.',
-        enrollment: 180,
-        monthly: 100,
         subjects: [
             'Español',
             'Matemática',
@@ -87,8 +85,6 @@ export const LEVELS = [
         name: 'Primaria',
         tagline: 'Bases sólidas y pensamiento crítico',
         schedule: '7:30 a. m. — 2:00 p. m.',
-        enrollment: 180,
-        monthly: 110,
         subjects: [
             'Español',
             'Matemática',
@@ -112,8 +108,6 @@ export const LEVELS = [
         name: 'Pre-media',
         tagline: 'Autonomía, método y proyectos',
         schedule: '7:30 a. m. — 2:00 p. m.',
-        enrollment: 200,
-        monthly: 130,
         subjects: [
             'Español',
             'Matemática',
@@ -136,8 +130,6 @@ export const LEVELS = [
         name: 'Bachiller en Ciencias',
         tagline: 'Preparación real para la universidad',
         schedule: '7:30 a. m. — 2:00 p. m.',
-        enrollment: 200,
-        monthly: 140,
         subjects: [
             'Español',
             'Física',
@@ -171,18 +163,17 @@ export const REQUIREMENTS = [
 ]
 
 /* ------------------------------------------------------------------ *
- * Vida escolar — la banda de música
- * Es la única actividad que confirmó el colegio.
+ * Vida escolar — la banda de guerra y las demás actividades
  * ------------------------------------------------------------------ */
 
 export const BAND = {
-    name: 'Banda de música',
+    name: 'Banda de guerra',
     tagline: 'Disciplina que se escucha',
     description:
-        'La banda es el sello del colegio en desfiles y actos cívicos. Los estudiantes que la integran aprenden lectura musical, marcha y trabajo en equipo, y representan a La Colmena en las fiestas patrias y en actividades de la comunidad de Aguadulce.',
+        'La banda de guerra es el sello del colegio en desfiles y actos cívicos. Los estudiantes que la integran aprenden ritmo, marcha y trabajo en equipo, y representan a La Colmena en las fiestas patrias y en actividades de la comunidad de Aguadulce.',
     sections: [
-        'Percusión — cajas, bombos y platillos',
-        'Liras y melódicas',
+        'Tambores, redoblantes y bombos',
+        'Cornetas y clarines',
         'Bastoneras y abanderadas',
         'Cuerpo de banderas',
     ],
@@ -192,6 +183,30 @@ export const BAND = {
         'La participación es voluntaria y se registra en el portal del acudiente.',
     ],
 }
+
+export const ACTIVITIES = [
+    {
+        title: 'Clases de alemán',
+        tag: 'Extracurricular',
+        description:
+            'Además del inglés, los estudiantes pueden sumar un tercer idioma con clases de alemán fuera del horario regular.',
+        icon: 'language',
+    },
+    {
+        title: 'Ferias de emprendimiento',
+        tag: 'Proyectos',
+        description:
+            'Los estudiantes crean sus propios proyectos y negocios, y los presentan a la comunidad escolar en nuestras ferias.',
+        icon: 'store',
+    },
+    {
+        title: 'Apoyo al deporte',
+        tag: 'Deporte',
+        description:
+            'Impulsamos la práctica deportiva y acompañamos a nuestros estudiantes cuando representan al colegio en competencias.',
+        icon: 'sport',
+    },
+]
 
 /* ------------------------------------------------------------------ *
  * Plataforma digital — solo se menciona, sin entrar en detalles
