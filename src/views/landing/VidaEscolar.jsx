@@ -4,10 +4,9 @@ import classNames from 'classnames'
 import { SCHOOL, ACTIVITIES } from './lacolmenaData'
 import { THEME, HoneycombLayer, Reveal } from './brand'
 import { SubpageHeader, SubpageFooter } from './Subpage'
-import ApplyButton from './ApplyButton'
+import ApplyButton, { PRE_ENROLLMENT_PATH } from './ApplyButton'
 import { ActivityMedia, activityIcon } from './activities'
 import Seo from '@/components/shared/Seo'
-import { PRE_ENROLLMENT_URL } from '@/configs/platform.config'
 
 /**
  * Detalle de las actividades de vida escolar. Cada tarjeta de la landing
@@ -168,8 +167,8 @@ const VidaEscolar = () => (
                     })}
 
                     <div className="flex flex-wrap gap-3 pt-4">
-                        <a
-                            href={PRE_ENROLLMENT_URL}
+                        <Link
+                            to={PRE_ENROLLMENT_PATH}
                             className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-base font-bold transition hover:brightness-95"
                             style={{
                                 backgroundColor: 'var(--lc-gold)',
@@ -178,7 +177,7 @@ const VidaEscolar = () => (
                         >
                             Iniciar pre-matrícula
                             <PiArrowRightBold />
-                        </a>
+                        </Link>
                         <Link
                             to="/#contacto"
                             className="inline-flex items-center gap-2 rounded-full border-2 px-7 py-3.5 text-base font-bold transition hover:bg-white"

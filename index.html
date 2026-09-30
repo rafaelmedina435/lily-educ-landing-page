@@ -42,6 +42,23 @@
     </head>
     <body>
         <div id="root"></div>
+        <!-- Netlify Forms lee el HTML al desplegar, sin ejecutar JavaScript:
+         este formulario oculto le declara los campos de la pre-matrícula,
+         que React envía por fetch (src/views/landing/PreMatricula.jsx). -->
+        <form name="pre-matricula" data-netlify="true" netlify-honeypot="bot-field" hidden>
+            <input name="bot-field" />
+            <input name="estudiante_nombre" />
+            <input name="estudiante_apellido" />
+            <input name="estudiante_nacimiento" type="date" />
+            <input name="grado" />
+            <input name="colegio_procedencia" />
+            <input name="acudiente_nombre" />
+            <input name="acudiente_apellido" />
+            <input name="correo" type="email" />
+            <input name="telefono" />
+            <input name="fuente" />
+            <textarea name="comentarios"></textarea>
+        </form>
         <noscript>
             <h1>Colegio Bilingüe La Colmena</h1>
             <p>

@@ -26,10 +26,7 @@ export const SCHOOL = {
 export const ABOUT = `Colegio Bilingüe La Colmena forma a las próximas generaciones con una educación basada en valores, excelencia académica, creatividad y carácter. Con más de 20 años de experiencia, ofrecemos un ambiente de aprendizaje moderno e integral que impulsa el desarrollo personal y académico de nuestros estudiantes.`
 
 /** Frases de ABOUT que se muestran en negrita. */
-export const ABOUT_HIGHLIGHTS = [
-    SCHOOL.name,
-    'más de 20 años de experiencia',
-]
+export const ABOUT_HIGHLIGHTS = [SCHOOL.name, 'más de 20 años de experiencia']
 
 export const BENEFITS = [
     {
@@ -433,5 +430,59 @@ export const REGULATIONS = [
             'Las salidas se tramitan ante el MEDUCA con la debida antelación.',
             'La participación en la banda y en otras actividades es voluntaria y se coordina con el calendario escolar.',
         ],
+    },
+]
+
+/* ------------------------------------------------------------------ *
+ * Pre-matrícula — formulario en /pre-matricula
+ * ------------------------------------------------------------------ */
+
+/**
+ * Grados que se pueden marcar en el formulario, agrupados por nivel
+ * (los `id` coinciden con LEVELS). Se permite marcar varios para quien
+ * inscribe a más de un hijo.
+ *
+ * PENDIENTE DE CONFIRMAR con el colegio: qué grados abre pre-escolar.
+ */
+export const ENROLLMENT_GRADES = [
+    { level: 'preescolar', grades: ['Pre-kínder', 'Kínder'] },
+    { level: 'primaria', grades: ['1.º', '2.º', '3.º', '4.º', '5.º', '6.º'] },
+    { level: 'premedia', grades: ['7.º', '8.º', '9.º'] },
+    { level: 'bachiller', grades: ['10.º', '11.º', '12.º'] },
+]
+
+/** Opciones de «¿Cómo nos conociste?». */
+export const ENROLLMENT_SOURCES = [
+    'Instagram',
+    'Facebook',
+    'WhatsApp',
+    'Google / búsqueda en internet',
+    'Recomendación de un familiar o amigo',
+    'Tengo otro hijo en el colegio',
+    'Visité el colegio',
+    'Otro',
+]
+
+/** Qué pasa después de enviar el formulario. */
+export const ENROLLMENT_STEPS = [
+    {
+        title: 'Envía el formulario',
+        description:
+            'Déjanos tus datos y el grado que te interesa. Toma menos de dos minutos.',
+    },
+    {
+        title: 'Te contactamos',
+        description:
+            'Secretaría te escribe o te llama para confirmar el cupo y resolver tus dudas.',
+    },
+    {
+        title: 'Agenda una visita',
+        description:
+            'Conoces las instalaciones y entregas los documentos de admisión.',
+    },
+    {
+        title: 'Matrícula',
+        description:
+            'Firmas la hoja de inscripción y el contrato escolar, y tu hijo ya es parte de la colmena.',
     },
 ]

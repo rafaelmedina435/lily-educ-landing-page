@@ -2,12 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import classNames from 'classnames'
 
-/**
- * Destino del botón. El formulario de aplicación aún no existe, así que
- * por ahora lleva a la sección de admisión; cuando esté listo basta con
- * cambiar esta ruta.
- */
-export const APPLY_HREF = '/#admision'
+/** Vista con el formulario de pre-matrícula; a ella lleva este botón. */
+export const PRE_ENROLLMENT_PATH = '/pre-matricula'
 
 /** Celda de panal con tres celdas internas, en los colores de la marca. */
 const HoneycombCell = () => (
@@ -144,7 +140,7 @@ const ApplyButton = () => {
     return (
         <Link
             ref={ref}
-            to={APPLY_HREF}
+            to={PRE_ENROLLMENT_PATH}
             className={classNames(
                 revealed
                     ? 'opacity-100'

@@ -54,10 +54,10 @@ import {
     Reveal,
 } from './brand'
 import { ContactValue, useContactAction } from './ContactAction'
-import ApplyButton from './ApplyButton'
+import ApplyButton, { PRE_ENROLLMENT_PATH } from './ApplyButton'
 import { ActivityMedia, activityHref } from './activities'
 import Seo from '@/components/shared/Seo'
-import { PRE_ENROLLMENT_URL, SIGN_IN_URL } from '@/configs/platform.config'
+import { SIGN_IN_URL } from '@/configs/platform.config'
 
 const BENEFIT_ICONS = {
     award: PiMedalDuotone,
@@ -556,8 +556,8 @@ const LaColmena = () => {
                         >
                             Portal
                         </a>
-                        <a
-                            href={PRE_ENROLLMENT_URL}
+                        <Link
+                            to={PRE_ENROLLMENT_PATH}
                             className="rounded-full px-5 py-2.5 text-sm font-bold transition hover:brightness-95"
                             style={{
                                 backgroundColor: 'var(--lc-gold)',
@@ -565,7 +565,7 @@ const LaColmena = () => {
                             }}
                         >
                             Pre-matrícula en línea
-                        </a>
+                        </Link>
                     </div>
 
                     <button
@@ -598,8 +598,8 @@ const LaColmena = () => {
                             >
                                 Portal
                             </a>
-                            <a
-                                href={PRE_ENROLLMENT_URL}
+                            <Link
+                                to={PRE_ENROLLMENT_PATH}
                                 className="mt-2 rounded-full px-4 py-2.5 text-center text-sm font-bold"
                                 style={{
                                     backgroundColor: 'var(--lc-gold)',
@@ -607,7 +607,7 @@ const LaColmena = () => {
                                 }}
                             >
                                 Pre-matrícula en línea
-                            </a>
+                            </Link>
                         </nav>
                     </div>
                 )}
@@ -677,8 +677,8 @@ const LaColmena = () => {
                             </p>
 
                             <div className="mt-7 flex flex-wrap justify-center gap-3 sm:mt-9 lg:justify-start">
-                                <a
-                                    href={PRE_ENROLLMENT_URL}
+                                <Link
+                                    to={PRE_ENROLLMENT_PATH}
                                     className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold shadow-lg sm:px-7 sm:py-3.5 sm:text-base transition hover:brightness-95"
                                     style={{
                                         backgroundColor: 'var(--lc-gold)',
@@ -687,7 +687,7 @@ const LaColmena = () => {
                                 >
                                     Iniciar pre-matrícula
                                     <PiArrowRightBold />
-                                </a>
+                                </Link>
                                 <a
                                     href={whatsappLink}
                                     target="_blank"
@@ -1251,8 +1251,8 @@ const LaColmena = () => {
                                     ))}
                                 </ul>
 
-                                <a
-                                    href={PRE_ENROLLMENT_URL}
+                                <Link
+                                    to={PRE_ENROLLMENT_PATH}
                                     className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-bold transition hover:brightness-95"
                                     style={{
                                         backgroundColor: 'var(--lc-gold)',
@@ -1261,7 +1261,7 @@ const LaColmena = () => {
                                 >
                                     Llenar formulario de pre-matrícula
                                     <PiArrowRightBold />
-                                </a>
+                                </Link>
                             </div>
                         </div>
 
@@ -1507,12 +1507,12 @@ const LaColmena = () => {
                         >
                             Reglamento
                         </Link>
-                        <a
-                            href={PRE_ENROLLMENT_URL}
+                        <Link
+                            to={PRE_ENROLLMENT_PATH}
                             className="text-white/55 transition hover:text-white"
                         >
                             Pre-matrícula en línea
-                        </a>
+                        </Link>
                         <a
                             href={SIGN_IN_URL}
                             className="text-white/55 transition hover:text-white"

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import {
     BrowserRouter,
     Navigate,
@@ -9,6 +9,10 @@ import {
 import LaColmena from '@/views/landing/LaColmena'
 import Reglamento from '@/views/landing/Reglamento'
 import VidaEscolar from '@/views/landing/VidaEscolar'
+
+// Aparte porque trae el DatePicker y el Select del template (react-select,
+// floating-ui, dayjs), que el resto del sitio no usa
+const PreMatricula = lazy(() => import('@/views/landing/PreMatricula'))
 
 /**
  * Al refrescar se arranca arriba aunque la URL traiga un `#hash` de un
@@ -53,6 +57,14 @@ const App = () => (
             <Route path="/" element={<LaColmena />} />
             <Route path="/reglamento" element={<Reglamento />} />
             <Route path="/vida-escolar" element={<VidaEscolar />} />
+            <Route
+                path="/pre-matricula"
+                element={
+                    <Suspense fallback={null}>
+                        <PreMatricula />
+                    </Suspense>
+                }
+            />
             {/* Ruta que tenía la landing dentro de la plataforma */}
             <Route path="/la-colmena" element={<Navigate to="/" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />

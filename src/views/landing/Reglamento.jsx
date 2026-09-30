@@ -15,10 +15,9 @@ import {
 import { SCHOOL, REGULATIONS, REGULATIONS_INTRO } from './lacolmenaData'
 import { THEME, Hexagon, HoneycombLayer, Reveal } from './brand'
 import { SubpageHeader, SubpageFooter } from './Subpage'
-import ApplyButton from './ApplyButton'
+import ApplyButton, { PRE_ENROLLMENT_PATH } from './ApplyButton'
 import { ContactValue, useContactAction } from './ContactAction'
 import Seo from '@/components/shared/Seo'
-import { PRE_ENROLLMENT_URL } from '@/configs/platform.config'
 
 const ICONS = {
     clock: PiClockDuotone,
@@ -180,8 +179,8 @@ const Reglamento = () => {
                         </div>
 
                         <div className="mt-10 flex flex-wrap gap-3">
-                            <a
-                                href={PRE_ENROLLMENT_URL}
+                            <Link
+                                to={PRE_ENROLLMENT_PATH}
                                 className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-base font-bold transition hover:brightness-95"
                                 style={{
                                     backgroundColor: 'var(--lc-gold)',
@@ -190,7 +189,7 @@ const Reglamento = () => {
                             >
                                 Iniciar pre-matrícula
                                 <PiArrowRightBold />
-                            </a>
+                            </Link>
                             <Link
                                 to="/#admision"
                                 className="inline-flex items-center gap-2 rounded-full border-2 px-7 py-3.5 text-base font-bold transition hover:bg-white"

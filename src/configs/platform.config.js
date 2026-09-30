@@ -1,11 +1,10 @@
 /**
  * La landing vive aparte de la plataforma Lily Educ. El acceso al portal
- * y el formulario de pre-matrícula siguen en la plataforma, así que esos
- * botones salen del sitio hacia esta URL.
+ * sigue en la plataforma, así que ese botón sale del sitio hacia esta
+ * URL. La pre-matrícula ya vive en la landing (/pre-matricula).
  */
 export const PLATFORM_URL = (
     import.meta.env.VITE_PLATFORM_URL ?? 'http://localhost:5173'
 ).replace(/\/$/, '')
 
 export const SIGN_IN_URL = `${PLATFORM_URL}/sign-in`
-export const PRE_ENROLLMENT_URL = `${PLATFORM_URL}/pre-matricula`
