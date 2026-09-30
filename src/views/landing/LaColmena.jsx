@@ -49,6 +49,7 @@ import {
     Reveal,
 } from './brand'
 import { ContactValue, useContactAction } from './ContactAction'
+import ApplyButton from './ApplyButton'
 import { ActivityMedia, activityHref } from './activities'
 import Seo from '@/components/shared/Seo'
 import { PRE_ENROLLMENT_URL, SIGN_IN_URL } from '@/configs/platform.config'
@@ -1306,6 +1307,8 @@ const LaColmena = () => {
                     </nav>
                 </div>
             </footer>
+
+            <ApplyButton />
         </div>
     )
 }

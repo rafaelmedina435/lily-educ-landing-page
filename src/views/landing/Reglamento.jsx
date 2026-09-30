@@ -15,6 +15,7 @@ import {
 import { SCHOOL, REGULATIONS, REGULATIONS_INTRO } from './lacolmenaData'
 import { THEME, Hexagon, HoneycombLayer, Reveal } from './brand'
 import { SubpageHeader, SubpageFooter } from './Subpage'
+import ApplyButton from './ApplyButton'
 import { ContactValue, useContactAction } from './ContactAction'
 import Seo from '@/components/shared/Seo'
 import { PRE_ENROLLMENT_URL } from '@/configs/platform.config'
@@ -206,6 +207,8 @@ const Reglamento = () => {
             </main>
 
             <SubpageFooter />
+
+            <ApplyButton />
         </div>
     )
 }

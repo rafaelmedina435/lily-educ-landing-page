@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import { SCHOOL, ACTIVITIES } from './lacolmenaData'
 import { THEME, HoneycombLayer, Reveal } from './brand'
 import { SubpageHeader, SubpageFooter } from './Subpage'
+import ApplyButton from './ApplyButton'
 import { ActivityMedia, activityIcon } from './activities'
 import Seo from '@/components/shared/Seo'
 import { PRE_ENROLLMENT_URL } from '@/configs/platform.config'
@@ -194,6 +195,8 @@ const VidaEscolar = () => (
         </main>
 
         <SubpageFooter />
+
+        <ApplyButton />
     </div>
 )
 

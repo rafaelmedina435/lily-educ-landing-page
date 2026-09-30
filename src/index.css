@@ -70,3 +70,126 @@
         @apply text-base font-semibold;
     }
 }
+
+/* ── Botón flotante «Aplicar ahora» ─────────────────────────────────
+   La abeja va en el borde de una órbita que gira alrededor del panal;
+   arriba de la órbita mira a la derecha (90°), que es hacia donde
+   avanza al girar en sentido horario. */
+@keyframes lc-orbit {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes lc-bee-bob {
+    0%,
+    100% {
+        transform: translateY(calc(-1 * var(--lc-orbit))) rotate(90deg);
+    }
+    50% {
+        transform: translateY(calc(-1 * var(--lc-orbit) - 6px)) rotate(80deg);
+    }
+}
+
+@keyframes lc-wings {
+    0%,
+    100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(0.35);
+    }
+}
+
+@keyframes lc-apply-pulse {
+    0% {
+        box-shadow:
+            0 12px 32px -8px rgba(34, 43, 38, 0.7),
+            0 0 0 0 rgba(245, 197, 24, 0.75);
+    }
+    70%,
+    100% {
+        box-shadow:
+            0 12px 32px -8px rgba(34, 43, 38, 0.7),
+            0 0 0 22px rgba(245, 197, 24, 0);
+    }
+}
+
+/* El brillo cruza rápido y luego descansa, para no cansar la vista */
+@keyframes lc-apply-shine {
+    0% {
+        transform: translateX(0) skewX(-20deg);
+    }
+    30%,
+    100% {
+        transform: translateX(400%) skewX(-20deg);
+    }
+}
+
+@keyframes lc-cell-wobble {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-8deg);
+    }
+    75% {
+        transform: rotate(8deg);
+    }
+}
+
+.lc-apply {
+    animation: lc-apply-pulse 2.2s ease-out infinite;
+}
+
+.lc-apply-shine {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.65),
+        transparent
+    );
+    animation: lc-apply-shine 3.5s ease-in-out infinite;
+}
+
+.lc-bee-orbit {
+    animation: lc-orbit 5s linear infinite;
+}
+
+.lc-bee {
+    --lc-orbit: 26px;
+    animation: lc-bee-bob 1.25s ease-in-out infinite;
+}
+
+.lc-bee-wings {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation: lc-wings 0.12s linear infinite;
+}
+
+/* Al pasar el mouse la abeja se emociona y el panal se mece */
+.lc-apply:hover .lc-bee-orbit,
+.lc-apply:focus-visible .lc-bee-orbit {
+    animation-duration: 1.6s;
+}
+
+.lc-apply:hover .lc-apply-cell,
+.lc-apply:focus-visible .lc-apply-cell {
+    animation: lc-cell-wobble 0.6s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lc-apply,
+    .lc-apply-shine,
+    .lc-bee-orbit,
+    .lc-bee-wings,
+    .lc-apply:hover .lc-apply-cell {
+        animation: none;
+    }
+
+    .lc-bee {
+        animation: none;
+        transform: translate(16px, -18px) rotate(20deg);
+    }
+}
