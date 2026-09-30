@@ -8,6 +8,11 @@
 [build.environment]
     NODE_VERSION = "22"
 
+# netlify/functions/submission-created.mjs manda el correo de cada
+# pre-matrícula; esbuild empaqueta nodemailer y la plantilla del correo.
+[functions]
+    node_bundler = "esbuild"
+
 # La URL de la plataforma (VITE_PLATFORM_URL) se define en
 # Site configuration → Environment variables, no aquí, porque cambia
 # entre producción y las ramas de prueba. Vite la incrusta al compilar,
