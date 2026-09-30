@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
+import classNames from 'classnames'
 
 /**
  * Destino del botón. El formulario de aplicación aún no existe, así que
@@ -70,56 +72,124 @@ const Bee = () => (
     </svg>
 )
 
+/** Distancia en px al botón a la que ya se hace visible. */
+const REVEAL_DISTANCE = 140
+
 /**
- * Botón flotante «Aplicar ahora». Queda fijo a media altura en el borde
+ * El botón queda tenue mientras se está arriba del todo, para no competir
+ * con el video del hero, y se vuelve visible al bajar o al acercar el
+ * puntero. Al regresar arriba (o alejar el puntero) vuelve a atenuarse.
+ * Con el foco del teclado siempre se ve (`focus-visible:opacity-100`).
+ */
+const useRevealOnIntent = (ref) => {
+    const [scrolled, setScrolled] = useState(() => window.scrollY > 0)
+    const [near, setNear] = useState(false)
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 0)
+
+        const onPointerMove = (event) => {
+            const box = ref.current?.getBoundingClientRect()
+            if (!box) return
+
+            const dx = Math.max(
+                box.left - event.clientX,
+                0,
+                event.clientX - box.right,
+            )
+            const dy = Math.max(
+                box.top - event.clientY,
+                0,
+                event.clientY - box.bottom,
+            )
+
+            setNear(Math.hypot(dx, dy) <= REVEAL_DISTANCE)
+        }
+
+        // El puntero sale de la ventana: ya no está cerca del botón
+        const onPointerLeave = () => setNear(false)
+
+        window.addEventListener('scroll', onScroll, { passive: true })
+        window.addEventListener('pointermove', onPointerMove, { passive: true })
+        document.documentElement.addEventListener(
+            'pointerleave',
+            onPointerLeave,
+        )
+
+        return () => {
+            window.removeEventListener('scroll', onScroll)
+            window.removeEventListener('pointermove', onPointerMove)
+            document.documentElement.removeEventListener(
+                'pointerleave',
+                onPointerLeave,
+            )
+        }
+    }, [ref])
+
+    return scrolled || near
+}
+
+/**
+ * Botón flotante «Aplicar ahora». Queda fijo a un cuarto de la altura en el borde
  * derecho, en escritorio y en móvil; en móvil se reduce a una pestaña
  * con solo el panal, pegada al borde, para tapar lo menos posible. Una abeja ronda el panal y un
  * brillo lo recorre de vez en cuando. Con «reducir movimiento» activo
  * todo se queda quieto.
  */
-const ApplyButton = () => (
-    <Link
-        to={APPLY_HREF}
-        className="lc-apply group fixed top-1/2 right-0 z-40 flex -translate-y-1/2 items-center rounded-l-full border-2 border-r-0 py-1 pr-1.5 pl-1 font-bold transition duration-300 hover:-translate-x-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F5C518] sm:right-6 sm:gap-2.5 sm:rounded-full sm:border-r-2 sm:py-1.5 sm:pr-5 sm:pl-1.5"
-        style={{
-            background:
-                'linear-gradient(135deg, #FFD95C 0%, #F5C518 55%, #E0A800 100%)',
-            borderColor: 'var(--lc-green-deep, #222B26)',
-            color: 'var(--lc-green-deep, #222B26)',
-        }}
-    >
-        {/* Brillo que cruza el botón; recortado aquí para que la abeja sí
-            pueda salirse del borde */}
-        <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
-            <span className="lc-apply-shine absolute inset-y-0 -left-1/2 w-1/2" />
-        </span>
+const ApplyButton = () => {
+    const ref = useRef(null)
+    const revealed = useRevealOnIntent(ref)
 
-        <span
-            className="relative h-10 w-10 shrink-0 rounded-full p-1"
-            style={{ backgroundColor: 'var(--lc-green-deep, #222B26)' }}
+    return (
+        <Link
+            ref={ref}
+            to={APPLY_HREF}
+            className={classNames(
+                revealed
+                    ? 'opacity-100'
+                    : 'opacity-25 focus-visible:opacity-100',
+                'lc-apply group fixed top-1/4 right-0 z-40 flex -translate-y-1/2 items-center rounded-l-full border-2 border-r-0 py-1 pr-1.5 pl-1 font-bold transition duration-300 hover:-translate-x-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F5C518] sm:right-6 sm:gap-2.5 sm:rounded-full sm:border-r-2 sm:py-1.5 sm:pr-5 sm:pl-1.5',
+            )}
+            style={{
+                background:
+                    'linear-gradient(135deg, #FFD95C 0%, #F5C518 55%, #E0A800 100%)',
+                borderColor: 'var(--lc-green-deep, #222B26)',
+                color: 'var(--lc-green-deep, #222B26)',
+            }}
         >
-            <span className="lc-apply-cell block h-full w-full">
-                <HoneycombCell />
+            {/* Brillo que cruza el botón; recortado aquí para que la abeja sí
+            pueda salirse del borde */}
+            <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+                <span className="lc-apply-shine absolute inset-y-0 -left-1/2 w-1/2" />
             </span>
-            {/* La órbita gira; la abeja va montada en su borde */}
-            <span className="lc-bee-orbit pointer-events-none absolute inset-0">
-                <span className="lc-bee absolute top-1/2 left-1/2 -mt-3.5 -ml-3.5 h-7 w-7">
-                    <Bee />
-                </span>
-            </span>
-        </span>
 
-        {/* En móvil solo se ve el panal; el texto queda para lectores de
-            pantalla */}
-        <span className="sr-only sm:not-sr-only">
-            <span className="relative flex flex-col items-center text-center leading-tight">
-                <span className="text-[9px] font-bold tracking-[0.16em] uppercase opacity-75">
-                    Únete a la colmena
+            <span
+                className="relative h-10 w-10 shrink-0 rounded-full p-1"
+                style={{ backgroundColor: 'var(--lc-green-deep, #222B26)' }}
+            >
+                <span className="lc-apply-cell block h-full w-full">
+                    <HoneycombCell />
                 </span>
-                <span className="text-base">Aplicar ahora</span>
+                {/* La órbita gira; la abeja va montada en su borde */}
+                <span className="lc-bee-orbit pointer-events-none absolute inset-0">
+                    <span className="lc-bee absolute top-1/2 left-1/2 -mt-3.5 -ml-3.5 h-7 w-7">
+                        <Bee />
+                    </span>
+                </span>
             </span>
-        </span>
-    </Link>
-)
+
+            {/* En móvil solo se ve el panal; el texto queda para lectores de
+            pantalla */}
+            <span className="sr-only sm:not-sr-only">
+                <span className="relative flex flex-col items-center text-center leading-tight">
+                    <span className="text-[9px] font-bold tracking-[0.16em] uppercase opacity-75">
+                        Únete a la colmena
+                    </span>
+                    <span className="text-base">Aplicar ahora</span>
+                </span>
+            </span>
+        </Link>
+    )
+}
 
 export default ApplyButton

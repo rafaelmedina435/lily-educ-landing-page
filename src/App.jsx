@@ -11,6 +11,23 @@ import Reglamento from '@/views/landing/Reglamento'
 import VidaEscolar from '@/views/landing/VidaEscolar'
 
 /**
+ * Al refrescar se arranca arriba aunque la URL traiga un `#hash` de un
+ * enlace interno (p. ej. «/#contacto»): se quita antes de que lo lea el
+ * router, y se le pide al navegador que no restaure el scroll anterior.
+ */
+const isReload =
+    performance.getEntriesByType('navigation')[0]?.type === 'reload'
+
+if (isReload && window.location.hash) {
+    window.history.scrollRestoration = 'manual'
+    window.history.replaceState(
+        window.history.state,
+        '',
+        window.location.pathname + window.location.search,
+    )
+}
+
+/**
  * Al cambiar de página se arranca arriba, o en la sección del `#hash`
  * si el enlace apunta a una (p. ej. «/#admision» desde el reglamento).
  */

@@ -350,7 +350,7 @@ const LaColmena = () => {
         >
             <Seo
                 title={`${SCHOOL.name} — ${SCHOOL.city}, ${SCHOOL.province}`}
-                description={`Colegio bilingüe en ${SCHOOL.city}, ${SCHOOL.province}. Pre-escolar, primaria, pre-media y bachiller en ciencias. Matrícula abierta ${SCHOOL.schoolYear}, pre-matrícula en línea y portal para acudientes.`}
+                description={`Colegio bilingüe en ${SCHOOL.city}, ${SCHOOL.province}. Pre-escolar, primaria, pre-media y bachiller en ciencias. Pre-matrícula en línea y portal para acudientes.`}
                 canonical="/"
                 image={PHOTOS.sede}
                 jsonLd={JSON_LD}
@@ -364,7 +364,7 @@ const LaColmena = () => {
                     borderColor: 'rgba(245,197,24,.25)',
                 }}
             >
-                <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+                <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 lg:px-12 xl:px-4 py-3">
                     <a href="#inicio" className="flex items-center gap-3">
                         <Crest className="h-11 w-auto drop-shadow" />
                         <span className="leading-tight text-white">
@@ -493,7 +493,7 @@ const LaColmena = () => {
                         style={{ backgroundColor: 'rgba(245,197,24,.18)' }}
                     />
 
-                    <div className="relative mx-auto grid w-full max-w-6xl items-center gap-6 px-4 py-8 text-center sm:gap-8 sm:py-14 lg:grid-cols-[1.15fr_1fr] lg:gap-10 lg:py-28 lg:text-left">
+                    <div className="relative mx-auto grid w-full max-w-6xl items-center gap-6 px-4 lg:px-12 xl:px-4 py-8 text-center sm:gap-8 sm:py-14 lg:grid-cols-[1.15fr_1fr] lg:gap-10 lg:py-28 lg:text-left">
                         <div>
                             <span
                                 className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em]"
@@ -502,7 +502,7 @@ const LaColmena = () => {
                                     color: 'var(--lc-gold-soft)',
                                 }}
                             >
-                                Matrícula abierta {SCHOOL.schoolYear}
+                                Matrícula abierta {SCHOOL.enrollmentYear}
                             </span>
 
                             <h1 className="mt-4 text-4xl font-bold leading-[1.1] text-white sm:mt-6 sm:text-5xl lg:text-6xl">
@@ -572,7 +572,7 @@ const LaColmena = () => {
                     }}
                 >
                     <HoneycombLayer />
-                    <div className="relative mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 py-10 lg:grid-cols-4">
+                    <div className="relative mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 lg:px-12 xl:px-4 py-10 lg:grid-cols-4">
                         {[
                             { value: '20', label: 'años de experiencia' },
                             { value: '4', label: 'niveles académicos' },
@@ -597,7 +597,7 @@ const LaColmena = () => {
                 {/* ── Nosotros ───────────────────────────────────────── */}
                 <section id="nosotros" className="relative overflow-hidden">
                     <HoneycombLayer />
-                    <div className="relative mx-auto max-w-6xl px-4 py-20">
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
                             eyebrow="Sobre nosotros"
                             title="Una educación con valores, inteligente y creativa"
@@ -664,7 +664,7 @@ const LaColmena = () => {
                     style={{ backgroundColor: '#fff' }}
                 >
                     <HoneycombLayer />
-                    <div className="relative mx-auto max-w-6xl px-4 py-20">
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
                             eyebrow="Por qué La Colmena"
                             title="Lo que distingue a nuestros estudiantes"
@@ -725,7 +725,7 @@ const LaColmena = () => {
                         }}
                     />
                     <HoneycombLayer tone="light" />
-                    <div className="relative mx-auto max-w-6xl px-4 py-20">
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <Reveal className="max-w-xl">
                             <p
                                 className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
@@ -787,7 +787,7 @@ const LaColmena = () => {
                 {/* ── Niveles ────────────────────────────────────────── */}
                 <section id="niveles" className="relative overflow-hidden">
                     <HoneycombLayer />
-                    <div className="relative mx-auto max-w-6xl px-4 py-20">
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
                             eyebrow="Oferta académica"
                             title="Cuatro niveles, un mismo estándar"
@@ -911,7 +911,7 @@ const LaColmena = () => {
                     className="relative overflow-hidden border-y"
                 >
                     <HoneycombLayer />
-                    <div className="relative mx-auto max-w-6xl px-4 py-20">
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
                             eyebrow="Vida escolar"
                             title="Aprender también pasa fuera del aula"
@@ -1004,7 +1004,7 @@ const LaColmena = () => {
                     style={{ backgroundColor: 'var(--lc-green)' }}
                 >
                     <HoneycombLayer tone="light" opacity={0.07} />
-                    <div className="relative mx-auto max-w-6xl px-4 py-20">
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
                             light
                             eyebrow="Admisión"
@@ -1142,7 +1142,7 @@ const LaColmena = () => {
                 {/* ── Contacto ───────────────────────────────────────── */}
                 <section id="contacto" className="relative overflow-hidden">
                     <HoneycombLayer />
-                    <div className="relative mx-auto max-w-6xl px-4 py-20">
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
                             eyebrow="Contáctanos"
                             title="Estamos para atenderte"
@@ -1290,7 +1290,7 @@ const LaColmena = () => {
                 style={{ backgroundColor: 'var(--lc-green-deep)' }}
             >
                 <HoneycombLayer tone="light" opacity={0.05} />
-                <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-12 text-center sm:flex-row sm:text-left">
+                <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 lg:px-12 xl:px-4 py-12 text-center sm:flex-row sm:text-left">
                     <Crest className="h-16 w-auto" />
                     <div className="flex-1">
                         <p className="font-bold text-white">{SCHOOL.name}</p>
@@ -1312,7 +1312,7 @@ const LaColmena = () => {
                 <div className="border-t border-white/10">
                     <nav
                         aria-label="Enlaces del sitio"
-                        className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 py-5 text-sm sm:justify-start"
+                        className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 lg:px-12 xl:px-4 py-5 text-sm sm:justify-start"
                     >
                         {NAV.map((item) => (
                             <a

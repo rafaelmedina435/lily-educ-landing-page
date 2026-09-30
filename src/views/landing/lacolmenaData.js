@@ -10,7 +10,10 @@ export const SCHOOL = {
     province: 'Coclé',
     /** El eslogan del colegio: encabeza el hero y firma los pies de página. */
     motto: 'El Néctar de la Sabiduría',
-    schoolYear: '2026 – 2027',
+    /** Año lectivo en curso: se toma del calendario para no tener que actualizarlo. */
+    schoolYear: new Date().getFullYear(),
+    /** Período de la matrícula que se anuncia en el hero. */
+    enrollmentYear: '2027',
     foundedYear: 2006,
     address: 'Avenida Rodolfo Chiari, Vía El Puerto',
     addressLine2: 'Aguadulce — Coclé, Panamá',
