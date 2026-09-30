@@ -586,7 +586,7 @@ const LaColmena = () => {
                                 >
                                     {stat.value}
                                 </p>
-                                <p className="mt-1 text-sm text-[#6b766e]">
+                                <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-[#6b766e]">
                                     {stat.label}
                                 </p>
                             </div>
