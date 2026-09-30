@@ -130,9 +130,10 @@ const useRevealOnIntent = (ref) => {
 }
 
 /**
- * Botón flotante «Aplicar ahora». Queda fijo a un cuarto de la altura en el borde
- * derecho, en escritorio y en móvil; en móvil se reduce a una pestaña
- * con solo el panal, pegada al borde, para tapar lo menos posible. Una abeja ronda el panal y un
+ * Botón flotante «Aplicar ahora». Queda fijo a un cuarto de la altura,
+ * pegado al borde derecho como una pestaña; al pasar el mouse crece hacia
+ * la izquierda sin despegarse. En móvil se reduce a solo el panal para
+ * tapar lo menos posible. Una abeja ronda el panal y un
  * brillo lo recorre de vez en cuando. Con «reducir movimiento» activo
  * todo se queda quieto.
  */
@@ -148,7 +149,7 @@ const ApplyButton = () => {
                 revealed
                     ? 'opacity-100'
                     : 'opacity-25 focus-visible:opacity-100',
-                'lc-apply group fixed top-1/4 right-0 z-40 flex -translate-y-1/2 items-center rounded-l-full border-2 border-r-0 py-1 pr-1.5 pl-1 font-bold transition duration-300 hover:-translate-x-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F5C518] sm:right-6 sm:gap-2.5 sm:rounded-full sm:border-r-2 sm:py-1.5 sm:pr-5 sm:pl-1.5',
+                'lc-apply group fixed top-1/4 right-0 z-40 flex -translate-y-1/2 items-center rounded-l-full border-2 border-r-0 py-1 pr-1.5 pl-1 font-bold transition duration-300 hover:pr-2.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F5C518] sm:gap-2.5 sm:py-1.5 sm:pr-5 sm:pl-1.5 sm:hover:pr-7',
             )}
             style={{
                 background:
