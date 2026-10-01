@@ -8,11 +8,12 @@ import { renderPreMatricula } from '../emails/preMatricula.mjs'
  * Netlify ya no hace falta.
  *
  * Variables de entorno (Site configuration → Environment variables):
- *   SMTP_USER  Cuenta que envía, p. ej. esclacolmena@gmail.com
- *   SMTP_PASS  Contraseña de aplicación de esa cuenta (no la normal)
+ *   SMTP_USER  Buzón que envía (Namecheap Private Email), la dirección
+ *              completa, p. ej. pre-matricula@lacolmena.edu.pa
+ *   SMTP_PASS  Contraseña de ese buzón
  *   MAIL_TO    Quién recibe; varios separados por coma
- *   SMTP_HOST  Opcional, por defecto smtp.gmail.com
- *   SMTP_PORT  Opcional, por defecto 465
+ *   SMTP_HOST  Opcional, por defecto mail.privateemail.com
+ *   SMTP_PORT  Opcional, por defecto 465 (SSL)
  *   MAIL_FROM  Opcional, por defecto «Pre-matrícula La Colmena <SMTP_USER>»
  */
 
@@ -37,7 +38,7 @@ export const handler = async (event) => {
     const port = Number(process.env.SMTP_PORT || 465)
 
     const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        host: process.env.SMTP_HOST || 'mail.privateemail.com',
         port,
         secure: port === 465,
         auth: { user: SMTP_USER, pass: SMTP_PASS },
