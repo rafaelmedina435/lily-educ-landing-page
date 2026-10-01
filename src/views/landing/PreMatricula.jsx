@@ -611,7 +611,7 @@ const PreMatricula = () => {
                             Pre-matrícula {SCHOOL.enrollmentYear}
                         </p>
                         <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
-                            Únete a la colmena
+                            Únete a La Colmena
                         </h1>
                         <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/75">
                             Déjanos tus datos y el grado que te interesa.
