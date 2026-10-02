@@ -14,11 +14,11 @@ de `lily-educ-front-end` para trabajarlo por separado.
 Los datos del colegio (niveles, contacto, reglamento) están en
 `src/views/landing/lacolmenaData.js` y las fotos en `public/img/lacolmena/`.
 
-## Enlaces a la plataforma
+## Portal
 
-«Portal» y «Pre-matrícula» siguen viviendo en la plataforma. Su URL se
-configura con `VITE_PLATFORM_URL` (ver `.env.example`); por defecto
-`http://localhost:5173`.
+El botón «Portal» lleva a Académica Net (`https://www.academicanet.com/`),
+definido en `src/configs/platform.config.js`. La pre-matrícula vive en la
+landing (`/pre-matricula`).
 
 ## Scripts
 
@@ -40,17 +40,10 @@ Para conectar el sitio:
 1. En Netlify → **Add new site → Import an existing project** y elegir este
    repositorio. El comando de build y la carpeta a publicar los toma de
    `netlify.toml`; no hace falta escribirlos.
-2. **Site configuration → Environment variables**: crear `VITE_PLATFORM_URL`
-   con la URL de la plataforma (sin barra final). Sin ella los botones
-   «Portal de acudientes» y «Pre-matrícula» quedan apuntando a
-   `http://localhost:5173`, porque Vite incrusta el valor al compilar.
-3. **Domain management**: agregar `lacolmena.edu.pa`, que es el dominio que ya
+2. **Domain management**: agregar `lacolmena.edu.pa`, que es el dominio que ya
    declaran `index.html` (canonical), `public/robots.txt` y
    `public/sitemap.xml`.
 
 Cada push a `main` despliega producción; las demás ramas y los pull requests
 generan vistas previas, marcadas con `X-Robots-Tag: noindex` para que no las
 indexen los buscadores.
-
-Al cambiar `VITE_PLATFORM_URL` hay que volver a desplegar (**Deploys →
-Trigger deploy**): el valor viejo quedó dentro del JavaScript compilado.

@@ -13,11 +13,6 @@
 [functions]
     node_bundler = "esbuild"
 
-# La URL de la plataforma (VITE_PLATFORM_URL) se define en
-# Site configuration → Environment variables, no aquí, porque cambia
-# entre producción y las ramas de prueba. Vite la incrusta al compilar,
-# así que al cambiarla hay que volver a desplegar.
-
 # ---------------------------------------------------------------------------
 # Redirecciones
 # ---------------------------------------------------------------------------

@@ -71,7 +71,7 @@ export const LEVELS = [
         id: 'preescolar',
         name: 'Pre-escolar',
         tagline: 'Los primeros pasos, en dos idiomas',
-        schedule: '8:00 a. m. — 12:00 m. d.',
+        schedule: '8:00\u00a0a.\u00a0m. — 12:00\u00a0m.\u00a0d.',
         subjects: [
             'Español',
             'Matemática',
@@ -90,7 +90,7 @@ export const LEVELS = [
         id: 'primaria',
         name: 'Primaria',
         tagline: 'Bases sólidas y pensamiento crítico',
-        schedule: '7:30 a. m. — 2:00 p. m.',
+        schedule: '7:30\u00a0a.\u00a0m. — 2:00\u00a0p.\u00a0m.',
         subjects: [
             'Español',
             'Matemática',
@@ -113,7 +113,7 @@ export const LEVELS = [
         id: 'premedia',
         name: 'Pre-media',
         tagline: 'Autonomía, método y proyectos',
-        schedule: '7:30 a. m. — 2:00 p. m.',
+        schedule: '7:30\u00a0a.\u00a0m. — 2:00\u00a0p.\u00a0m.',
         subjects: [
             'Español',
             'Matemática',
@@ -135,7 +135,7 @@ export const LEVELS = [
         id: 'bachiller',
         name: 'Bachiller en Ciencias',
         tagline: 'Preparación real para la universidad',
-        schedule: '7:30 a. m. — 2:00 p. m.',
+        schedule: '7:30\u00a0a.\u00a0m. — 2:00\u00a0p.\u00a0m.',
         subjects: [
             'Español',
             'Física',
@@ -152,12 +152,6 @@ export const LEVELS = [
             'Educación Física 10.º y 11.º',
         ],
     },
-]
-
-export const PAYMENT_NOTES = [
-    'Las mensualidades se dividen en 10 cuotas, de marzo a diciembre.',
-    'Dos hermanos matriculados reciben un descuento de B/. 10.00 en la mensualidad.',
-    'Al cancelar el año escolar completo se recibe un 5 % de descuento.',
 ]
 
 export const REQUIREMENTS = [
@@ -177,10 +171,35 @@ export const REQUIREMENTS = [
  * en `/vida-escolar#<id>` (el resto de los campos). `photo` es opcional:
  * sin foto, la tarjeta usa el fondo verde de la marca con el icono.
  *
- * PENDIENTE DE CONFIRMAR con el colegio: los detalles de alemán,
- * emprendimiento y deporte (horarios, niveles) son orientativos.
+ * PENDIENTE DE CONFIRMAR con el colegio: los detalles de folclore,
+ * alemán, emprendimiento y deporte (horarios, niveles) son orientativos.
  */
 export const ACTIVITIES = [
+    {
+        id: 'folclore',
+        title: 'Proyección folclórica',
+        tag: 'Cultura',
+        tagline: 'Nuestras raíces, en movimiento',
+        summary:
+            'Polleras, montunos y bailes típicos: los estudiantes llevan el folclore panameño a cada acto del colegio.',
+        description:
+            'En el conjunto folclórico los estudiantes aprenden los bailes típicos de Panamá y los presentan en los actos cívicos, las fiestas patrias y las actividades culturales del colegio. Es una forma de conocer y celebrar nuestras tradiciones mientras se trabaja la coordinación, la expresión y el trabajo en equipo.',
+        highlights: [
+            'Bailes típicos panameños',
+            'Pollera y montuno',
+            'Presentaciones en actos cívicos',
+            'Trabajo en pareja y en grupo',
+        ],
+        notes: [
+            'Abierto a estudiantes de primaria, pre-media y media.',
+            'Ensayos coordinados con el calendario escolar.',
+        ],
+        icon: 'dance',
+        photo: 'folclore',
+        photoPosition: '50% 50%',
+        photoAlt:
+            'Estudiantes de La Colmena bailando folclore panameño con faldas de colores',
+    },
     {
         id: 'banda',
         title: 'Banda de guerra',
@@ -202,10 +221,6 @@ export const ACTIVITIES = [
             'La participación es voluntaria y se registra en el portal del acudiente.',
         ],
         icon: 'music',
-        photo: 'uniforme',
-        photoPosition: '62% 45%',
-        photoAlt:
-            'Escudo del Colegio Bilingüe La Colmena bordado en el suéter del uniforme',
     },
     {
         id: 'aleman',
@@ -272,6 +287,10 @@ export const ACTIVITIES = [
             'Participación coordinada con el acudiente y el calendario escolar.',
         ],
         icon: 'sport',
+        photo: 'deporte',
+        photoPosition: '50% 32%',
+        photoAlt:
+            'Estudiantes de La Colmena con el uniforme de béisbol de Coclé',
     },
 ]
 

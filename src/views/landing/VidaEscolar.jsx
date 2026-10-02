@@ -20,7 +20,7 @@ const VidaEscolar = () => (
     >
         <Seo
             title={`Vida escolar — ${SCHOOL.name}`}
-            description={`Banda de guerra, clases de alemán, ferias de emprendimiento y deporte en el ${SCHOOL.name} de ${SCHOOL.city}, ${SCHOOL.province}.`}
+            description={`Folclore, banda de guerra, clases de alemán, ferias de emprendimiento y deporte en el ${SCHOOL.name} de ${SCHOOL.city}, ${SCHOOL.province}.`}
             canonical="/vida-escolar"
         />
 

@@ -120,6 +120,8 @@ export const PHOTOS = {
     sedeDuotono: '/img/lacolmena/sede-duotono.jpg',
     estudiante: '/img/lacolmena/estudiante.jpg',
     uniforme: '/img/lacolmena/uniforme.jpg',
+    folclore: '/img/lacolmena/folclore.jpg',
+    deporte: '/img/lacolmena/deporte.jpg',
 }
 
 /** Video de fondo del hero: WebM (VP9) primero, MP4 (H.264) como respaldo. */

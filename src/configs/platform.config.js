@@ -1,10 +1,6 @@
 /**
- * La landing vive aparte de la plataforma Lily Educ. El acceso al portal
- * sigue en la plataforma, así que ese botón sale del sitio hacia esta
- * URL. La pre-matrícula ya vive en la landing (/pre-matricula).
+ * El portal de acudientes y estudiantes vive en Académica Net, fuera de
+ * la landing; ese botón sale del sitio hacia esta URL. La pre-matrícula
+ * vive en la landing (/pre-matricula).
  */
-export const PLATFORM_URL = (
-    import.meta.env.VITE_PLATFORM_URL ?? 'http://localhost:5173'
-).replace(/\/$/, '')
-
-export const SIGN_IN_URL = `${PLATFORM_URL}/sign-in`
+export const SIGN_IN_URL = 'https://www.academicanet.com/'

@@ -36,7 +36,6 @@ import {
     ABOUT_HIGHLIGHTS,
     BENEFITS,
     LEVELS,
-    PAYMENT_NOTES,
     PAYMENT_METHODS,
     REQUIREMENTS,
     ACTIVITIES,
@@ -156,15 +155,16 @@ const JSON_LD = {
 
 /**
  * Celdas del bento de vida escolar, en el orden de `ACTIVITIES`: la
- * primera (la banda) ocupa 2×2 y la última se estira a lo ancho para
- * cerrar la cuadrícula de 4 columnas. Las celdas de 1×1 miden 15rem en
+ * primera (folclore) ocupa 2×2 y las otras cuatro llenan el resto de la
+ * cuadrícula de 4 columnas. Las celdas de 1×1 miden 15rem en
  * escritorio: ahí no cabe el resumen, solo el título y «Ver más».
  */
 const ACTIVITY_TILES = [
     { span: 'sm:col-span-2 lg:row-span-2', size: 'large' },
     { span: '', size: 'small' },
     { span: '', size: 'small' },
-    { span: 'sm:col-span-2', size: 'wide' },
+    { span: '', size: 'small' },
+    { span: '', size: 'small' },
 ]
 
 /**
@@ -220,7 +220,6 @@ const ActivityTile = ({ activity, size }) => (
                         className={classNames(
                             'mt-2 line-clamp-3 text-sm leading-relaxed text-white/75',
                             size === 'large' && 'max-w-md',
-                            size === 'wide' && 'max-w-lg',
                             size === 'small' && 'lg:hidden',
                         )}
                     >
@@ -1093,10 +1092,10 @@ const LaColmena = () => {
                         <SectionTitle
                             eyebrow="Vida escolar"
                             title="Aprender también pasa fuera del aula"
-                            description="Banda de guerra, idiomas, emprendimiento y deporte: actividades que forman en disciplina, creatividad y trabajo en equipo."
+                            description="Folclore, banda de guerra, idiomas, emprendimiento y deporte: actividades que forman en disciplina, creatividad y trabajo en equipo."
                         />
 
-                        {/* Bento: la banda ocupa el bloque grande; el resto
+                        {/* Bento: el folclore ocupa el bloque grande; el resto
                             llena las celdas. Cada tarjeta lleva a su sección
                             en /vida-escolar. */}
                         <div className="grid gap-5 sm:grid-cols-2 lg:auto-rows-[15rem] lg:grid-cols-4">
@@ -1190,70 +1189,43 @@ const LaColmena = () => {
                             description="Reúne los documentos, envía tu solicitud en línea y nuestra secretaría te contacta."
                         />
 
-                        <div className="grid gap-6 lg:grid-cols-2">
-                            <div
-                                className="rounded-2xl p-8"
-                                style={{
-                                    backgroundColor: 'rgba(255,255,255,.06)',
-                                }}
-                            >
-                                <h3 className="mb-5 text-lg font-bold text-white">
-                                    Requisitos
-                                </h3>
-                                <ul className="space-y-3">
-                                    {REQUIREMENTS.map((item) => (
-                                        <li
-                                            key={item}
-                                            className="flex gap-3 text-sm leading-relaxed text-white/80"
-                                        >
-                                            <PiCheckCircleDuotone
-                                                className="mt-0.5 shrink-0 text-lg"
-                                                style={{
-                                                    color: 'var(--lc-gold)',
-                                                }}
-                                            />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
+                        <div
+                            className="rounded-2xl p-8"
+                            style={{ backgroundColor: 'rgba(255,255,255,.06)' }}
+                        >
+                            <h3 className="mb-5 text-lg font-bold text-white">
+                                Requisitos
+                            </h3>
+                            <ul className="grid gap-x-8 gap-y-3 md:grid-cols-2">
+                                {REQUIREMENTS.map((item) => (
+                                    <li
+                                        key={item}
+                                        className="flex gap-3 text-sm leading-relaxed text-white/80"
+                                    >
+                                        <PiCheckCircleDuotone
+                                            className="mt-0.5 shrink-0 text-lg"
+                                            style={{
+                                                color: 'var(--lc-gold)',
+                                            }}
+                                        />
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
 
+                            <div className="mt-7 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                                 <Link
                                     to="/reglamento"
-                                    className="mt-6 inline-flex items-center gap-2 text-sm font-bold transition hover:brightness-110"
+                                    className="inline-flex items-center gap-2 text-sm font-bold transition hover:brightness-110"
                                     style={{ color: 'var(--lc-gold)' }}
                                 >
                                     Conocer el reglamento del colegio
                                     <PiArrowRightBold />
                                 </Link>
-                            </div>
-
-                            <div
-                                className="rounded-2xl p-8"
-                                style={{
-                                    backgroundColor: 'rgba(245,197,24,.12)',
-                                }}
-                            >
-                                <h3 className="mb-5 text-lg font-bold text-white">
-                                    Facilidades de pago
-                                </h3>
-                                <ul className="space-y-4">
-                                    {PAYMENT_NOTES.map((note) => (
-                                        <li
-                                            key={note}
-                                            className="rounded-xl px-4 py-3 text-sm leading-relaxed text-white/90"
-                                            style={{
-                                                backgroundColor:
-                                                    'rgba(255,255,255,.07)',
-                                            }}
-                                        >
-                                            {note}
-                                        </li>
-                                    ))}
-                                </ul>
 
                                 <Link
                                     to={PRE_ENROLLMENT_PATH}
-                                    className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-bold transition hover:brightness-95"
+                                    className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-bold transition hover:brightness-95"
                                     style={{
                                         backgroundColor: 'var(--lc-gold)',
                                         color: 'var(--lc-green-deep)',

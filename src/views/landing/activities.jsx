@@ -4,6 +4,7 @@ import {
     PiStorefrontDuotone,
     PiSoccerBallDuotone,
     PiSparkleDuotone,
+    PiMaskHappyDuotone,
 } from 'react-icons/pi'
 import { HoneycombLayer, PHOTOS } from './brand'
 
@@ -12,6 +13,7 @@ const ACTIVITY_ICONS = {
     language: PiTranslateDuotone,
     store: PiStorefrontDuotone,
     sport: PiSoccerBallDuotone,
+    dance: PiMaskHappyDuotone,
 }
 
 export const activityIcon = (activity) =>
