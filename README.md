@@ -9,9 +9,10 @@ de `lily-educ-front-end` para trabajarlo por separado.
 | ------------- | ---------------------------------- |
 | `/`           | `src/views/landing/LaColmena.jsx`  |
 | `/reglamento` | `src/views/landing/Reglamento.jsx` |
+| `/historia`   | `src/views/landing/Historia.jsx`   |
 | `/la-colmena` | redirige a `/` (ruta anterior)     |
 
-Los datos del colegio (niveles, contacto, reglamento) están en
+Los datos del colegio (niveles, contacto, reglamento, historia) están en
 `src/views/landing/lacolmenaData.js` y las fotos en `public/img/lacolmena/`.
 
 ## Portal

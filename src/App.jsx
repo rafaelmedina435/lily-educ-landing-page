@@ -9,6 +9,7 @@ import {
 import LaColmena from '@/views/landing/LaColmena'
 import Reglamento from '@/views/landing/Reglamento'
 import VidaEscolar from '@/views/landing/VidaEscolar'
+import Historia from '@/views/landing/Historia'
 
 // Aparte porque trae el DatePicker y el Select del template (react-select,
 // floating-ui, dayjs), que el resto del sitio no usa
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/" element={<LaColmena />} />
             <Route path="/reglamento" element={<Reglamento />} />
             <Route path="/vida-escolar" element={<VidaEscolar />} />
+            <Route path="/historia" element={<Historia />} />
             <Route
                 path="/pre-matricula"
                 element={

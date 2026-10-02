@@ -5,7 +5,7 @@ import { BrandMark, Crest, HoneycombLayer } from './brand'
 
 /**
  * Encabezado y pie de las páginas secundarias (reglamento, vida
- * escolar): la marca y un enlace de vuelta a la landing.
+ * escolar, historia): la marca y un enlace de vuelta a la landing.
  */
 export const SubpageHeader = () => (
     <header

@@ -28,6 +28,79 @@ export const ABOUT = `Colegio Bilingüe La Colmena forma a las próximas generac
 /** Frases de ABOUT que se muestran en negrita. */
 export const ABOUT_HIGHLIGHTS = [SCHOOL.name, 'más de 20 años de experiencia']
 
+/**
+ * Reseña histórica, tomada del discurso del 19.º aniversario (16 de
+ * mayo de 2025). Las cifras de matrícula y docentes son de ese año.
+ */
+export const HISTORY = {
+    foundedOn: '16 de mayo de 2006',
+    founder: 'Magíster Mirta Gisela Batista Sáenz',
+    decree: 'Resuelto N.º 9417 de 2006',
+    intro: [
+        `El ${SCHOOL.name} nació gracias a la gestión de la Magíster Mirta Gisela Batista Sáenz, quien logró su creación mediante el Resuelto N.º 9417 de 2006 y lo dirigió desde sus primeros días.`,
+        'Abrimos nuestras puertas con 25 estudiantes de preescolar, primero y segundo grado. Hoy acompañamos a más de 230 estudiantes, con 24 docentes que imparten lenguas, ciencias, tecnología e informática desde Preescolar hasta Media.',
+        'Desde el inicio, la escuela ha crecido de la mano de sus profesores, administrativos, estudiantes, familias y de toda la comunidad, que se sienten orgullosos de las generaciones «Colmenitas» y de sus logros.',
+    ],
+    stats: [
+        { value: '25', label: 'estudiantes en 2006' },
+        { value: '230+', label: 'estudiantes hoy' },
+        { value: '24', label: 'docentes' },
+    ],
+    milestones: [
+        {
+            year: 2006,
+            title: 'Nace La Colmena',
+            description:
+                'Se funda el 16 de mayo e inicia clases con 25 estudiantes de preescolar, primero y segundo grado.',
+        },
+        {
+            year: 2020,
+            title: 'Educación Básica General',
+            description:
+                'Se amplía la oferta académica para completar la Educación Básica General.',
+        },
+        {
+            year: 2022,
+            title: 'Primera promoción de Pre-Media',
+            description:
+                'Se gradúa la primera generación de estudiantes de Pre-Media.',
+        },
+        {
+            year: 2023,
+            title: 'Llega la Robótica',
+            description:
+                'Se incorpora la asignatura de Robótica en Primaria, Pre-Media y Media.',
+        },
+        {
+            year: 2025,
+            title: SCHOOL.name,
+            description: `El colegio adopta oficialmente el nombre de ${SCHOOL.name}.`,
+        },
+    ],
+    commitments: [
+        {
+            title: 'Actualización permanente',
+            description:
+                'En coordinación con el Ministerio de Educación renovamos los planes de estudio del bachillerato para responder a las necesidades de hoy.',
+            icon: 'book',
+        },
+        {
+            title: 'Docentes a la vanguardia',
+            description:
+                'Capacitamos a nuestros educadores en tecnología de punta y metodologías activas, acordes con las exigencias de un mundo globalizado.',
+            icon: 'chip',
+        },
+        {
+            title: 'Formación para la vida',
+            description:
+                'Brindamos a la juventud aguadulceña una formación humanística, científica y tecnológica para la vida, el trabajo y la convivencia pacífica.',
+            icon: 'heart',
+        },
+    ],
+    closing:
+        'Cada aniversario renovamos nuestra misión y visión, y ratificamos la vocación que nos dio origen: formar ciudadanos de calidad para Aguadulce y para Panamá.',
+}
+
 export const BENEFITS = [
     {
         title: 'Excelencia académica',

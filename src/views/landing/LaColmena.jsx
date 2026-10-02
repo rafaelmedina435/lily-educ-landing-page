@@ -830,6 +830,17 @@ const LaColmena = () => {
                                         </div>
                                     ))}
                                 </div>
+                                <Link
+                                    to="/historia"
+                                    className="mt-8 inline-flex items-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-bold transition hover:bg-white"
+                                    style={{
+                                        borderColor: 'rgba(46,58,51,.2)',
+                                        color: 'var(--lc-green)',
+                                    }}
+                                >
+                                    Conocer nuestra historia
+                                    <PiArrowRightBold />
+                                </Link>
                             </div>
                         </div>{' '}
                     </div>
@@ -1473,6 +1484,12 @@ const LaColmena = () => {
                                 {item.label}
                             </a>
                         ))}
+                        <Link
+                            to="/historia"
+                            className="text-white/55 transition hover:text-white"
+                        >
+                            Nuestra historia
+                        </Link>
                         <Link
                             to="/reglamento"
                             className="text-white/55 transition hover:text-white"
