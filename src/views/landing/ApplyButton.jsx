@@ -30,7 +30,7 @@ const HoneycombCell = () => (
 )
 
 /** Abeja mirando hacia arriba: así, al girar en órbita, vuela de frente. */
-const Bee = () => (
+export const Bee = () => (
     <svg viewBox="0 0 24 24" className="h-full w-full" aria-hidden="true">
         <g
             className="lc-bee-wings"

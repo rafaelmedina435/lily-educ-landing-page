@@ -209,7 +209,24 @@
     animation: lc-cell-wobble 0.6s ease-in-out;
 }
 
+/* ── Línea del tiempo de «Nuestra historia» ─────────────────────────
+   La abeja se mece de lado a lado mientras baja por la ruta. */
+@keyframes lc-bee-sway {
+    0%,
+    100% {
+        transform: translateX(-5px) rotate(-6deg);
+    }
+    50% {
+        transform: translateX(5px) rotate(6deg);
+    }
+}
+
+.lc-bee-sway {
+    animation: lc-bee-sway 1.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+    .lc-bee-sway,
     .lc-apply,
     .lc-apply-shine,
     .lc-bee-orbit,

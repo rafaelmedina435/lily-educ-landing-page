@@ -46,34 +46,45 @@ export const HISTORY = {
         { value: '230+', label: 'estudiantes hoy' },
         { value: '24', label: 'docentes' },
     ],
+    /** `kicker` va sobre el título y `tag` en la etiqueta de la tarjeta. */
     milestones: [
         {
             year: 2006,
             title: 'Nace La Colmena',
+            kicker: 'Primera celda',
+            tag: 'El comienzo',
             description:
                 'Se funda el 16 de mayo e inicia clases con 25 estudiantes de preescolar, primero y segundo grado.',
         },
         {
             year: 2020,
             title: 'Educación Básica General',
+            kicker: 'La colmena crece',
+            tag: 'Crecimiento',
             description:
                 'Se amplía la oferta académica para completar la Educación Básica General.',
         },
         {
             year: 2022,
             title: 'Primera promoción de Pre-Media',
+            kicker: 'Una nueva generación',
+            tag: 'Generaciones',
             description:
                 'Se gradúa la primera generación de estudiantes de Pre-Media.',
         },
         {
             year: 2023,
             title: 'Llega la Robótica',
+            kicker: 'Nuevas alas',
+            tag: 'Innovación',
             description:
                 'Se incorpora la asignatura de Robótica en Primaria, Pre-Media y Media.',
         },
         {
             year: 2025,
             title: SCHOOL.name,
+            kicker: 'Nuestra identidad',
+            tag: 'Nueva etapa',
             description: `El colegio adopta oficialmente el nombre de ${SCHOOL.name}.`,
         },
     ],

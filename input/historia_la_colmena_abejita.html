@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuestra historia | Colegio Bilingüe La Colmena</title>
+<style>
+:root{
+  --navy:#123247;
+  --navy2:#1e465b;
+  --honey:#d9aa17;
+  --honey2:#f2c94c;
+  --cream:#fbf8ef;
+  --cream2:#f4efdf;
+  --white:#fffefb;
+  --muted:#6f7e87;
+  --line:#dfd7c4;
+  --shadow:0 20px 60px rgba(18,50,71,.11);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--navy);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.story{
+  position:relative;
+  overflow:hidden;
+  padding:88px 22px 105px;
+  isolation:isolate;
+}
+.story:before{
+  content:"";
+  position:absolute;inset:0;z-index:-3;
+  background:
+    radial-gradient(circle at 12% 20%,rgba(242,201,76,.16),transparent 24%),
+    radial-gradient(circle at 90% 72%,rgba(18,50,71,.05),transparent 28%);
+}
+.hive-pattern{
+  position:absolute;z-index:-2;right:-80px;top:30px;width:510px;height:650px;opacity:.18;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='173' viewBox='0 0 150 173'%3E%3Cg fill='none' stroke='%23d9aa17' stroke-width='1.4'%3E%3Cpath d='M37.5 1L75 22.7v43.4L37.5 87.8 0 66.1V22.7zM112.5 1L150 22.7v43.4l-37.5 21.7L75 66.1V22.7zM75 87.8l37.5 21.7v43.4L75 174l-37.5-21.1v-43.4z'/%3E%3C/g%3E%3C/svg%3E");
+  transform:rotate(8deg);
+}
+.container{width:min(1180px,100%);margin:auto}
+
+/* Intro */
+.intro{display:grid;grid-template-columns:1fr .82fr;gap:80px;align-items:end;margin-bottom:68px}
+.kicker{
+  display:flex;align-items:center;gap:11px;color:var(--honey);
+  text-transform:uppercase;letter-spacing:.18em;font-size:11px;font-weight:900;margin-bottom:17px
+}
+.kicker:before{content:"";width:34px;height:1px;background:var(--honey)}
+h1{margin:0;font-size:clamp(45px,6vw,76px);line-height:.95;letter-spacing:-.06em;font-weight:850}
+.intro-copy{font-size:16px;line-height:1.8;color:var(--muted);margin:0 0 3px}
+.intro-copy strong{color:var(--navy)}
+
+/* Journey */
+.journey{
+  position:relative;
+  padding:32px 0 20px;
+}
+.flight-path{
+  position:absolute;
+  left:7%;
+  right:7%;
+  top:165px;
+  height:265px;
+  z-index:0;
+  pointer-events:none;
+}
+.flight-path svg{width:100%;height:100%;overflow:visible}
+.path-shadow{fill:none;stroke:rgba(18,50,71,.06);stroke-width:9;stroke-linecap:round}
+.path-main{fill:none;stroke:var(--honey);stroke-width:2.2;stroke-linecap:round;stroke-dasharray:4 11}
+.path-dot{fill:var(--honey2);opacity:.8}
+
+/* Bee */
+.bee{
+  position:absolute;
+  left:4%;
+  top:110px;
+  width:76px;height:65px;
+  z-index:5;
+  transform:rotate(-8deg);
+}
+.bee .body{
+  position:absolute;left:19px;top:22px;width:40px;height:27px;border-radius:50%;
+  background:repeating-linear-gradient(90deg,var(--honey2) 0 8px,var(--navy) 8px 14px);
+  box-shadow:0 8px 16px rgba(18,50,71,.18);
+}
+.bee .head{
+  position:absolute;left:51px;top:24px;width:18px;height:18px;border-radius:50%;background:var(--navy)
+}
+.bee .eye{position:absolute;right:4px;top:5px;width:3px;height:3px;background:white;border-radius:50%}
+.bee .wing{
+  position:absolute;width:29px;height:20px;background:rgba(255,255,255,.84);
+  border:1px solid rgba(18,50,71,.13);border-radius:55% 55% 40% 40%;
+}
+.bee .w1{left:16px;top:7px;transform:rotate(-28deg)}
+.bee .w2{left:40px;top:4px;transform:rotate(24deg)}
+.bee .stinger{
+  position:absolute;left:12px;top:31px;width:0;height:0;
+  border-top:4px solid transparent;border-bottom:4px solid transparent;border-right:10px solid var(--navy)
+}
+.bee .ant{
+  position:absolute;width:14px;height:9px;border-top:1px solid var(--navy);border-radius:50%;top:17px
+}
+.bee .a1{left:52px;transform:rotate(-35deg)}
+.bee .a2{left:59px;transform:rotate(20deg)}
+
+/* Cards */
+.events{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:24px;
+  align-items:start;
+}
+.event{
+  position:relative;
+  padding-top:115px;
+}
+.event:nth-child(even){padding-top:275px}
+.event-card{
+  position:relative;
+  background:rgba(255,254,251,.96);
+  border:1px solid var(--line);
+  border-radius:25px;
+  padding:28px 25px 26px;
+  min-height:220px;
+  box-shadow:0 14px 42px rgba(18,50,71,.07);
+  transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease;
+}
+.event-card:hover{
+  transform:translateY(-7px);
+  box-shadow:var(--shadow);
+  border-color:rgba(217,170,23,.55);
+}
+.event:nth-child(even) .event-card{transform-origin:center bottom}
+.event:nth-child(even) .event-card:hover{transform:translateY(-7px)}
+
+.hex{
+  position:absolute;
+  top:-58px;
+  left:50%;
+  transform:translateX(-50%);
+  width:91px;height:104px;
+  display:grid;place-items:center;
+}
+.hex:before{
+  content:"";position:absolute;inset:0;background:var(--honey);
+  clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%);
+  filter:drop-shadow(0 8px 13px rgba(18,50,71,.12));
+}
+.hex:after{
+  content:"";position:absolute;inset:5px;background:var(--cream);
+  clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%);
+}
+.hex span{position:relative;z-index:2;font-size:15px;font-weight:900;color:var(--navy)}
+
+.year{
+  font-size:11px;color:var(--honey);font-weight:900;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px
+}
+.event h2{font-size:21px;line-height:1.18;letter-spacing:-.025em;margin:0 0 11px}
+.event p{font-size:13.5px;line-height:1.7;color:var(--muted);margin:0}
+.type{
+  display:inline-flex;margin-top:17px;padding:6px 9px;border-radius:100px;
+  background:#f8f0d2;color:#806600;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.11em
+}
+
+/* Honey drops / connector details */
+.event:nth-child(1):before,.event:nth-child(2):before,.event:nth-child(3):before,.event:nth-child(4):before,.event:nth-child(5):before{
+  content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--honey2);z-index:3;
+  left:50%;transform:translateX(-50%);
+}
+.event:nth-child(1):before{top:150px}
+.event:nth-child(2):before{top:309px}
+.event:nth-child(3):before{top:150px}
+.event:nth-child(4):before{top:309px}
+.event:nth-child(5):before{top:150px}
+
+/* Bottom statement */
+.end{
+  text-align:center;
+  max-width:820px;
+  margin:82px auto 0;
+  padding-top:45px;
+  border-top:1px solid var(--line);
+}
+.end-label{font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--honey);font-weight:900}
+.end h3{margin:13px 0 13px;font-size:clamp(30px,4vw,47px);line-height:1.06;letter-spacing:-.045em}
+.end p{margin:0 auto;color:var(--muted);font-size:15px;line-height:1.8;max-width:650px}
+.end strong{color:var(--navy)}
+
+@media(max-width:1050px){
+  .intro{gap:45px}
+  .events{gap:16px}
+  .event-card{padding:25px 19px}
+  .event h2{font-size:19px}
+  .event p{font-size:12.5px}
+  .flight-path{left:4%;right:4%}
+}
+@media(max-width:780px){
+  .story{padding:70px 18px 85px}
+  .intro{grid-template-columns:1fr;gap:22px;margin-bottom:35px}
+  h1{font-size:clamp(44px,14vw,62px)}
+  .journey{padding:20px 0 0}
+  .flight-path{left:25px;right:auto;top:35px;width:75px;height:1110px}
+  .flight-path svg{transform:rotate(90deg);transform-origin:center}
+  .bee{left:0;top:18px;transform:scale(.72) rotate(-8deg);transform-origin:left top}
+  .events{display:block;padding-left:76px}
+  .event,.event:nth-child(even){padding-top:70px;margin-bottom:88px}
+  .event-card{min-height:auto;padding:27px 24px}
+  .hex{left:-48px;top:0;width:72px;height:83px}
+  .hex:after{inset:4px}
+  .hex span{font-size:11px}
+  .event:before{display:none!important}
+  .end{margin-top:10px}
+}
+</style>
+</head>
+<body>
+<section class="story">
+  <div class="hive-pattern" aria-hidden="true"></div>
+  <div class="container">
+
+    <header class="intro">
+      <div>
+        <div class="kicker">Nuestra historia</div>
+        <h1>El vuelo que<br>nos trajo hasta aquí.</h1>
+      </div>
+      <p class="intro-copy">
+        Una colmena se construye <strong>celda a celda</strong>.
+        Nuestra historia también. Desde 2006, cada generación ha dejado
+        algo que nos permite seguir creciendo juntos.
+      </p>
+    </header>
+
+    <div class="journey">
+      <div class="flight-path" aria-hidden="true">
+        <svg viewBox="0 0 1000 265" preserveAspectRatio="none">
+          <path class="path-shadow" d="M20,205 C120,35 205,50 305,185 S475,255 555,90 S735,15 805,135 S910,220 980,55"/>
+          <path class="path-main" d="M20,205 C120,35 205,50 305,185 S475,255 555,90 S735,15 805,135 S910,220 980,55"/>
+          <circle class="path-dot" cx="20" cy="205" r="4"/>
+          <circle class="path-dot" cx="245" cy="110" r="4"/>
+          <circle class="path-dot" cx="410" cy="221" r="4"/>
+          <circle class="path-dot" cx="630" cy="72" r="4"/>
+          <circle class="path-dot" cx="810" cy="139" r="4"/>
+        </svg>
+      </div>
+
+      <div class="bee" aria-hidden="true">
+        <i class="wing w1"></i><i class="wing w2"></i>
+        <i class="stinger"></i><i class="ant a1"></i><i class="ant a2"></i>
+        <i class="body"></i><i class="head"><i class="eye"></i></i>
+      </div>
+
+      <div class="events">
+
+        <article class="event">
+          <div class="event-card">
+            <div class="hex"><span>2006</span></div>
+            <div class="year">Primera celda</div>
+            <h2>Nace La Colmena</h2>
+            <p>Se funda el 16 de mayo e inicia clases con 25 estudiantes de preescolar, primero y segundo grado.</p>
+            <span class="type">El comienzo</span>
+          </div>
+        </article>
+
+        <article class="event">
+          <div class="event-card">
+            <div class="hex"><span>2020</span></div>
+            <div class="year">La colmena crece</div>
+            <h2>Educación Básica General</h2>
+            <p>Se amplía la oferta académica para completar la Educación Básica General.</p>
+            <span class="type">Crecimiento</span>
+          </div>
+        </article>
+
+        <article class="event">
+          <div class="event-card">
+            <div class="hex"><span>2022</span></div>
+            <div class="year">Una nueva generación</div>
+            <h2>Primera promoción de Pre-Media</h2>
+            <p>Se gradúa la primera generación de estudiantes de Pre-Media.</p>
+            <span class="type">Generaciones</span>
+          </div>
+        </article>
+
+        <article class="event">
+          <div class="event-card">
+            <div class="hex"><span>2023</span></div>
+            <div class="year">Nuevas alas</div>
+            <h2>Llega la Robótica</h2>
+            <p>Se incorpora la asignatura de Robótica en Primaria, Pre-Media y Media.</p>
+            <span class="type">Innovación</span>
+          </div>
+        </article>
+
+        <article class="event">
+          <div class="event-card">
+            <div class="hex"><span>2025</span></div>
+            <div class="year">Nuestra identidad</div>
+            <h2>Colegio Bilingüe La Colmena</h2>
+            <p>El colegio adopta oficialmente el nombre de Colegio Bilingüe La Colmena.</p>
+            <span class="type">Nueva etapa</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="end">
+      <div class="end-label">Y el vuelo continúa</div>
+      <h3>Una celda se convierte en otra.</h3>
+      <p>
+        Lo que comenzó con 25 estudiantes hoy es una comunidad que sigue construyendo futuro.
+        <strong>La historia de La Colmena todavía tiene muchas celdas por llenar.</strong>
+      </p>
+    </div>
+
+  </div>
+</section>
+</body>
+</html>

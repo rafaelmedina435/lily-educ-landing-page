@@ -9,6 +9,7 @@ import {
 import { SCHOOL, HISTORY } from './lacolmenaData'
 import { THEME, Crest, Hexagon, HoneycombLayer, Reveal } from './brand'
 import { SubpageHeader, SubpageFooter } from './Subpage'
+import HistoryTimeline from './HistoryTimeline'
 import ApplyButton, { PRE_ENROLLMENT_PATH } from './ApplyButton'
 import Seo from '@/components/shared/Seo'
 
@@ -114,60 +115,7 @@ const Historia = () => (
                     </Reveal>
 
                     {/* ── Línea del tiempo ───────────────────────── */}
-                    <section>
-                        <h2
-                            className="mb-8 text-2xl font-bold sm:text-3xl"
-                            style={{ color: 'var(--lc-green)' }}
-                        >
-                            Momentos que nos definen
-                        </h2>
-                        <ol
-                            className="relative space-y-6 border-l-2 pl-8 sm:pl-10"
-                            style={{ borderColor: 'rgba(245,197,24,.6)' }}
-                        >
-                            {HISTORY.milestones.map((milestone, index) => (
-                                <li key={milestone.year} className="relative">
-                                    <Reveal delay={index * 80}>
-                                        {/* Punto sobre la línea */}
-                                        <span
-                                            className="absolute -left-[2.6rem] top-5 h-4 w-4 rounded-full border-4 sm:-left-[3.1rem]"
-                                            style={{
-                                                backgroundColor:
-                                                    'var(--lc-gold)',
-                                                borderColor: 'var(--lc-cream)',
-                                            }}
-                                            aria-hidden="true"
-                                        />
-                                        <div
-                                            className="rounded-2xl border bg-white p-6"
-                                            style={{
-                                                borderColor:
-                                                    'rgba(46,58,51,.1)',
-                                            }}
-                                        >
-                                            <p
-                                                className="text-sm font-bold tracking-wider"
-                                                style={{ color: '#b08a00' }}
-                                            >
-                                                {milestone.year}
-                                            </p>
-                                            <h3
-                                                className="mt-1 text-lg font-bold"
-                                                style={{
-                                                    color: 'var(--lc-green)',
-                                                }}
-                                            >
-                                                {milestone.title}
-                                            </h3>
-                                            <p className="mt-2 text-sm leading-relaxed text-[#5b665e]">
-                                                {milestone.description}
-                                            </p>
-                                        </div>
-                                    </Reveal>
-                                </li>
-                            ))}
-                        </ol>
-                    </section>
+                    <HistoryTimeline />
 
                     {/* ── Compromisos ────────────────────────────── */}
                     <section>

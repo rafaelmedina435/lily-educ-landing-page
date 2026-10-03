@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Historia — La Colmena | Experiencia interactiva</title>
+<style>
+:root{
+  --navy:#102f43;
+  --navy2:#214b61;
+  --gold:#e0ad18;
+  --honey:#f3c84b;
+  --cream:#faf7ed;
+  --white:#fffefb;
+  --muted:#71808a;
+  --line:#e7dfcb;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--navy);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.story{height:500vh;position:relative}
+.stage{
+  position:sticky;top:0;height:100vh;overflow:hidden;
+  background:
+    radial-gradient(circle at 80% 20%,rgba(243,200,75,.16),transparent 25%),
+    radial-gradient(circle at 10% 85%,rgba(16,47,67,.045),transparent 28%),
+    var(--cream);
+}
+.stage:before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.23;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='173' viewBox='0 0 150 173'%3E%3Cg fill='none' stroke='%23d9aa17' stroke-width='1.1'%3E%3Cpath d='M37.5 1L75 22.7v43.4L37.5 87.8 0 66.1V22.7zM112.5 1L150 22.7v43.4l-37.5 21.7L75 66.1V22.7zM75 87.8l37.5 21.7v43.4L75 174l-37.5-21.1v-43.4z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.ui{position:absolute;z-index:20;left:clamp(24px,5vw,76px);top:clamp(24px,6vh,60px);max-width:520px}
+.eyebrow{display:flex;gap:10px;align-items:center;color:var(--gold);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.2em}
+.eyebrow i{width:30px;height:1px;background:var(--gold)}
+h1{font-size:clamp(38px,5vw,68px);line-height:.96;letter-spacing:-.055em;margin:14px 0 13px;font-weight:850}
+.sub{margin:0;color:var(--muted);font-size:15px;line-height:1.7;max-width:470px}
+.scrollhint{
+  position:absolute;z-index:20;right:clamp(24px,5vw,76px);top:clamp(28px,6vh,62px);
+  display:flex;align-items:center;gap:10px;color:var(--muted);font-size:10px;
+  text-transform:uppercase;letter-spacing:.15em;font-weight:800
+}
+.scrollhint b{width:24px;height:38px;border:1px solid #c9c0ab;border-radius:20px;position:relative}
+.scrollhint b:after{content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;border-radius:5px;background:var(--gold);transform:translateX(-50%);animation:wheel 1.5s infinite}
+@keyframes wheel{0%{top:7px;opacity:1}80%,100%{top:23px;opacity:0}}
+
+.scene{position:absolute;inset:0}
+.path{
+  position:absolute;left:5vw;right:5vw;top:50%;height:38vh;transform:translateY(-45%);
+}
+.path svg{width:100%;height:100%;overflow:visible}
+.route-shadow{fill:none;stroke:rgba(16,47,67,.06);stroke-width:18;stroke-linecap:round}
+.route{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:3 12}
+.route-progress{fill:none;stroke:var(--honey);stroke-width:4;stroke-linecap:round;filter:drop-shadow(0 3px 5px rgba(224,173,24,.22))}
+.spark{fill:var(--honey);opacity:.55}
+
+.milestone{
+  position:absolute;z-index:7;width:min(285px,24vw);opacity:.16;
+  transform:translate(-50%,-50%) scale(.88);
+  transition:opacity .5s ease,transform .65s cubic-bezier(.2,.8,.2,1);
+}
+.milestone.active{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.milestone .card{
+  background:rgba(255,254,251,.93);border:1px solid var(--line);border-radius:22px;
+  padding:23px 24px;box-shadow:0 18px 45px rgba(16,47,67,.08);backdrop-filter:blur(7px)
+}
+.milestone .year{font-size:11px;color:var(--gold);font-weight:900;letter-spacing:.17em;text-transform:uppercase;margin-bottom:7px}
+.milestone h2{font-size:21px;line-height:1.15;margin:0 0 9px;letter-spacing:-.025em}
+.milestone p{font-size:12.5px;line-height:1.65;color:var(--muted);margin:0}
+.cell{
+  position:absolute;left:50%;top:-54px;transform:translateX(-50%);width:76px;height:88px;
+  filter:drop-shadow(0 7px 11px rgba(16,47,67,.1))
+}
+.cell:before{content:"";position:absolute;inset:0;background:var(--gold);clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%)}
+.cell:after{content:"";position:absolute;inset:4px;background:var(--cream);clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%)}
+.cell span{position:absolute;z-index:2;inset:0;display:grid;place-items:center;font-weight:900;font-size:12px}
+
+.p1{left:11%;top:57%}.p2{left:30%;top:35%}.p3{left:51%;top:60%}.p4{left:71%;top:37%}.p5{left:89%;top:53%}
+
+.bee{
+  position:absolute;z-index:15;width:88px;height:72px;left:0;top:0;
+  will-change:transform;
+  filter:drop-shadow(0 10px 10px rgba(16,47,67,.18));
+}
+.bee-body{position:absolute;left:23px;top:24px;width:43px;height:29px;border-radius:50%;background:repeating-linear-gradient(90deg,var(--honey) 0 9px,var(--navy) 9px 16px)}
+.bee-head{position:absolute;left:58px;top:27px;width:19px;height:19px;border-radius:50%;background:var(--navy)}
+.eye{position:absolute;right:4px;top:5px;width:3px;height:3px;background:white;border-radius:50%}
+.wing{position:absolute;width:31px;height:21px;background:rgba(255,255,255,.85);border:1px solid rgba(16,47,67,.14);border-radius:60% 60% 45% 45%;transform-origin:80% 80%}
+.wing1{left:18px;top:7px;transform:rotate(-25deg)}
+.wing2{left:42px;top:5px;transform:rotate(25deg)}
+.bee.flying .wing1{animation:flap1 .16s infinite alternate}
+.bee.flying .wing2{animation:flap2 .16s infinite alternate}
+@keyframes flap1{to{transform:rotate(-48deg) scaleY(.65)}}
+@keyframes flap2{to{transform:rotate(48deg) scaleY(.65)}}
+.ant{position:absolute;width:14px;height:9px;border-top:1px solid var(--navy);top:19px;border-radius:50%}
+.ant1{left:59px;transform:rotate(-30deg)}.ant2{left:66px;transform:rotate(22deg)}
+.sting{position:absolute;left:14px;top:35px;width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-right:10px solid var(--navy)}
+
+.trail{position:absolute;z-index:10;pointer-events:none}
+.trail-dot{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--honey);opacity:.5;transform:translate(-50%,-50%);animation:float 1.8s ease-in-out infinite}
+@keyframes float{50%{transform:translate(-50%,-80%);opacity:.12}}
+
+.progress{
+  position:absolute;z-index:30;left:50%;bottom:27px;transform:translateX(-50%);
+  width:min(520px,70vw);height:3px;background:rgba(18,50,71,.1);border-radius:10px;overflow:hidden
+}
+.progress i{display:block;width:0;height:100%;background:var(--gold);transition:width .1s linear}
+.progress-label{
+  position:absolute;z-index:30;left:50%;bottom:38px;transform:translateX(-50%);
+  color:var(--muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;white-space:nowrap
+}
+.final{
+  position:absolute;z-index:20;left:50%;top:50%;transform:translate(-50%,-50%) scale(.7);
+  text-align:center;opacity:0;pointer-events:none;width:min(700px,88vw);transition:opacity .6s,transform .7s cubic-bezier(.2,.8,.2,1)
+}
+.final.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.final .final-hex{margin:auto;width:105px;height:120px;position:relative}
+.final-hex:before{content:"";position:absolute;inset:0;background:var(--gold);clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%)}
+.final-hex:after{content:"";position:absolute;inset:5px;background:var(--cream);clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%)}
+.final-hex span{position:absolute;z-index:2;inset:0;display:grid;place-items:center;font-weight:900}
+.final h2{font-size:clamp(34px,5vw,60px);line-height:1;letter-spacing:-.05em;margin:22px 0 12px}
+.final p{color:var(--muted);line-height:1.7;margin:0 auto;max-width:550px}
+
+@media(max-width:760px){
+  .story{height:500vh}
+  .ui{left:22px;right:22px;top:28px}
+  h1{font-size:43px}
+  .sub{font-size:13px;max-width:390px}
+  .scrollhint{display:none}
+  .path{left:0;right:auto;top:28vh;bottom:12vh;height:auto;width:120px;transform:none}
+  .path svg{height:100%;width:100%;transform:none}
+  .route-shadow,.route,.route-progress{vector-effect:non-scaling-stroke}
+  .milestone{width:min(275px,70vw)}
+  .p1{left:53%;top:28%}.p2{left:55%;top:43%}.p3{left:55%;top:58%}.p4{left:55%;top:73%}.p5{left:55%;top:88%}
+  .bee{width:70px;height:58px}
+  .bee-body{left:18px;top:20px;width:35px;height:24px}.bee-head{left:48px;top:22px}
+  .wing{width:25px;height:17px}
+  .wing1{left:14px;top:5px}.wing2{left:35px;top:4px}
+  .progress{bottom:19px}
+  .progress-label{bottom:30px}
+}
+</style>
+</head>
+<body>
+
+<section class="story" id="story">
+  <div class="stage">
+    <header class="ui">
+      <div class="eyebrow"><i></i> Nuestra historia</div>
+      <h1>El vuelo que nos trajo hasta aquí.</h1>
+      <p class="sub">Desplázate para acompañar a nuestra abejita por los momentos que han construido <strong>La Colmena</strong>.</p>
+    </header>
+
+    <div class="scrollhint"><b></b> Desliza para explorar</div>
+
+    <div class="scene">
+      <div class="path" aria-hidden="true">
+        <svg viewBox="0 0 1000 380" preserveAspectRatio="none">
+          <path id="routeShadow" class="route-shadow" d="M35 295 C130 35 205 50 300 240 S460 340 555 92 S710 10 805 180 S915 285 975 58"/>
+          <path id="route" class="route" d="M35 295 C130 35 205 50 300 240 S460 340 555 92 S710 10 805 180 S915 285 975 58"/>
+          <path id="routeProgress" class="route-progress" d="M35 295 C130 35 205 50 300 240 S460 340 555 92 S710 10 805 180 S915 285 975 58"/>
+        </svg>
+      </div>
+
+      <article class="milestone p1" data-index="0">
+        <div class="cell"><span>2006</span></div>
+        <div class="card"><div class="year">Primera celda · 2006</div><h2>Nace La Colmena</h2><p>Se funda el 16 de mayo e inicia clases con 25 estudiantes de preescolar, primero y segundo grado.</p></div>
+      </article>
+
+      <article class="milestone p2" data-index="1">
+        <div class="cell"><span>2020</span></div>
+        <div class="card"><div class="year">Crecimiento · 2020</div><h2>Educación Básica General</h2><p>Se amplía la oferta académica para completar la Educación Básica General.</p></div>
+      </article>
+
+      <article class="milestone p3" data-index="2">
+        <div class="cell"><span>2022</span></div>
+        <div class="card"><div class="year">Generaciones · 2022</div><h2>Primera promoción de Pre-Media</h2><p>Se gradúa la primera generación de estudiantes de Pre-Media.</p></div>
+      </article>
+
+      <article class="milestone p4" data-index="3">
+        <div class="cell"><span>2023</span></div>
+        <div class="card"><div class="year">Innovación · 2023</div><h2>Llega la Robótica</h2><p>Se incorpora la asignatura de Robótica en Primaria, Pre-Media y Media.</p></div>
+      </article>
+
+      <article class="milestone p5" data-index="4">
+        <div class="cell"><span>2025</span></div>
+        <div class="card"><div class="year">Nueva etapa · 2025</div><h2>Colegio Bilingüe La Colmena</h2><p>El colegio adopta oficialmente el nombre de Colegio Bilingüe La Colmena.</p></div>
+      </article>
+
+      <div class="bee" id="bee" aria-label="Abeja">
+        <i class="wing wing1"></i><i class="wing wing2"></i><i class="sting"></i>
+        <i class="ant ant1"></i><i class="ant ant2"></i>
+        <i class="bee-body"></i><i class="bee-head"><i class="eye"></i></i>
+      </div>
+
+      <div class="trail" id="trail"></div>
+
+      <div class="final" id="final">
+        <div class="final-hex"><span>🐝</span></div>
+        <h2>Y el vuelo continúa.</h2>
+        <p>Una historia construida celda a celda. Una comunidad que sigue creciendo y dejando su huella.</p>
+      </div>
+    </div>
+
+    <div class="progress"><i id="progressBar"></i></div>
+    <div class="progress-label" id="progressLabel">2006 · El comienzo</div>
+  </div>
+</section>
+
+<script>
+(() => {
+  const story = document.getElementById('story');
+  const stage = document.querySelector('.stage');
+  const bee = document.getElementById('bee');
+  const route = document.getElementById('route');
+  const routeProgress = document.getElementById('routeProgress');
+  const cards = [...document.querySelectorAll('.milestone')];
+  const bar = document.getElementById('progressBar');
+  const label = document.getElementById('progressLabel');
+  const final = document.getElementById('final');
+  const trail = document.getElementById('trail');
+
+  const labels = [
+    '2006 · El comienzo',
+    '2020 · Crecimiento',
+    '2022 · Nueva generación',
+    '2023 · Innovación',
+    '2025 · Nueva etapa'
+  ];
+
+  let points = [];
+  let lastPoint = null;
+
+  function metrics(){
+    const r = route.getBoundingClientRect();
+    const total = route.getTotalLength();
+    routeProgress.style.strokeDasharray = total;
+    routeProgress.style.strokeDashoffset = total;
+    return {r,total};
+  }
+
+  function positionBee(progress){
+    const {r,total} = metrics();
+    const p = route.getPointAtLength(total * progress);
+    const x = r.left + (p.x / 1000) * r.width;
+    const y = r.top + (p.y / 380) * r.height;
+
+    // Orientación aproximada: mirar hacia el siguiente punto del recorrido.
+    const next = route.getPointAtLength(Math.min(total, total * progress + 2));
+    const dx = next.x - p.x;
+    const direction = dx < 0 ? -1 : 1;
+
+    bee.style.transform = `translate3d(${x - 44}px,${y - 35}px,0) scaleX(${direction})`;
+    bee.classList.add('flying');
+
+    if(lastPoint && Math.hypot(x-lastPoint.x,y-lastPoint.y)>12){
+      const dot = document.createElement('i');
+      dot.className='trail-dot';
+      dot.style.left=x+'px';
+      dot.style.top=y+'px';
+      dot.style.animationDelay=(Math.random()*.5)+'s';
+      trail.appendChild(dot);
+      setTimeout(()=>dot.remove(),1900);
+    }
+    lastPoint={x,y};
+  }
+
+  function update(){
+    const rect = story.getBoundingClientRect();
+    const max = story.offsetHeight - window.innerHeight;
+    const progress = Math.min(1,Math.max(0,(-rect.top)/max));
+
+    // 0–92% is the journey; final state is reserved for the last part.
+    const journey = Math.min(1, progress / .92);
+    routeProgress.style.strokeDashoffset = route.getTotalLength() * (1-journey);
+    positionBee(journey);
+
+    const idx = Math.min(4,Math.floor(journey*5));
+    cards.forEach((c,i)=>c.classList.toggle('active',i===idx || (journey>.92 && i===4)));
+    label.textContent = labels[idx];
+    bar.style.width = (progress*100)+'%';
+
+    if(progress>.94){
+      final.classList.add('show');
+      cards.forEach(c=>c.classList.remove('active'));
+      label.textContent='Hoy · Y el vuelo continúa';
+    }else{
+      final.classList.remove('show');
+    }
+  }
+
+  // Seed a few subtle particles so the bee leaves a living trail.
+  for(let i=0;i<8;i++){
+    const dot=document.createElement('i');
+    dot.className='trail-dot';
+    dot.style.left=(15+i*9)+'%';
+    dot.style.top=(40+(i%3)*7)+'%';
+    dot.style.animationDelay=(i*.18)+'s';
+    dot.style.opacity='.12';
+    trail.appendChild(dot);
+  }
+
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update);
+  requestAnimationFrame(update);
+})();
+</script>
+</body>
+</html>
