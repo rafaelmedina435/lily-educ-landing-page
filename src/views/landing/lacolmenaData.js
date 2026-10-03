@@ -424,7 +424,7 @@ export const PAYMENT_METHODS = [
  * ------------------------------------------------------------------ */
 
 export const CAMPUS = {
-    title: 'Un campus pensado para aprender',
+    title: 'Una sede pensada para aprender',
     description:
         'Aulas amplias, áreas de recreación y espacios para deporte, arte y robótica, en el corazón de Aguadulce.',
     highlights: [

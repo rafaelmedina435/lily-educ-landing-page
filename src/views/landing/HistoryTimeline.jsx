@@ -6,6 +6,15 @@ import { Bee } from './ApplyButton'
 /** La abeja se posa sobre la última celda en lugar de tapar su «Hoy». */
 const LANDING_GAP = 38
 
+/**
+ * Rodeo de la abeja alrededor de cada celda: empieza a apartarse a
+ * `DETOUR_REACH` px del centro de la celda y se separa hasta
+ * `DETOUR_WIDTH` px de la ruta, lo justo para no tocar el año.
+ */
+const DETOUR_REACH = 70
+const DETOUR_WIDTH = 50
+const DETOUR_RAMP = 0.4
+
 /** Altura de la pantalla (0–1) que marca hasta dónde ha volado la abeja. */
 const VIEWPORT_ANCHOR = 0.55
 
@@ -13,9 +22,10 @@ const VIEWPORT_ANCHOR = 0.55
  * Celda de panal sobre la línea del tiempo. Se rellena de miel cuando la
  * abeja ya pasó por ella.
  */
-const Cell = ({ label, filled, className = 'top-0' }) => (
+const Cell = ({ label, filled, cardSide, className = 'top-0' }) => (
     <span
         data-cell
+        data-card={cardSide}
         className={`absolute left-0 z-10 md:left-1/2 md:-translate-x-1/2 ${className}`}
     >
         <Hexagon
@@ -145,7 +155,31 @@ const useFlight = () => {
             )
 
             trailRef.current.style.transform = `translateX(-50%) scaleY(${length ? flown / length : 0})`
-            beeRef.current.style.transform = `translate3d(-50%, ${start - 20 + Math.min(flown, length - LANDING_GAP)}px, 0)`
+
+            // Rodea cada celda por el costado libre: en pantallas anchas el
+            // contrario a su tarjeta; en el teléfono, hacia las tarjetas,
+            // porque a la izquierda de la ruta no hay espacio.
+            const beeY = rect.top + start + flown
+            const wide = window.matchMedia('(min-width: 768px)').matches
+            let detour = 0
+
+            for (const cell of cells()) {
+                const side = cell.dataset.card
+                const near = 1 - Math.abs(beeY - center(cell)) / DETOUR_REACH
+
+                if (side && near > 0) {
+                    const t = Math.min(1, near / DETOUR_RAMP)
+                    detour =
+                        DETOUR_WIDTH *
+                        t *
+                        t *
+                        (3 - 2 * t) *
+                        (wide && side === 'right' ? -1 : 1)
+                    break
+                }
+            }
+
+            beeRef.current.style.transform = `translate3d(calc(-50% + ${detour}px), ${start - 20 + Math.min(flown, length - LANDING_GAP)}px, 0)`
 
             // De cabeza al bajar, de frente al subir.
             if (flown !== last) {
@@ -153,7 +187,6 @@ const useFlight = () => {
                 last = flown
             }
 
-            const beeY = rect.top + start + flown
             setReached(
                 cells().filter((cell) => center(cell) <= beeY + 1).length,
             )
@@ -211,7 +244,7 @@ const HistoryTimeline = () => {
                         El vuelo que nos trajo hasta aquí
                     </h2>
                 </div>
-                <p className="text-base leading-relaxed text-[#5b665e]">
+                <p className="text-base leading-relaxed sm:text-lg text-[#5b665e]">
                     Una colmena se construye{' '}
                     <strong style={{ color: 'var(--lc-green)' }}>
                         celda a celda
@@ -242,9 +275,11 @@ const HistoryTimeline = () => {
                     aria-hidden="true"
                 />
 
+                {/* Rodea las celdas (ver `useFlight`) y, por si roza una,
+                    va debajo de ellas (z-10) para no tapar el año. */}
                 <span
                     ref={beeRef}
-                    className="pointer-events-none absolute left-7 z-20 motion-reduce:hidden md:left-1/2"
+                    className="pointer-events-none absolute left-7 z-[5] motion-reduce:hidden md:left-1/2"
                     style={{ top: 0, transform: 'translate3d(-50%, 0, 0)' }}
                     aria-hidden="true"
                 >
@@ -274,6 +309,7 @@ const HistoryTimeline = () => {
                             <Cell
                                 label={milestone.year}
                                 filled={filled}
+                                cardSide={right ? 'right' : 'left'}
                                 className="top-1/2 -translate-y-1/2"
                             />
                             <span
@@ -298,22 +334,22 @@ const HistoryTimeline = () => {
                             >
                                 <CellCard filled={filled}>
                                     <p
-                                        className="text-[11px] font-extrabold uppercase tracking-[0.18em]"
+                                        className="text-xs font-extrabold uppercase tracking-[0.18em]"
                                         style={{ color: '#b08a00' }}
                                     >
                                         {milestone.kicker}
                                     </p>
                                     <h3
-                                        className="mt-2 text-xl font-bold leading-snug"
+                                        className="mt-2 text-xl sm:text-2xl font-bold leading-snug"
                                         style={{ color: 'var(--lc-green)' }}
                                     >
                                         {milestone.title}
                                     </h3>
-                                    <p className="mt-2 text-sm leading-relaxed text-[#5b665e]">
+                                    <p className="mt-2 text-base leading-relaxed text-[#5b665e]">
                                         {milestone.description}
                                     </p>
                                     <span
-                                        className="mt-4 inline-flex rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.12em]"
+                                        className="mt-4 inline-flex rounded-full px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.12em]"
                                         style={{
                                             backgroundColor:
                                                 'rgba(245,197,24,.2)',
@@ -333,18 +369,18 @@ const HistoryTimeline = () => {
                     <Cell label="Hoy" filled={reached > total} />
                     <Reveal className="pt-1 md:pt-0">
                         <p
-                            className="text-[11px] font-extrabold uppercase tracking-[0.2em]"
+                            className="text-xs font-extrabold uppercase tracking-[0.2em]"
                             style={{ color: '#b08a00' }}
                         >
                             Y el vuelo continúa
                         </p>
                         <p
-                            className="mt-2 text-2xl font-bold leading-tight sm:text-3xl"
+                            className="mt-2 text-3xl font-bold leading-tight sm:text-4xl"
                             style={{ color: 'var(--lc-green)' }}
                         >
                             Una celda se convierte en otra.
                         </p>
-                        <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-[#5b665e]">
+                        <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed sm:text-lg text-[#5b665e]">
                             Lo que comenzó con 25 estudiantes hoy es una
                             comunidad que sigue construyendo futuro. Nuestra
                             historia todavía tiene muchas celdas por llenar.
