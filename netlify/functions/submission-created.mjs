@@ -51,7 +51,7 @@ export const handler = async (event) => {
     })
 
     try {
-        await transporter.sendMail({
+        const info = await transporter.sendMail({
             from:
                 process.env.MAIL_FROM ||
                 `"Pre-matrícula La Colmena" <${SMTP_USER}>`,
@@ -62,8 +62,18 @@ export const handler = async (event) => {
             html,
             text,
         })
+
+        // Queda en Logs → Functions: confirma a quién salió con el MAIL_TO vigente
+        console.log(
+            `Correo de la pre-matrícula enviado a ${MAIL_TO}. ` +
+                `Aceptados: ${info.accepted.join(', ') || 'ninguno'}. ` +
+                `Rechazados: ${info.rejected.join(', ') || 'ninguno'}.`,
+        )
     } catch (error) {
-        console.error('No se pudo enviar el correo de la pre-matrícula:', error)
+        console.error(
+            `No se pudo enviar el correo de la pre-matrícula a ${MAIL_TO}:`,
+            error,
+        )
         return { statusCode: 500 }
     }
 
