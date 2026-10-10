@@ -11,15 +11,8 @@ import {
     PiWarningCircleDuotone,
     PiWhatsappLogoBold,
 } from 'react-icons/pi'
-import {
-    SCHOOL,
-    LEVELS,
-    REQUIREMENTS,
-    ENROLLMENT_GRADES,
-    ENROLLMENT_SOURCES,
-    ENROLLMENT_STEPS,
-} from './lacolmenaData'
 import { THEME, Hexagon, HoneycombLayer, Reveal } from './brand'
+import { useLanguage } from './language'
 import { SubpageHeader, SubpageFooter } from './Subpage'
 import { ContactValue, useContactAction } from './ContactAction'
 import Seo from '@/components/shared/Seo'
@@ -46,68 +39,83 @@ const EMPTY = {
     telefono: '',
     comentarios: '',
     fuente: '',
+    // La casilla del aviso de privacidad: obligatoria y sin marcar
+    consentimiento: false,
     // Trampa para bots: el campo está oculto, una persona lo deja vacío
     'bot-field': '',
 }
 
-const LEVEL_NAMES = Object.fromEntries(
-    LEVELS.map((level) => [level.id, level.name]),
-)
-
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-/** Grados agrupados por nivel, en el formato de opciones de `Select`. */
-const GRADE_OPTIONS = ENROLLMENT_GRADES.map(({ level, grades }) => ({
-    label: LEVEL_NAMES[level],
-    options: grades.map((grade) => ({ value: grade, label: grade })),
-}))
+/**
+ * Grados agrupados por nivel, en el formato de opciones de `Select`. El
+ * valor que se envía es siempre el grado en español; en inglés solo
+ * cambia la etiqueta (ver `lacolmenaData.en.js`).
+ */
+const gradeOptions = ({ LEVELS, ENROLLMENT_GRADES, ENROLLMENT_GRADE_LABELS }) =>
+    ENROLLMENT_GRADES.map(({ level, grades }) => ({
+        label: LEVELS.find((item) => item.id === level).name,
+        options: grades.map((grade) => ({
+            value: grade,
+            label: ENROLLMENT_GRADE_LABELS?.[grade] ?? grade,
+        })),
+    }))
 
-const ALL_GRADES = GRADE_OPTIONS.flatMap((group) => group.options)
-
-const validate = (values) => {
+const validate = (values, t) => {
     const errors = {}
 
     // En el mismo orden que el formulario: el primero recibe el foco
     if (!values.estudiante_nombre.trim()) {
-        errors.estudiante_nombre = 'Escribe el nombre del estudiante.'
+        errors.estudiante_nombre = t('preEnrollment.errors.studentFirstName')
     }
     if (!values.estudiante_apellido.trim()) {
-        errors.estudiante_apellido = 'Escribe el apellido del estudiante.'
+        errors.estudiante_apellido = t('preEnrollment.errors.studentLastName')
     }
 
     if (!values.estudiante_nacimiento) {
-        errors.estudiante_nacimiento = 'Indica la fecha de nacimiento.'
+        errors.estudiante_nacimiento = t('preEnrollment.errors.birthDate')
     }
 
-    if (!values.grado) errors.grado = 'Marca el grado al que aplica.'
+    if (!values.grado) {
+        errors.grado = t('preEnrollment.errors.grade')
+    }
 
     if (!values.acudiente_nombre.trim()) {
-        errors.acudiente_nombre = 'Escribe tu nombre.'
+        errors.acudiente_nombre = t('preEnrollment.errors.guardianFirstName')
     }
     if (!values.acudiente_apellido.trim()) {
-        errors.acudiente_apellido = 'Escribe tu apellido.'
+        errors.acudiente_apellido = t('preEnrollment.errors.guardianLastName')
     }
 
     if (!values.correo.trim()) {
-        errors.correo = 'Escribe tu correo.'
+        errors.correo = t('preEnrollment.errors.emailMissing')
     } else if (!EMAIL_PATTERN.test(values.correo.trim())) {
-        errors.correo = 'Revisa el correo: parece incompleto.'
+        errors.correo = t('preEnrollment.errors.emailInvalid')
     }
 
     if (values.telefono.replace(/\D/g, '').length < 7) {
-        errors.telefono = 'Escribe un teléfono de al menos 7 dígitos.'
+        errors.telefono = t('preEnrollment.errors.phone')
+    }
+
+    if (!values.consentimiento) {
+        errors.consentimiento = t('preEnrollment.errors.consent')
     }
 
     return errors
 }
 
-const encode = (values) =>
+const encode = (values, { lang, privacyVersion }) =>
     new URLSearchParams({
         'form-name': FORM_NAME,
         ...values,
         estudiante_nacimiento: dayjs(values.estudiante_nacimiento).format(
             'YYYY-MM-DD',
         ),
+        // Queda guardado con el envío: prueba qué aviso aceptó la familia
+        consentimiento: values.consentimiento ? 'Sí' : 'No',
+        aviso_version: privacyVersion,
+        // Así secretaría sabe en qué idioma contestarle a la familia
+        idioma: lang === 'en' ? 'Inglés' : 'Español',
     }).toString()
 
 const inputClass = (invalid) =>
@@ -118,24 +126,28 @@ const inputClass = (invalid) =>
             : 'border-[rgba(46,58,51,.18)] focus:border-[#2E3A33] focus:ring-[#F5C518]/40',
     )
 
-const Field = ({ id, label, optional, error, className, children }) => (
-    <div className={className}>
-        <label
-            htmlFor={id}
-            className="mb-1.5 block text-sm font-bold"
-            style={{ color: 'var(--lc-green)' }}
-        >
-            {label}
-            {optional && (
-                <span className="ml-1.5 font-medium text-[#8a948c]">
-                    (opcional)
-                </span>
-            )}
-        </label>
-        {children}
-        {error && <FieldError id={`${id}-error`}>{error}</FieldError>}
-    </div>
-)
+const Field = ({ id, label, optional, error, className, children }) => {
+    const { t } = useLanguage()
+
+    return (
+        <div className={className}>
+            <label
+                htmlFor={id}
+                className="mb-1.5 block text-sm font-bold"
+                style={{ color: 'var(--lc-green)' }}
+            >
+                {label}
+                {optional && (
+                    <span className="ml-1.5 font-medium text-[#8a948c]">
+                        {t('preEnrollment.form.optional')}
+                    </span>
+                )}
+            </label>
+            {children}
+            {error && <FieldError id={`${id}-error`}>{error}</FieldError>}
+        </div>
+    )
+}
 
 const FieldError = ({ id, children }) => (
     <p id={id} className="mt-1.5 text-xs font-semibold text-[#c2412d]">
@@ -143,59 +155,74 @@ const FieldError = ({ id, children }) => (
     </p>
 )
 
-const whatsappHref = (text) =>
-    `https://wa.me/${SCHOOL.whatsapp}?text=${encodeURIComponent(text)}`
+const whatsappHref = (school, text) =>
+    `https://wa.me/${school.whatsapp}?text=${encodeURIComponent(text)}`
 
-const Sent = ({ nombre, estudiante }) => (
-    <div className="py-6 text-center">
-        <Hexagon
-            className="mx-auto mb-5 h-16 w-16 text-3xl"
-            style={{
-                backgroundColor: 'var(--lc-gold)',
-                color: 'var(--lc-green-deep)',
-            }}
-        >
-            <PiCheckBold />
-        </Hexagon>
-        <h2 className="text-2xl font-bold" style={{ color: 'var(--lc-green)' }}>
-            ¡Gracias, {nombre}!
-        </h2>
-        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#5b665e]">
-            Recibimos la solicitud de pre-matrícula de {estudiante}. Secretaría
-            te contactará en los próximos días hábiles para confirmar el cupo y
-            los pasos siguientes.
-        </p>
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <a
-                href={whatsappHref(
-                    `Hola, soy ${nombre} y acabo de enviar la pre-matrícula en línea de ${estudiante}.`,
-                )}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white transition hover:brightness-110"
-                style={{ backgroundColor: 'var(--lc-green)' }}
-            >
-                <PiWhatsappLogoBold className="text-base" />
-                Escribir por WhatsApp
-            </a>
-            <Link
-                to="/"
-                className="inline-flex items-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-bold transition hover:bg-[rgba(46,58,51,.04)]"
+const Sent = ({ nombre, estudiante }) => {
+    const { t, content } = useLanguage()
+
+    return (
+        <div className="py-6 text-center">
+            <Hexagon
+                className="mx-auto mb-5 h-16 w-16 text-3xl"
                 style={{
-                    borderColor: 'rgba(46,58,51,.2)',
-                    color: 'var(--lc-green)',
+                    backgroundColor: 'var(--lc-gold)',
+                    color: 'var(--lc-green-deep)',
                 }}
             >
-                Volver al sitio
-            </Link>
+                <PiCheckBold />
+            </Hexagon>
+            <h2
+                className="text-2xl font-bold"
+                style={{ color: 'var(--lc-green)' }}
+            >
+                {t('preEnrollment.sent.thanks', nombre)}
+            </h2>
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#5b665e]">
+                {t('preEnrollment.sent.received', estudiante)}
+            </p>
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+                <a
+                    href={whatsappHref(
+                        content.SCHOOL,
+                        t(
+                            'preEnrollment.sent.whatsappMessage',
+                            nombre,
+                            estudiante,
+                        ),
+                    )}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white transition hover:brightness-110"
+                    style={{ backgroundColor: 'var(--lc-green)' }}
+                >
+                    <PiWhatsappLogoBold className="text-base" />
+                    {t('common.whatsappCta')}
+                </a>
+                <Link
+                    to="/"
+                    className="inline-flex items-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-bold transition hover:bg-[rgba(46,58,51,.04)]"
+                    style={{
+                        borderColor: 'rgba(46,58,51,.2)',
+                        color: 'var(--lc-green)',
+                    }}
+                >
+                    {t('common.backToSite')}
+                </Link>
+            </div>
         </div>
-    </div>
-)
+    )
+}
 
 const PreEnrollmentForm = () => {
     const [values, setValues] = useState(EMPTY)
     const [errors, setErrors] = useState({})
     const [status, setStatus] = useState('idle') // idle | sending | sent | failed
+    const { lang, t, content } = useLanguage()
+    const { SCHOOL, ENROLLMENT_SOURCES, ENROLLMENT_SOURCE_LABELS, PRIVACY } =
+        content
+    const gradeGroups = gradeOptions(content)
+    const allGrades = gradeGroups.flatMap((group) => group.options)
 
     const set = (field) => (eventOrValue) => {
         const value = eventOrValue?.target
@@ -213,7 +240,7 @@ const PreEnrollmentForm = () => {
     const onSubmit = async (event) => {
         event.preventDefault()
 
-        const found = validate(values)
+        const found = validate(values, t)
         setErrors(found)
 
         const first = Object.keys(found)[0]
@@ -233,7 +260,10 @@ const PreEnrollmentForm = () => {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: encode(values),
+                body: encode(values, {
+                    lang,
+                    privacyVersion: PRIVACY.version,
+                }),
             })
 
             if (!response.ok) throw new Error(response.statusText)
@@ -265,7 +295,7 @@ const PreEnrollmentForm = () => {
         >
             <p className="hidden">
                 <label>
-                    No llenes este campo:
+                    {t('preEnrollment.form.botField')}
                     <input
                         name="bot-field"
                         value={values['bot-field']}
@@ -281,18 +311,17 @@ const PreEnrollmentForm = () => {
                     className="text-xl font-bold"
                     style={{ color: 'var(--lc-green)' }}
                 >
-                    Datos del estudiante
+                    {t('preEnrollment.form.studentTitle')}
                 </h2>
                 <p className="mt-1 text-xs text-[#7d877f]">
-                    Todos los campos son obligatorios salvo los marcados como
-                    opcionales.
+                    {t('preEnrollment.form.requiredNote')}
                 </p>
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
                 <Field
                     id="estudiante_nombre"
-                    label="Nombre"
+                    label={t('preEnrollment.form.studentFirstName')}
                     error={errors.estudiante_nombre}
                 >
                     <input
@@ -309,7 +338,7 @@ const PreEnrollmentForm = () => {
                 </Field>
                 <Field
                     id="estudiante_apellido"
-                    label="Apellido"
+                    label={t('preEnrollment.form.studentLastName')}
                     error={errors.estudiante_apellido}
                 >
                     <input
@@ -326,7 +355,7 @@ const PreEnrollmentForm = () => {
                 </Field>
                 <Field
                     id="estudiante_nacimiento"
-                    label="Fecha de nacimiento"
+                    label={t('preEnrollment.form.birthDate')}
                     error={errors.estudiante_nacimiento}
                 >
                     <FormItemContextProvider
@@ -335,9 +364,12 @@ const PreEnrollmentForm = () => {
                         <DatePicker
                             id="estudiante_nacimiento"
                             name="estudiante_nacimiento"
-                            locale="es"
+                            locale={lang}
                             inputFormat="DD/MM/YYYY"
-                            placeholder="dd/mm/aaaa"
+                            placeholder={t(
+                                'preEnrollment.form.birthDatePlaceholder',
+                            )}
+                            navigationLabels={t('preEnrollment.form.calendar')}
                             // Para una fecha de nacimiento: primero el año
                             defaultView="year"
                             maxDate={new Date()}
@@ -349,17 +381,19 @@ const PreEnrollmentForm = () => {
                 </Field>
                 <Field
                     id="grado"
-                    label="Grado al que aplica"
+                    label={t('preEnrollment.form.grade')}
                     error={errors.grado}
                 >
                     <Select
                         inputId="grado"
                         name="grado"
-                        placeholder="Selecciona el grado"
-                        noOptionsMessage={() => 'Sin resultados'}
-                        options={GRADE_OPTIONS}
+                        placeholder={t('preEnrollment.form.gradePlaceholder')}
+                        noOptionsMessage={() =>
+                            t('preEnrollment.form.noResults')
+                        }
+                        options={gradeGroups}
                         value={
-                            ALL_GRADES.find(
+                            allGrades.find(
                                 (option) => option.value === values.grado,
                             ) ?? null
                         }
@@ -371,7 +405,7 @@ const PreEnrollmentForm = () => {
                 </Field>
                 <Field
                     id="colegio_procedencia"
-                    label="Colegio de procedencia"
+                    label={t('preEnrollment.form.previousSchool')}
                     optional
                     className="sm:col-span-2"
                 >
@@ -388,21 +422,20 @@ const PreEnrollmentForm = () => {
             </div>
 
             <p className="-mt-2 text-xs text-[#7d877f]">
-                Si inscribes a más de un hijo, cuéntanos de los demás en
-                comentarios.
+                {t('preEnrollment.form.siblingsNote')}
             </p>
 
             <h2
                 className="pt-3 text-xl font-bold"
                 style={{ color: 'var(--lc-green)' }}
             >
-                Datos del acudiente
+                {t('preEnrollment.form.guardianTitle')}
             </h2>
 
             <div className="grid gap-5 sm:grid-cols-2">
                 <Field
                     id="acudiente_nombre"
-                    label="Nombre del acudiente"
+                    label={t('preEnrollment.form.guardianFirstName')}
                     error={errors.acudiente_nombre}
                 >
                     <input
@@ -419,7 +452,7 @@ const PreEnrollmentForm = () => {
                 </Field>
                 <Field
                     id="acudiente_apellido"
-                    label="Apellido del acudiente"
+                    label={t('preEnrollment.form.guardianLastName')}
                     error={errors.acudiente_apellido}
                 >
                     <input
@@ -436,7 +469,7 @@ const PreEnrollmentForm = () => {
                 </Field>
                 <Field
                     id="correo"
-                    label="Correo electrónico"
+                    label={t('preEnrollment.form.email')}
                     error={errors.correo}
                 >
                     <input
@@ -446,7 +479,7 @@ const PreEnrollmentForm = () => {
                         inputMode="email"
                         autoComplete="email"
                         maxLength={80}
-                        placeholder="nombre@correo.com"
+                        placeholder={t('preEnrollment.form.emailPlaceholder')}
                         value={values.correo}
                         onChange={set('correo')}
                         aria-invalid={!!errors.correo}
@@ -456,7 +489,7 @@ const PreEnrollmentForm = () => {
                 </Field>
                 <Field
                     id="telefono"
-                    label="Teléfono o WhatsApp"
+                    label={t('preEnrollment.form.phone')}
                     error={errors.telefono}
                 >
                     <input
@@ -476,7 +509,7 @@ const PreEnrollmentForm = () => {
                 </Field>
             </div>
 
-            <Field id="fuente" label="¿Cómo nos conociste?" optional>
+            <Field id="fuente" label={t('preEnrollment.form.source')} optional>
                 <select
                     id="fuente"
                     name="fuente"
@@ -487,31 +520,87 @@ const PreEnrollmentForm = () => {
                         !values.fuente && 'text-[#a3aca5]',
                     )}
                 >
-                    <option value="">Selecciona una opción</option>
+                    <option value="">
+                        {t('preEnrollment.form.sourcePlaceholder')}
+                    </option>
+                    {/* Se envía en español; en inglés solo cambia la etiqueta */}
                     {ENROLLMENT_SOURCES.map((source) => (
                         <option
                             key={source}
                             value={source}
                             className="text-[#2E3A33]"
                         >
-                            {source}
+                            {ENROLLMENT_SOURCE_LABELS?.[source] ?? source}
                         </option>
                     ))}
                 </select>
             </Field>
 
-            <Field id="comentarios" label="Comentarios o preguntas" optional>
+            <Field
+                id="comentarios"
+                label={t('preEnrollment.form.comments')}
+                optional
+            >
                 <textarea
                     id="comentarios"
                     name="comentarios"
                     rows={4}
                     maxLength={1000}
-                    placeholder="Por ejemplo: otros hijos que quieras inscribir, necesidades particulares o cualquier duda."
+                    placeholder={t('preEnrollment.form.commentsPlaceholder')}
                     value={values.comentarios}
                     onChange={set('comentarios')}
                     className={classNames(inputClass(false), 'resize-y')}
                 />
+                <p className="mt-1.5 text-xs text-[#7d877f]">
+                    {t('preEnrollment.form.healthNote')}
+                </p>
             </Field>
+
+            <div
+                className="rounded-xl border px-4 py-4"
+                style={{
+                    borderColor: errors.consentimiento
+                        ? '#c2412d'
+                        : 'rgba(46,58,51,.15)',
+                    backgroundColor: 'rgba(245,197,24,.08)',
+                }}
+            >
+                <div className="flex items-start gap-3">
+                    <input
+                        id="consentimiento"
+                        name="consentimiento"
+                        type="checkbox"
+                        checked={values.consentimiento}
+                        onChange={(event) =>
+                            set('consentimiento')(event.target.checked)
+                        }
+                        aria-invalid={!!errors.consentimiento}
+                        aria-describedby={describedBy('consentimiento')}
+                        className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[#2E3A33]"
+                    />
+                    <label
+                        htmlFor="consentimiento"
+                        className="cursor-pointer text-sm leading-relaxed text-[#4c574f]"
+                    >
+                        {t('preEnrollment.form.consent')}{' '}
+                        {/* En otra pestaña, para no perder lo ya escrito */}
+                        <Link
+                            to="/privacidad"
+                            target="_blank"
+                            rel="noopener"
+                            className="font-bold underline underline-offset-2"
+                            style={{ color: 'var(--lc-green)' }}
+                        >
+                            {t('preEnrollment.form.privacyLink')}
+                        </Link>
+                    </label>
+                </div>
+                {errors.consentimiento && (
+                    <FieldError id="consentimiento-error">
+                        {errors.consentimiento}
+                    </FieldError>
+                )}
+            </div>
 
             {status === 'failed' && (
                 <div
@@ -525,11 +614,11 @@ const PreEnrollmentForm = () => {
                 >
                     <PiWarningCircleDuotone className="mt-0.5 shrink-0 text-lg" />
                     <span>
-                        No pudimos enviar el formulario. Inténtalo de nuevo o
-                        escríbenos por{' '}
+                        {t('preEnrollment.form.failed')}{' '}
                         <a
                             href={whatsappHref(
-                                'Hola, quisiera información sobre la pre-matrícula.',
+                                SCHOOL,
+                                t('preEnrollment.form.failedWhatsappMessage'),
                             )}
                             target="_blank"
                             rel="noreferrer"
@@ -554,19 +643,18 @@ const PreEnrollmentForm = () => {
                 {status === 'sending' ? (
                     <>
                         <PiCircleNotchBold className="animate-spin" />
-                        Enviando…
+                        {t('preEnrollment.form.sending')}
                     </>
                 ) : (
                     <>
-                        Enviar pre-matrícula
+                        {t('preEnrollment.form.submit')}
                         <PiArrowRightBold />
                     </>
                 )}
             </button>
 
             <p className="text-center text-xs leading-relaxed text-[#8a948c]">
-                La pre-matrícula no reserva el cupo: la matrícula se formaliza
-                en secretaría con los documentos y el contrato firmado.
+                {t('preEnrollment.form.disclaimer')}
             </p>
         </form>
     )
@@ -580,6 +668,8 @@ const PreEnrollmentForm = () => {
  */
 const PreMatricula = () => {
     const { copiado, activar } = useContactAction()
+    const { t, content } = useLanguage()
+    const { SCHOOL, REQUIREMENTS, ENROLLMENT_STEPS } = content
 
     return (
         <div
@@ -587,9 +677,10 @@ const PreMatricula = () => {
             className="min-h-screen font-sans"
         >
             <Seo
-                title={`Pre-matrícula ${SCHOOL.enrollmentYear} — ${SCHOOL.name}`}
-                description={`Formulario de pre-matrícula del ${SCHOOL.name} en ${SCHOOL.city}, ${SCHOOL.province}. Pre-escolar, primaria, pre-media y bachiller en ciencias.`}
+                title={t('preEnrollment.seoTitle')}
+                description={t('preEnrollment.seoDescription')}
                 canonical="/pre-matricula"
+                locale={t('meta.locale')}
             />
 
             <SubpageHeader />
@@ -608,16 +699,13 @@ const PreMatricula = () => {
                             className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
                             style={{ color: 'var(--lc-gold)' }}
                         >
-                            Pre-matrícula {SCHOOL.enrollmentYear}
+                            {t('preEnrollment.eyebrow')} {SCHOOL.enrollmentYear}
                         </p>
                         <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
-                            Únete a La Colmena
+                            {t('preEnrollment.title')}
                         </h1>
                         <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/75">
-                            Déjanos tus datos y el grado que te interesa.
-                            Secretaría te contacta para confirmar el cupo,
-                            agendar una visita y explicarte los pasos de la
-                            matrícula.
+                            {t('preEnrollment.intro')}
                         </p>
                     </div>
                 </section>
@@ -632,7 +720,7 @@ const PreMatricula = () => {
                                     className="mb-5 text-lg font-bold"
                                     style={{ color: 'var(--lc-green)' }}
                                 >
-                                    Nuestro proceso de admisión
+                                    {t('preEnrollment.processTitle')}
                                 </h2>
                                 <ol className="space-y-5">
                                     {ENROLLMENT_STEPS.map((step, index) => (
@@ -682,7 +770,7 @@ const PreMatricula = () => {
                                     className="mb-4 text-base font-bold"
                                     style={{ color: 'var(--lc-green)' }}
                                 >
-                                    Documentos para la matrícula
+                                    {t('preEnrollment.documentsTitle')}
                                 </h2>
                                 <ul className="space-y-2.5">
                                     {REQUIREMENTS.map((item) => (
@@ -701,8 +789,7 @@ const PreMatricula = () => {
                                     ))}
                                 </ul>
                                 <p className="mt-4 text-xs leading-relaxed text-[#5b665e]">
-                                    No hace falta enviarlos ahora: se entregan
-                                    en secretaría.
+                                    {t('preEnrollment.documentsNote')}
                                 </p>
                             </Reveal>
 
@@ -711,7 +798,7 @@ const PreMatricula = () => {
                                     className="mb-1 font-bold"
                                     style={{ color: 'var(--lc-green)' }}
                                 >
-                                    ¿Prefieres hablar con nosotros?
+                                    {t('preEnrollment.talkToUs')}
                                 </p>
                                 <div className="-mx-2 flex flex-wrap items-center">
                                     <ContactValue

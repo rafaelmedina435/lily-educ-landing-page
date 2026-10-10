@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import { PiCheckBold, PiCopySimpleBold } from 'react-icons/pi'
+import { useLanguage } from './language'
 
 /**
  * Un puntero grueso significa dedo: el aparato puede llamar o abrir el
@@ -37,15 +38,19 @@ export const useContactAction = () => {
     return { copiado, activar: copiar }
 }
 
-const Copiado = () => (
-    <span
-        className="inline-flex items-center gap-1 text-xs font-bold"
-        style={{ color: 'var(--lc-green)' }}
-    >
-        <PiCheckBold />
-        Copiado
-    </span>
-)
+const Copiado = () => {
+    const { t } = useLanguage()
+
+    return (
+        <span
+            className="inline-flex items-center gap-1 text-xs font-bold"
+            style={{ color: 'var(--lc-green)' }}
+        >
+            <PiCheckBold />
+            {t('contact.copied')}
+        </span>
+    )
+}
 
 /**
  * Un dato de contacto pulsable. Es un enlace de verdad (`tel:`,
@@ -65,6 +70,7 @@ export const ContactValue = ({
     copyButton = false,
     className = '',
 }) => {
+    const { t } = useLanguage()
     const activo = copiado === itemKey
 
     const alPulsarEnlace = async (event) => {
@@ -88,7 +94,7 @@ export const ContactValue = ({
             >
                 <a
                     href={href}
-                    title={`Escribir a ${value}`}
+                    title={t('contact.emailValue', value)}
                     className="rounded-lg px-2 py-1 text-[#4a554d] underline-offset-2 transition hover:bg-[rgba(46,58,51,.06)] hover:underline"
                 >
                     {value}
@@ -96,8 +102,8 @@ export const ContactValue = ({
                 <button
                     type="button"
                     onClick={() => onActivate(itemKey, value)}
-                    title="Copiar"
-                    aria-label={`Copiar ${value}`}
+                    title={t('contact.copy')}
+                    aria-label={t('contact.copyValue', value)}
                     className="inline-flex items-center rounded-lg p-1.5 text-[#7d877f] transition hover:bg-[rgba(46,58,51,.06)] hover:text-[#4a554d]"
                 >
                     {activo ? <Copiado /> : <PiCopySimpleBold />}
@@ -110,7 +116,7 @@ export const ContactValue = ({
         <a
             href={href}
             onClick={alPulsarEnlace}
-            title={`${value} — pulsa para llamar o copiar`}
+            title={t('contact.callOrCopy', value)}
             className={`group inline-flex items-center gap-2 rounded-lg px-2 py-1 text-sm transition hover:bg-[rgba(46,58,51,.06)] ${className}`}
         >
             <span className="text-[#4a554d]">{value}</span>

@@ -16,6 +16,8 @@ const MonthTable = (props) => {
         preventFocus,
         monthLabelFormat = 'MMM',
         yearLabelFormat = 'YYYY',
+        previousLabel,
+        nextLabel,
         ...rest
     } = props
 
@@ -62,8 +64,8 @@ const MonthTable = (props) => {
                     typeof minYear === 'number' ? year > minYear : true
                 }
                 className={className}
-                nextLabel={'Año siguiente'}
-                previousLabel={'Año anterior'}
+                nextLabel={nextLabel}
+                previousLabel={previousLabel}
                 preventFocus={preventFocus}
                 onNext={() => onYearChange(year + 1)}
                 onPrevious={() => onYearChange(year - 1)}

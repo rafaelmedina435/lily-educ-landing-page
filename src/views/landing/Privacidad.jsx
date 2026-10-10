@@ -1,47 +1,45 @@
 import { Link } from 'react-router'
 import {
-    PiClockDuotone,
-    PiTShirtDuotone,
-    PiHandshakeDuotone,
-    PiNotebookDuotone,
-    PiDeviceMobileDuotone,
     PiShieldCheckDuotone,
-    PiChatsCircleDuotone,
-    PiCompassDuotone,
+    PiIdentificationCardDuotone,
+    PiTargetDuotone,
+    PiCheckSquareDuotone,
+    PiCloudDuotone,
+    PiHourglassDuotone,
+    PiUserCheckDuotone,
+    PiCookieDuotone,
+    PiTrashDuotone,
     PiSparkleDuotone,
     PiArrowRightBold,
-    PiInfoDuotone,
 } from 'react-icons/pi'
 import { THEME, Hexagon, HoneycombLayer, Reveal } from './brand'
 import { useLanguage } from './language'
 import { SubpageHeader, SubpageFooter } from './Subpage'
-import ApplyButton, { PRE_ENROLLMENT_PATH } from './ApplyButton'
+import { PRE_ENROLLMENT_PATH } from './ApplyButton'
 import { ContactValue, useContactAction } from './ContactAction'
 import Seo from '@/components/shared/Seo'
 
 const ICONS = {
-    clock: PiClockDuotone,
-    shirt: PiTShirtDuotone,
-    handshake: PiHandshakeDuotone,
-    notebook: PiNotebookDuotone,
-    phone: PiDeviceMobileDuotone,
     shield: PiShieldCheckDuotone,
-    chat: PiChatsCircleDuotone,
-    compass: PiCompassDuotone,
+    card: PiIdentificationCardDuotone,
+    target: PiTargetDuotone,
+    check: PiCheckSquareDuotone,
+    cloud: PiCloudDuotone,
+    hourglass: PiHourglassDuotone,
+    user: PiUserCheckDuotone,
+    cookie: PiCookieDuotone,
 }
 
 /**
- * Reglamento interno, en vista aparte.
- *
- * El contenido es deliberadamente general: describe las normas que rigen
- * la convivencia en el colegio sin reproducir el contrato de servicios
- * educativos, que es propio de cada institución y no es público. Tampoco
- * se ofrece descarga: es una página para leer, no un documento.
+ * Aviso de privacidad de la pre-matrícula. El formulario lo enlaza junto
+ * a la casilla de autorización y lo abre en otra pestaña, por eso no
+ * lleva el botón flotante de pre-matrícula: la familia vuelve a la
+ * pestaña donde dejó el formulario a medias.
  */
-const Reglamento = () => {
+const Privacidad = () => {
     const { copiado, activar } = useContactAction()
     const { t, content } = useLanguage()
-    const { SCHOOL, REGULATIONS, REGULATIONS_INTRO } = content
+    const { SCHOOL, PRIVACY } = content
 
     return (
         <div
@@ -49,9 +47,9 @@ const Reglamento = () => {
             className="min-h-screen font-sans"
         >
             <Seo
-                title={t('regulations.seoTitle')}
-                description={t('regulations.seoDescription')}
-                canonical="/reglamento"
+                title={t('privacy.seoTitle')}
+                description={t('privacy.seoDescription')}
+                canonical="/privacidad"
                 locale={t('meta.locale')}
             />
 
@@ -71,14 +69,22 @@ const Reglamento = () => {
                             className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
                             style={{ color: 'var(--lc-gold)' }}
                         >
-                            {t('regulations.eyebrow')}
+                            {t('privacy.eyebrow')}
                         </p>
                         <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
-                            {t('regulations.title')}
+                            {t('privacy.title')}
                         </h1>
                         <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/75">
-                            {REGULATIONS_INTRO}
+                            {PRIVACY.intro}
                         </p>
+                        <p className="mt-4 text-sm text-white/50">
+                            {t('privacy.updated')}
+                        </p>
+                        {PRIVACY.translationNote && (
+                            <p className="mt-2 text-sm italic text-white/50">
+                                {PRIVACY.translationNote}
+                            </p>
+                        )}
                     </div>
                 </section>
 
@@ -86,7 +92,7 @@ const Reglamento = () => {
                     <HoneycombLayer />
                     <div className="relative mx-auto max-w-5xl px-4 py-16">
                         <div className="grid gap-5 md:grid-cols-2">
-                            {REGULATIONS.map((block, index) => {
+                            {PRIVACY.sections.map((block, index) => {
                                 const Icon =
                                     ICONS[block.icon] || PiSparkleDuotone
 
@@ -141,26 +147,39 @@ const Reglamento = () => {
                             })}
                         </div>
 
+                        {/* Al final y destacado: lo que más le importa a una familia */}
                         <div
-                            className="mt-6 flex flex-wrap items-start gap-4 rounded-2xl border p-7"
+                            id="borrar"
+                            className="mt-6 flex flex-wrap items-start gap-5 rounded-2xl border p-7"
                             style={{
                                 borderColor: 'rgba(46,58,51,.12)',
-                                backgroundColor: 'rgba(245,197,24,.12)',
+                                backgroundColor: 'rgba(245,197,24,.14)',
                             }}
                         >
-                            <PiInfoDuotone
-                                className="mt-0.5 shrink-0 text-2xl"
-                                style={{ color: 'var(--lc-green)' }}
-                            />
+                            <Hexagon
+                                className="h-12 w-12 shrink-0 text-xl"
+                                style={{
+                                    backgroundColor: 'var(--lc-green)',
+                                    color: 'var(--lc-gold)',
+                                }}
+                            >
+                                <PiTrashDuotone />
+                            </Hexagon>
                             <div className="min-w-[240px] flex-1">
-                                <p className="text-sm leading-relaxed text-[#4c574f]">
-                                    {t('regulations.disclaimer')}
+                                <h2
+                                    className="text-lg font-bold"
+                                    style={{ color: 'var(--lc-green)' }}
+                                >
+                                    {PRIVACY.erase.title}
+                                </h2>
+                                <p className="mt-2 text-sm leading-relaxed text-[#4c574f]">
+                                    {PRIVACY.erase.description}
                                 </p>
-                                <div className="mt-2 flex flex-wrap items-center gap-x-1 gap-y-1 text-sm text-[#4c574f]">
-                                    <span>{t('regulations.questions')}</span>
+                                <div className="mt-3 flex flex-wrap items-center gap-x-1 gap-y-1 text-sm text-[#4c574f]">
+                                    <span>{t('common.emailUsAt')}</span>
                                     <ContactValue
-                                        value={SCHOOL.email}
-                                        href={`mailto:${SCHOOL.email}`}
+                                        value={PRIVACY.email}
+                                        href={`mailto:${PRIVACY.email}?subject=${encodeURIComponent(t('privacy.emailSubject'))}`}
                                         itemKey="correo"
                                         copiado={copiado}
                                         onActivate={activar}
@@ -186,18 +205,8 @@ const Reglamento = () => {
                                     color: 'var(--lc-green-deep)',
                                 }}
                             >
-                                {t('common.startPreEnrollment')}
+                                {t('privacy.cta')}
                                 <PiArrowRightBold />
-                            </Link>
-                            <Link
-                                to="/#admision"
-                                className="inline-flex items-center gap-2 rounded-full border-2 px-7 py-3.5 text-base font-bold transition hover:bg-white"
-                                style={{
-                                    borderColor: 'rgba(46,58,51,.2)',
-                                    color: 'var(--lc-green)',
-                                }}
-                            >
-                                {t('regulations.requirementsLink')}
                             </Link>
                         </div>
                     </div>
@@ -205,10 +214,8 @@ const Reglamento = () => {
             </main>
 
             <SubpageFooter />
-
-            <ApplyButton />
         </div>
     )
 }
 
-export default Reglamento
+export default Privacidad

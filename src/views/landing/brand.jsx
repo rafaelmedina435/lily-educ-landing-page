@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { SCHOOL } from './lacolmenaData'
+import { useLanguage } from './language'
 import useRevealHook from '@/utils/hooks/useReveal'
 
 /**
@@ -16,13 +16,21 @@ export const THEME = {
     '--lc-cream': '#FBF7EC',
 }
 
-export const Crest = ({ className }) => (
-    <img
-        src="/img/lacolmena/logo-la-colmena.png"
-        alt={`Escudo del ${SCHOOL.name}`}
-        className={className}
-    />
-)
+/**
+ * Escudo en WebP: pesa la quinta parte del PNG. El PNG se queda para los
+ * datos estructurados (JSON-LD), que leen buscadores sin WebP garantizado.
+ */
+export const Crest = ({ className }) => {
+    const { t } = useLanguage()
+
+    return (
+        <img
+            src="/img/lacolmena/logo-la-colmena.webp"
+            alt={t('common.crestAlt')}
+            className={className}
+        />
+    )
+}
 
 /**
  * Patrón de panal: la marca es una colmena.
@@ -106,10 +114,12 @@ export const BrandMark = ({ crestClassName = 'h-11 w-auto', light = true }) => (
             className="leading-tight"
             style={{ color: light ? '#fff' : 'var(--lc-green)' }}
         >
-            <span className="block text-[11px] uppercase tracking-[0.18em] opacity-70">
+            <span className="block whitespace-nowrap text-[11px] uppercase tracking-[0.12em] opacity-70 sm:tracking-[0.18em]">
                 Colegio Bilingüe
             </span>
-            <span className="block text-lg font-bold">La Colmena</span>
+            <span className="block whitespace-nowrap text-lg font-bold">
+                La Colmena
+            </span>
         </span>
     </span>
 )

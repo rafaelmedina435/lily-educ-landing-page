@@ -103,6 +103,27 @@ const button = (href, label, { background, color }) => `
 const EMPTY = `<span style="color:${COLORS.muted};font-weight:500;">No indicado</span>`
 
 /**
+ * La casilla del aviso de privacidad. Los envíos anteriores a la casilla
+ * (o un bot que salte el formulario) no la traen: se avisa en rojo para
+ * que secretaría lo confirme con la familia antes de usar los datos.
+ */
+const consentLabel = (data, privacyUrl) => {
+    const version = clean(data.aviso_version)
+
+    if (clean(data.consentimiento) === 'Sí') {
+        return {
+            html: `Sí. La familia autorizó el uso de sus datos y los del estudiante según el <a href="${escape(privacyUrl)}" style="color:${COLORS.text};text-decoration:underline;">aviso de privacidad del colegio</a>${version ? ` (versión ${escape(version)})` : ''}.`,
+            text: `Sí, según el aviso de privacidad del colegio${version ? ` (versión ${version})` : ''}: ${privacyUrl}`,
+        }
+    }
+
+    return {
+        html: `<span style="color:#C2412D;">No consta. Confírmalo con la familia antes de usar estos datos.</span>`,
+        text: 'No consta. Confírmalo con la familia antes de usar estos datos.',
+    }
+}
+
+/**
  * @param {Record<string, string>} data Campos del formulario tal como
  *   los guarda Netlify Forms.
  * @param {{ siteUrl: string, receivedAt?: Date }} options
@@ -123,18 +144,29 @@ export const renderPreMatricula = (
     const school = clean(data.colegio_procedencia)
     const source = clean(data.fuente)
     const comments = clean(data.comentarios)
+    // La familia llenó el formulario en inglés: se le contesta en inglés
+    const language = clean(data.idioma)
+    const english = language === 'Inglés'
 
     const birthLabel = birth ? formatBirthDate(birth, receivedAt) : ''
     const received = formatReceived(receivedAt)
     const logoUrl = `${siteUrl.replace(/\/$/, '')}/img/lacolmena/logo-correo.png`
+    const consent = consentLabel(
+        data,
+        `${siteUrl.replace(/\/$/, '')}/privacidad`,
+    )
 
     const subject = `Pre-matrícula: ${student}${grade ? ` – ${grade}` : ''}`
 
     const replyHref = `mailto:${email}?subject=${encodeURIComponent(
-        `Pre-matrícula de ${student} – ${SCHOOL.name}`,
+        english
+            ? `Pre-enrollment for ${student} – ${SCHOOL.name}`
+            : `Pre-matrícula de ${student} – ${SCHOOL.name}`,
     )}`
     const whatsappHref = `https://wa.me/${whatsappNumber(phone)}?text=${encodeURIComponent(
-        `Hola, ${clean(data.acudiente_nombre)}. Le escribimos del ${SCHOOL.name} por la pre-matrícula de ${student}.`,
+        english
+            ? `Hello, ${clean(data.acudiente_nombre)}. This is ${SCHOOL.name}, writing about the pre-enrollment for ${student}.`
+            : `Hola, ${clean(data.acudiente_nombre)}. Le escribimos del ${SCHOOL.name} por la pre-matrícula de ${student}.`,
     )}`
 
     const html = `<!doctype html>
@@ -212,6 +244,14 @@ export const renderPreMatricula = (
                             'Teléfono o WhatsApp',
                             `<a href="tel:+${whatsappNumber(phone)}" style="color:${COLORS.text};text-decoration:underline;">${escape(phone)}</a>`,
                         ],
+                        [
+                            'Idioma',
+                            english
+                                ? 'Inglés. Llenó el formulario en inglés: los botones de abajo ya traen la respuesta en inglés.'
+                                : language
+                                  ? escape(language)
+                                  : EMPTY,
+                        ],
                     ])}
 
                     ${section('Más información', [
@@ -222,6 +262,10 @@ export const renderPreMatricula = (
                                 ? escape(comments).replace(/\r?\n/g, '<br>')
                                 : EMPTY,
                         ],
+                    ])}
+
+                    ${section('Privacidad', [
+                        ['Autorización de datos', consent.html],
                     ])}
 
                     <!-- Acciones -->
@@ -242,7 +286,8 @@ export const renderPreMatricula = (
                             <p style="margin:0;font:500 12px/1.6 ${FONT};color:${COLORS.muted};">
                                 Recibido el ${escape(received)} desde el formulario de pre-matrícula de
                                 <a href="${escape(siteUrl)}" style="color:${COLORS.muted};">${SCHOOL.domain}</a>.
-                                También queda guardado en Netlify, en la sección Forms.
+                                También queda guardado en Netlify, en la sección Forms. Si la familia pide
+                                que se borren sus datos, hay que borrar este correo y el envío en Netlify.
                             </p>
                             <p style="margin:10px 0 0;font:italic 600 12px/1.6 ${FONT};color:${COLORS.green};">
                                 ${SCHOOL.motto}
@@ -270,9 +315,12 @@ export const renderPreMatricula = (
         `Nombre: ${guardian}`,
         `Correo: ${email}`,
         `Teléfono o WhatsApp: ${phone}`,
+        `Idioma: ${language || 'No indicado'}`,
         '',
         `¿Cómo nos conoció?: ${source || 'No indicado'}`,
         `Comentarios: ${comments || 'Ninguno'}`,
+        '',
+        `Autorización de datos: ${consent.text}`,
         '',
         `Recibido: ${received}`,
     ].join('\n')

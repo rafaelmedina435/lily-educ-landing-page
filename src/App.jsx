@@ -10,6 +10,8 @@ import LaColmena from '@/views/landing/LaColmena'
 import Reglamento from '@/views/landing/Reglamento'
 import VidaEscolar from '@/views/landing/VidaEscolar'
 import Historia from '@/views/landing/Historia'
+import Privacidad from '@/views/landing/Privacidad'
+import { LanguageProvider } from '@/views/landing/language'
 
 // Aparte porque trae el DatePicker y el Select del template (react-select,
 // floating-ui, dayjs), que el resto del sitio no usa
@@ -52,26 +54,32 @@ const ScrollOnNavigate = () => {
 }
 
 const App = () => (
-    <BrowserRouter>
-        <ScrollOnNavigate />
-        <Routes>
-            <Route path="/" element={<LaColmena />} />
-            <Route path="/reglamento" element={<Reglamento />} />
-            <Route path="/vida-escolar" element={<VidaEscolar />} />
-            <Route path="/historia" element={<Historia />} />
-            <Route
-                path="/pre-matricula"
-                element={
-                    <Suspense fallback={null}>
-                        <PreMatricula />
-                    </Suspense>
-                }
-            />
-            {/* Ruta que tenía la landing dentro de la plataforma */}
-            <Route path="/la-colmena" element={<Navigate to="/" replace />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-    </BrowserRouter>
+    <LanguageProvider>
+        <BrowserRouter>
+            <ScrollOnNavigate />
+            <Routes>
+                <Route path="/" element={<LaColmena />} />
+                <Route path="/reglamento" element={<Reglamento />} />
+                <Route path="/vida-escolar" element={<VidaEscolar />} />
+                <Route path="/historia" element={<Historia />} />
+                <Route path="/privacidad" element={<Privacidad />} />
+                <Route
+                    path="/pre-matricula"
+                    element={
+                        <Suspense fallback={null}>
+                            <PreMatricula />
+                        </Suspense>
+                    }
+                />
+                {/* Ruta que tenía la landing dentro de la plataforma */}
+                <Route
+                    path="/la-colmena"
+                    element={<Navigate to="/" replace />}
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+        </BrowserRouter>
+    </LanguageProvider>
 )
 
 export default App

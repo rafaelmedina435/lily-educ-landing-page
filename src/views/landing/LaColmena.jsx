@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import classNames from 'classnames'
 import {
@@ -31,18 +31,6 @@ import {
     PiSpeakerXFill,
 } from 'react-icons/pi'
 import {
-    SCHOOL,
-    ABOUT,
-    ABOUT_HIGHLIGHTS,
-    BENEFITS,
-    LEVELS,
-    PAYMENT_METHODS,
-    REQUIREMENTS,
-    ACTIVITIES,
-    PLATFORM,
-    CAMPUS,
-} from './lacolmenaData'
-import {
     THEME,
     Crest,
     HoneycombLayer,
@@ -55,6 +43,8 @@ import {
 import { ContactValue, useContactAction } from './ContactAction'
 import ApplyButton, { PRE_ENROLLMENT_PATH } from './ApplyButton'
 import { ActivityMedia, activityHref } from './activities'
+import { LanguageSwitch, useLanguage } from './language'
+import { FooterCredits } from './Subpage'
 import Seo from '@/components/shared/Seo'
 import { SIGN_IN_URL } from '@/configs/platform.config'
 
@@ -74,63 +64,68 @@ const PAYMENT_ICONS = {
     card: PiCreditCardDuotone,
 }
 
-const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    CAMPUS.mapsQuery,
-)}`
+const mapsHref = (query) =>
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
 
-const INSTAGRAM_LINK = `https://www.instagram.com/${SCHOOL.instagram}/`
+const instagramHref = (user) => `https://www.instagram.com/${user}/`
 
 /** Un teléfono panameño marcable: +507 y solo dígitos. */
 const telHref = (phone) => `tel:+507${phone.replace(/\D/g, '')}`
 
-const CONTACT_CARDS = [
-    {
-        icon: PiMapPinDuotone,
-        title: 'Dirección',
-        external: true,
-        values: [
-            { text: SCHOOL.address, href: MAPS_LINK },
-            { text: SCHOOL.addressLine2, href: MAPS_LINK },
-        ],
-    },
-    {
-        icon: PiPhoneDuotone,
-        title: 'Teléfonos',
-        values: SCHOOL.phones.map((phone) => ({
-            text: phone,
-            href: telHref(phone),
-        })),
-    },
-    {
-        icon: PiEnvelopeSimpleDuotone,
-        title: 'Correo',
-        copyButton: true,
-        values: [{ text: SCHOOL.email, href: `mailto:${SCHOOL.email}` }],
-    },
-    {
-        icon: PiInstagramLogoDuotone,
-        title: 'Instagram',
-        external: true,
-        href: INSTAGRAM_LINK,
-        values: [
-            {
-                text: `@${SCHOOL.instagram}`,
-                href: INSTAGRAM_LINK,
-            },
-        ],
-    },
-]
+/** Tarjetas de contacto, con los títulos en el idioma activo. */
+const contactCards = ({ SCHOOL, CAMPUS }, t) => {
+    const mapsLink = mapsHref(CAMPUS.mapsQuery)
+    const instagramLink = instagramHref(SCHOOL.instagram)
 
-const NAV = [
-    { href: '#nosotros', label: 'Nosotros' },
-    { href: '#niveles', label: 'Niveles' },
-    { href: '#vida', label: 'Vida escolar' },
-    { href: '#admision', label: 'Admisión' },
-    { href: '#contacto', label: 'Contacto' },
+    return [
+        {
+            icon: PiMapPinDuotone,
+            title: t('home.contact.address'),
+            external: true,
+            values: [
+                { text: SCHOOL.address, href: mapsLink },
+                { text: SCHOOL.addressLine2, href: mapsLink },
+            ],
+        },
+        {
+            icon: PiPhoneDuotone,
+            title: t('home.contact.phones'),
+            values: SCHOOL.phones.map((phone) => ({
+                text: phone,
+                href: telHref(phone),
+            })),
+        },
+        {
+            icon: PiEnvelopeSimpleDuotone,
+            title: t('home.contact.email'),
+            copyButton: true,
+            values: [{ text: SCHOOL.email, href: `mailto:${SCHOOL.email}` }],
+        },
+        {
+            icon: PiInstagramLogoDuotone,
+            title: 'Instagram',
+            external: true,
+            href: instagramLink,
+            values: [
+                {
+                    text: `@${SCHOOL.instagram}`,
+                    href: instagramLink,
+                },
+            ],
+        },
+    ]
+}
+
+const navItems = (t) => [
+    { href: '#nosotros', label: t('home.nav.about') },
+    { href: '#niveles', label: t('home.nav.levels') },
+    { href: '#vida', label: t('home.nav.schoolLife') },
+    { href: '#admision', label: t('home.nav.admissions') },
+    { href: '#contacto', label: t('home.nav.contact') },
 ]
 
 /** Datos estructurados: ayudan a Google a mostrar la ficha del colegio. */
-const JSON_LD = {
+const jsonLd = ({ SCHOOL, ABOUT }) => ({
     '@context': 'https://schema.org',
     '@type': 'EducationalOrganization',
     name: SCHOOL.name,
@@ -142,7 +137,7 @@ const JSON_LD = {
     telephone: SCHOOL.phones.map((phone) => `+507 ${phone}`),
     logo: '/img/lacolmena/logo-la-colmena.png',
     image: '/img/lacolmena/sede.jpg',
-    sameAs: [INSTAGRAM_LINK],
+    sameAs: [instagramHref(SCHOOL.instagram)],
     address: {
         '@type': 'PostalAddress',
         streetAddress: SCHOOL.address,
@@ -151,7 +146,7 @@ const JSON_LD = {
         addressCountry: 'PA',
     },
     openingHours: 'Mo-Fr 07:30-14:00',
-}
+})
 
 /**
  * Celdas del bento de vida escolar, en el orden de `ACTIVITIES`: la
@@ -172,74 +167,78 @@ const ACTIVITY_TILES = [
  * en escritorio, al pasar por encima aparece «Ver más» (y el resumen,
  * si la celda tiene espacio); en pantallas táctiles se ven siempre.
  */
-const ActivityTile = ({ activity, size }) => (
-    <Link
-        to={activityHref(activity)}
-        className="group relative flex w-full overflow-hidden rounded-3xl focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--lc-gold)]"
-    >
-        <ActivityMedia
-            activity={activity}
-            className="transition-transform duration-700 ease-out group-hover:scale-105"
-        />
-        <div
-            className="absolute inset-0 transition-opacity duration-500 desk:opacity-80 desk:group-hover:opacity-100"
-            style={{
-                background:
-                    'linear-gradient(to top, rgba(34,43,38,.95) 0%, rgba(34,43,38,.55) 45%, rgba(34,43,38,.1) 100%)',
-            }}
-        />
+const ActivityTile = ({ activity, size }) => {
+    const { t } = useLanguage()
 
-        <div
-            className={classNames(
-                'relative mt-auto w-full',
-                size === 'small' ? 'p-6' : 'p-6 sm:p-7',
-            )}
+    return (
+        <Link
+            to={activityHref(activity)}
+            className="group relative flex w-full overflow-hidden rounded-3xl focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[var(--lc-gold)]"
         >
-            <span
-                className="inline-block rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em]"
+            <ActivityMedia
+                activity={activity}
+                className="transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+            <div
+                className="absolute inset-0 transition-opacity duration-500 desk:opacity-80 desk:group-hover:opacity-100"
                 style={{
-                    backgroundColor: 'rgba(245,197,24,.18)',
-                    color: 'var(--lc-gold-soft)',
+                    background:
+                        'linear-gradient(to top, rgba(34,43,38,.95) 0%, rgba(34,43,38,.55) 45%, rgba(34,43,38,.1) 100%)',
                 }}
-            >
-                {activity.tag}
-            </span>
-            <h3
+            />
+
+            <div
                 className={classNames(
-                    'mt-3 font-bold leading-snug text-white',
-                    size === 'large' ? 'text-2xl sm:text-3xl' : 'text-xl',
+                    'relative mt-auto w-full',
+                    size === 'small' ? 'p-6' : 'p-6 sm:p-7',
                 )}
             >
-                {activity.title}
-            </h3>
+                <span
+                    className="inline-block rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em]"
+                    style={{
+                        backgroundColor: 'rgba(245,197,24,.18)',
+                        color: 'var(--lc-gold-soft)',
+                    }}
+                >
+                    {activity.tag}
+                </span>
+                <h3
+                    className={classNames(
+                        'mt-3 font-bold leading-snug text-white',
+                        size === 'large' ? 'text-2xl sm:text-3xl' : 'text-xl',
+                    )}
+                >
+                    {activity.title}
+                </h3>
 
-            {/* Resumen y botón: plegados hasta el hover en escritorio */}
-            <div className="grid transition-[grid-template-rows,opacity] duration-500 ease-out desk:grid-rows-[0fr] desk:opacity-0 desk:group-hover:grid-rows-[1fr] desk:group-hover:opacity-100 desk:group-focus-visible:grid-rows-[1fr] desk:group-focus-visible:opacity-100">
-                <div className="overflow-hidden">
-                    <p
-                        className={classNames(
-                            'mt-2 line-clamp-3 text-sm leading-relaxed text-white/75',
-                            size === 'large' && 'max-w-md',
-                            size === 'small' && 'lg:hidden',
-                        )}
-                    >
-                        {activity.summary}
-                    </p>
-                    <span
-                        className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold"
-                        style={{
-                            backgroundColor: 'var(--lc-gold)',
-                            color: 'var(--lc-green-deep)',
-                        }}
-                    >
-                        Ver más
-                        <PiArrowRightBold className="transition-transform group-hover:translate-x-1" />
-                    </span>
+                {/* Resumen y botón: plegados hasta el hover en escritorio */}
+                <div className="grid transition-[grid-template-rows,opacity] duration-500 ease-out desk:grid-rows-[0fr] desk:opacity-0 desk:group-hover:grid-rows-[1fr] desk:group-hover:opacity-100 desk:group-focus-visible:grid-rows-[1fr] desk:group-focus-visible:opacity-100">
+                    <div className="overflow-hidden">
+                        <p
+                            className={classNames(
+                                'mt-2 line-clamp-3 text-sm leading-relaxed text-white/75',
+                                size === 'large' && 'max-w-md',
+                                size === 'small' && 'lg:hidden',
+                            )}
+                        >
+                            {activity.summary}
+                        </p>
+                        <span
+                            className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold"
+                            style={{
+                                backgroundColor: 'var(--lc-gold)',
+                                color: 'var(--lc-green-deep)',
+                            }}
+                        >
+                            {t('home.schoolLife.learnMore')}
+                            <PiArrowRightBold className="transition-transform group-hover:translate-x-1" />
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </Link>
-)
+        </Link>
+    )
+}
 
 const SectionTitle = ({ eyebrow, title, description, light }) => (
     <div className="mx-auto mb-12 max-w-2xl text-center">
@@ -268,12 +267,13 @@ const SectionTitle = ({ eyebrow, title, description, light }) => (
     </div>
 )
 
-/** Parte ABOUT dejando las frases resaltadas en las posiciones impares. */
-const ABOUT_HIGHLIGHTS_PATTERN = new RegExp(
-    `(${ABOUT_HIGHLIGHTS.map((phrase) =>
-        phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-    ).join('|')})`,
-)
+/** Para partir ABOUT dejando las frases resaltadas en las posiciones impares. */
+const highlightPattern = (phrases) =>
+    new RegExp(
+        `(${phrases
+            .map((phrase) => phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+            .join('|')})`,
+    )
 
 /** Segundos a «m:ss». */
 const formatTime = (seconds) => {
@@ -291,6 +291,8 @@ const formatTime = (seconds) => {
  * derecho, que trae «Guardar video como».
  */
 const AnniversaryVideo = () => {
+    const { t, content } = useLanguage()
+    const { SCHOOL } = content
     const videoRef = useRef(null)
     const [started, setStarted] = useState(false)
     const [playing, setPlaying] = useState(false)
@@ -393,8 +395,12 @@ const AnniversaryVideo = () => {
                         onChange={seek}
                         className="block w-full cursor-pointer"
                         style={{ accentColor: 'var(--lc-gold)' }}
-                        aria-label="Avance del video"
-                        aria-valuetext={`${formatTime(currentTime)} de ${formatTime(duration)}`}
+                        aria-label={t('video.progress')}
+                        aria-valuetext={t(
+                            'video.position',
+                            formatTime(currentTime),
+                            formatTime(duration),
+                        )}
                     />
 
                     <div className="mt-2 flex items-center gap-3">
@@ -407,7 +413,7 @@ const AnniversaryVideo = () => {
                                 color: 'var(--lc-green-deep)',
                             }}
                             aria-label={
-                                playing ? 'Pausar video' : 'Reproducir video'
+                                playing ? t('video.pause') : t('video.play')
                             }
                         >
                             {playing ? (
@@ -424,7 +430,7 @@ const AnniversaryVideo = () => {
                                 onClick={toggleMute}
                                 className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                                 aria-label={
-                                    silent ? 'Activar sonido' : 'Silenciar'
+                                    silent ? t('video.unmute') : t('video.mute')
                                 }
                             >
                                 <VolumeIcon className="text-xl" />
@@ -439,7 +445,7 @@ const AnniversaryVideo = () => {
                                 onChange={changeVolume}
                                 className="w-0 cursor-pointer opacity-0 transition-all duration-300 group-hover/volume:ml-1 group-hover/volume:w-24 group-hover/volume:opacity-100 group-focus-within/volume:ml-1 group-focus-within/volume:w-24 group-focus-within/volume:opacity-100"
                                 style={{ accentColor: 'var(--lc-gold)' }}
-                                aria-label="Volumen"
+                                aria-label={t('video.volume')}
                             />
                         </div>
 
@@ -459,7 +465,7 @@ const AnniversaryVideo = () => {
                         background:
                             'linear-gradient(180deg, rgba(34,43,38,.15) 0%, rgba(34,43,38,.7) 100%)',
                     }}
-                    aria-label={`Reproducir video: ${SCHOOL.name}, 20 años`}
+                    aria-label={t('video.playLabel')}
                 >
                     <span
                         className="flex h-16 w-16 items-center justify-center rounded-full shadow-xl transition group-hover:scale-110 sm:h-20 sm:w-20"
@@ -478,10 +484,11 @@ const AnniversaryVideo = () => {
                             {SCHOOL.foundedYear} – {SCHOOL.foundedYear + 20}
                         </span>
                         <span className="mt-1 block text-2xl font-bold">
-                            20 años sembrando el néctar de la sabiduría
+                            {t('video.title')}
                         </span>
+                        {/* El video no lleva subtítulos: en inglés se avisa que está en español */}
                         <span className="mt-1 block text-sm text-white/70">
-                            Video · 2:22
+                            {t('video.meta')}
                         </span>
                     </span>
                 </button>
@@ -498,8 +505,26 @@ const LaColmena = () => {
 
     const { copiado, activar } = useContactAction()
 
+    const { t, content } = useLanguage()
+    const {
+        SCHOOL,
+        ABOUT,
+        ABOUT_HIGHLIGHTS,
+        BENEFITS,
+        LEVELS,
+        PAYMENT_METHODS,
+        REQUIREMENTS,
+        ACTIVITIES,
+        PLATFORM,
+        CAMPUS,
+    } = content
+    const nav = navItems(t)
+    const mapsLink = mapsHref(CAMPUS.mapsQuery)
+    // Memorizado: <Seo> reescribe el <head> cada vez que cambia
+    const structuredData = useMemo(() => jsonLd(content), [content])
+
     const whatsappLink = `https://wa.me/${SCHOOL.whatsapp}?text=${encodeURIComponent(
-        'Hola, quisiera información sobre la matrícula en el Colegio Bilingüe La Colmena.',
+        t('home.whatsappMessage'),
     )}`
 
     return (
@@ -509,10 +534,11 @@ const LaColmena = () => {
         >
             <Seo
                 title={`${SCHOOL.name} — ${SCHOOL.city}, ${SCHOOL.province}`}
-                description={`Colegio bilingüe en ${SCHOOL.city}, ${SCHOOL.province}. Pre-escolar, primaria, pre-media y bachiller en ciencias. Pre-matrícula en línea y portal para acudientes.`}
+                description={t('home.seoDescription')}
                 canonical="/"
                 image={PHOTOS.sede}
-                jsonLd={JSON_LD}
+                locale={t('meta.locale')}
+                jsonLd={structuredData}
             />
 
             {/* ── Barra superior ─────────────────────────────────── */}
@@ -523,21 +549,21 @@ const LaColmena = () => {
                     borderColor: 'rgba(245,197,24,.25)',
                 }}
             >
-                <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 lg:px-12 xl:px-4 py-3">
+                <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 sm:gap-4 lg:px-12 xl:px-4 py-3">
                     <a href="#inicio" className="flex items-center gap-3">
                         <Crest className="h-11 w-auto drop-shadow" />
                         <span className="leading-tight text-white">
-                            <span className="block text-[11px] uppercase tracking-[0.18em] opacity-70">
+                            <span className="block whitespace-nowrap text-[11px] uppercase tracking-[0.12em] opacity-70 sm:tracking-[0.18em]">
                                 Colegio Bilingüe
                             </span>
-                            <span className="block text-lg font-bold">
+                            <span className="block whitespace-nowrap text-lg font-bold">
                                 La Colmena
                             </span>
                         </span>
                     </a>
 
-                    <nav className="ml-auto hidden items-center gap-6 lg:flex">
-                        {NAV.map((item) => (
+                    <nav className="ml-auto hidden items-center gap-6 xl:flex">
+                        {nav.map((item) => (
                             <a
                                 key={item.href}
                                 href={item.href}
@@ -548,7 +574,7 @@ const LaColmena = () => {
                         ))}
                     </nav>
 
-                    <div className="ml-auto hidden items-center gap-3 lg:ml-0 lg:flex">
+                    <div className="hidden items-center gap-3 xl:flex">
                         <a
                             href={SIGN_IN_URL}
                             className="text-sm font-medium text-white/70 transition hover:text-white"
@@ -563,14 +589,20 @@ const LaColmena = () => {
                                 color: 'var(--lc-green-deep)',
                             }}
                         >
-                            Pre-matrícula en línea
+                            {t('common.onlinePreEnrollment')}
                         </Link>
                     </div>
 
+                    {/* Siempre a la vista: en escritorio cierra la barra,
+                        después de la pre-matrícula; hasta 1280px va junto al
+                        botón del menú, porque con el selector el menú completo
+                        ya no cabe en una línea a 1024px */}
+                    <LanguageSwitch className="ml-auto xl:ml-0" />
+
                     <button
                         type="button"
-                        aria-label="Abrir menú"
-                        className="ml-auto p-2 text-2xl text-white lg:hidden"
+                        aria-label={t('home.openMenu')}
+                        className="-ml-2 p-2 text-2xl text-white xl:hidden"
                         onClick={() => setMenuOpen((open) => !open)}
                     >
                         {menuOpen ? <PiXBold /> : <PiListBold />}
@@ -578,9 +610,9 @@ const LaColmena = () => {
                 </div>
 
                 {menuOpen && (
-                    <div className="border-t border-white/10 px-4 pb-4 lg:hidden">
+                    <div className="border-t border-white/10 px-4 pb-4 xl:hidden">
                         <nav className="flex flex-col gap-1 pt-3">
-                            {NAV.map((item) => (
+                            {nav.map((item) => (
                                 <a
                                     key={item.href}
                                     href={item.href}
@@ -605,7 +637,7 @@ const LaColmena = () => {
                                     color: 'var(--lc-green-deep)',
                                 }}
                             >
-                                Pre-matrícula en línea
+                                {t('common.onlinePreEnrollment')}
                             </Link>
                         </nav>
                     </div>
@@ -661,7 +693,7 @@ const LaColmena = () => {
                                     color: 'var(--lc-gold-soft)',
                                 }}
                             >
-                                Matrícula abierta {SCHOOL.enrollmentYear}
+                                {t('home.hero.badge')}
                             </span>
 
                             <h1 className="mt-4 text-4xl font-bold leading-[1.1] text-white sm:mt-6 sm:text-5xl lg:text-6xl">
@@ -669,10 +701,7 @@ const LaColmena = () => {
                             </h1>
 
                             <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/75 sm:mt-5 sm:text-lg lg:mx-0">
-                                Colegio bilingüe en {SCHOOL.city},{' '}
-                                {SCHOOL.province}. Veinte años formando
-                                estudiantes con valores, criterio y dominio del
-                                inglés — desde pre-escolar hasta bachillerato.
+                                {t('home.hero.intro')}
                             </p>
 
                             <div className="mt-7 flex flex-wrap justify-center gap-3 sm:mt-9 lg:justify-start">
@@ -684,7 +713,7 @@ const LaColmena = () => {
                                         color: 'var(--lc-green-deep)',
                                     }}
                                 >
-                                    Iniciar pre-matrícula
+                                    {t('common.startPreEnrollment')}
                                     <PiArrowRightBold />
                                 </Link>
                                 <a
@@ -697,13 +726,12 @@ const LaColmena = () => {
                                     }}
                                 >
                                     <PiWhatsappLogoDuotone className="text-xl" />
-                                    Escríbenos
+                                    {t('home.hero.whatsapp')}
                                 </a>
                             </div>
 
                             <p className="mt-5 text-sm text-white/50 sm:mt-6">
-                                Fundado en {SCHOOL.foundedYear} · {SCHOOL.city},{' '}
-                                {SCHOOL.province}
+                                {t('home.hero.founded')}
                             </p>
                         </div>
 
@@ -732,12 +760,7 @@ const LaColmena = () => {
                 >
                     <HoneycombLayer />
                     <div className="relative mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 lg:px-12 xl:px-4 py-10 lg:grid-cols-4">
-                        {[
-                            { value: '20', label: 'años de experiencia' },
-                            { value: '4', label: 'niveles académicos' },
-                            { value: '100%', label: 'programa bilingüe' },
-                            { value: '2', label: 'idiomas en el aula' },
-                        ].map((stat) => (
+                        {t('home.stats').map((stat) => (
                             <div key={stat.label} className="text-center">
                                 <p
                                     className="text-3xl font-bold sm:text-4xl"
@@ -758,8 +781,8 @@ const LaColmena = () => {
                     <HoneycombLayer />
                     <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
-                            eyebrow="Sobre nosotros"
-                            title="Una educación con valores, inteligente y creativa"
+                            eyebrow={t('home.about.eyebrow')}
+                            title={t('home.about.title')}
                         />
                         <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-center">
                             <Reveal className="relative mx-auto w-full max-w-2xl lg:mx-0">
@@ -778,7 +801,7 @@ const LaColmena = () => {
                                             className="text-base font-bold italic leading-snug sm:text-xl"
                                             style={{ color: 'var(--lc-gold)' }}
                                         >
-                                            «{SCHOOL.motto}»
+                                            {t('common.motto')}
                                         </p>
                                         <p className="mt-0.5 text-xs tracking-wide text-white/60 sm:text-sm">
                                             {SCHOOL.city}, {SCHOOL.province}
@@ -790,32 +813,28 @@ const LaColmena = () => {
                             <div>
                                 <p className="text-lg leading-relaxed text-[#4a554d]">
                                     {/* Las frases de ABOUT_HIGHLIGHTS van en negrita */}
-                                    {ABOUT.split(ABOUT_HIGHLIGHTS_PATTERN).map(
-                                        (part, index) =>
-                                            index % 2 ? (
-                                                <strong
-                                                    key={index}
-                                                    className="font-bold"
-                                                    style={{
-                                                        color: 'var(--lc-green)',
-                                                    }}
-                                                >
-                                                    {part}
-                                                </strong>
-                                            ) : (
-                                                <Fragment key={index}>
-                                                    {part}
-                                                </Fragment>
-                                            ),
+                                    {ABOUT.split(
+                                        highlightPattern(ABOUT_HIGHLIGHTS),
+                                    ).map((part, index) =>
+                                        index % 2 ? (
+                                            <strong
+                                                key={index}
+                                                className="font-bold"
+                                                style={{
+                                                    color: 'var(--lc-green)',
+                                                }}
+                                            >
+                                                {part}
+                                            </strong>
+                                        ) : (
+                                            <Fragment key={index}>
+                                                {part}
+                                            </Fragment>
+                                        ),
                                     )}
                                 </p>
                                 <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                                    {[
-                                        'Formación bilingüe',
-                                        'Ambiente de aprendizaje propicio',
-                                        'Acompañamiento personalizado',
-                                        'Plan de estudios completo',
-                                    ].map((item) => (
+                                    {t('home.about.checks').map((item) => (
                                         <div
                                             key={item}
                                             className="flex items-center gap-2 text-sm font-medium text-[#3d4a42]"
@@ -838,7 +857,7 @@ const LaColmena = () => {
                                         color: 'var(--lc-green)',
                                     }}
                                 >
-                                    Conocer nuestra historia
+                                    {t('home.about.historyLink')}
                                     <PiArrowRightBold />
                                 </Link>
                             </div>
@@ -854,8 +873,8 @@ const LaColmena = () => {
                     <HoneycombLayer />
                     <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
-                            eyebrow="Por qué La Colmena"
-                            title="Lo que distingue a nuestros estudiantes"
+                            eyebrow={t('home.benefits.eyebrow')}
+                            title={t('home.benefits.title')}
                         />
                         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                             {BENEFITS.map((benefit, index) => {
@@ -919,7 +938,7 @@ const LaColmena = () => {
                                 className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
                                 style={{ color: 'var(--lc-gold)' }}
                             >
-                                Nuestra sede
+                                {t('home.campus.eyebrow')}
                             </p>
                             <h2 className="text-3xl font-bold text-white sm:text-4xl">
                                 {CAMPUS.title}
@@ -956,7 +975,7 @@ const LaColmena = () => {
                             </div>
 
                             <a
-                                href={MAPS_LINK}
+                                href={mapsLink}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition hover:brightness-95"
@@ -966,7 +985,7 @@ const LaColmena = () => {
                                 }}
                             >
                                 <PiNavigationArrowDuotone className="text-base" />
-                                Cómo llegar
+                                {t('home.campus.directions')}
                             </a>
                         </Reveal>
                     </div>
@@ -977,9 +996,9 @@ const LaColmena = () => {
                     <HoneycombLayer />
                     <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
-                            eyebrow="Oferta académica"
-                            title="Cuatro niveles, un mismo estándar"
-                            description="Cada nivel tiene su horario y su plan de materias. Toca un nivel para ver el detalle completo."
+                            eyebrow={t('home.levels.eyebrow')}
+                            title={t('home.levels.title')}
+                            description={t('home.levels.description')}
                         />
 
                         {/* `items-start` evita que la tarjeta vecina se estire al expandir una */}
@@ -1043,8 +1062,12 @@ const LaColmena = () => {
                                                 }}
                                             >
                                                 {open
-                                                    ? 'Ocultar materias'
-                                                    : 'Ver materias'}
+                                                    ? t(
+                                                          'home.levels.hideSubjects',
+                                                      )
+                                                    : t(
+                                                          'home.levels.showSubjects',
+                                                      )}
                                                 <PiCaretDownBold
                                                     className={classNames(
                                                         'text-xs transition',
@@ -1063,8 +1086,10 @@ const LaColmena = () => {
                                                 }}
                                             >
                                                 <p className="mb-3 text-xs font-bold uppercase tracking-[0.15em] text-[#8a948c]">
-                                                    Materias (
-                                                    {level.subjects.length})
+                                                    {t(
+                                                        'home.levels.subjectCount',
+                                                        level.subjects.length,
+                                                    )}
                                                 </p>
                                                 <div className="flex flex-wrap gap-2">
                                                     {level.subjects.map(
@@ -1101,9 +1126,9 @@ const LaColmena = () => {
                     <HoneycombLayer />
                     <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
-                            eyebrow="Vida escolar"
-                            title="Aprender también pasa fuera del aula"
-                            description="Folclore, banda de guerra, idiomas, emprendimiento y deporte: actividades que forman en disciplina, creatividad y trabajo en equipo."
+                            eyebrow={t('home.schoolLife.eyebrow')}
+                            title={t('home.schoolLife.title')}
+                            description={t('home.schoolLife.description')}
                         />
 
                         {/* Bento: el folclore ocupa el bloque grande; el resto
@@ -1136,7 +1161,7 @@ const LaColmena = () => {
                                     color: 'var(--lc-green)',
                                 }}
                             >
-                                Conocer toda la vida escolar
+                                {t('home.schoolLife.allActivities')}
                                 <PiArrowRightBold />
                             </Link>
                         </div>
@@ -1161,7 +1186,7 @@ const LaColmena = () => {
                                 className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
                                 style={{ color: 'var(--lc-gold)' }}
                             >
-                                Plataforma
+                                {t('home.platform.eyebrow')}
                             </p>
                             <h2
                                 className="text-2xl font-bold sm:text-3xl"
@@ -1179,7 +1204,7 @@ const LaColmena = () => {
                             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-7 py-3.5 text-base font-bold text-white transition hover:brightness-110"
                             style={{ backgroundColor: 'var(--lc-green)' }}
                         >
-                            Entrar al portal
+                            {t('home.platform.cta')}
                             <PiArrowRightBold />
                         </a>
                     </div>
@@ -1195,9 +1220,9 @@ const LaColmena = () => {
                     <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
                             light
-                            eyebrow="Admisión"
-                            title="Matricularse es sencillo"
-                            description="Reúne los documentos, envía tu solicitud en línea y nuestra secretaría te contacta."
+                            eyebrow={t('home.admissions.eyebrow')}
+                            title={t('home.admissions.title')}
+                            description={t('home.admissions.description')}
                         />
 
                         <div
@@ -1205,7 +1230,7 @@ const LaColmena = () => {
                             style={{ backgroundColor: 'rgba(255,255,255,.06)' }}
                         >
                             <h3 className="mb-5 text-lg font-bold text-white">
-                                Requisitos
+                                {t('home.admissions.requirements')}
                             </h3>
                             <ul className="grid gap-x-8 gap-y-3 md:grid-cols-2">
                                 {REQUIREMENTS.map((item) => (
@@ -1230,7 +1255,7 @@ const LaColmena = () => {
                                     className="inline-flex items-center gap-2 text-sm font-bold transition hover:brightness-110"
                                     style={{ color: 'var(--lc-gold)' }}
                                 >
-                                    Conocer el reglamento del colegio
+                                    {t('home.admissions.regulationsLink')}
                                     <PiArrowRightBold />
                                 </Link>
 
@@ -1242,7 +1267,7 @@ const LaColmena = () => {
                                         color: 'var(--lc-green-deep)',
                                     }}
                                 >
-                                    Llenar formulario de pre-matrícula
+                                    {t('home.admissions.formLink')}
                                     <PiArrowRightBold />
                                 </Link>
                             </div>
@@ -1254,11 +1279,10 @@ const LaColmena = () => {
                             style={{ backgroundColor: 'rgba(255,255,255,.06)' }}
                         >
                             <h3 className="mb-2 text-lg font-bold text-white">
-                                Formas de pago aceptadas
+                                {t('home.admissions.paymentTitle')}
                             </h3>
                             <p className="mb-6 text-sm text-white/60">
-                                Paga como te quede más cómodo. Cada pago queda
-                                registrado en el portal del acudiente.
+                                {t('home.admissions.paymentDescription')}
                             </p>
 
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -1305,13 +1329,13 @@ const LaColmena = () => {
                     <HoneycombLayer />
                     <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
                         <SectionTitle
-                            eyebrow="Contáctanos"
-                            title="Estamos para atenderte"
-                            description="Toca cualquier dato: desde el celular llama, abre el correo o Instagram; desde la computadora copia el teléfono al portapapeles."
+                            eyebrow={t('home.contact.eyebrow')}
+                            title={t('home.contact.title')}
+                            description={t('home.contact.description')}
                         />
 
                         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                            {CONTACT_CARDS.map((card, index) => {
+                            {contactCards(content, t).map((card, index) => {
                                 const Icon = card.icon
 
                                 const contenido = (
@@ -1422,11 +1446,10 @@ const LaColmena = () => {
                                         className="text-sm font-bold"
                                         style={{ color: 'var(--lc-green)' }}
                                     >
-                                        Horario de atención
+                                        {t('home.contact.hours')}
                                     </p>
                                     <p className="text-sm text-[#5b665e]">
-                                        Lunes a viernes · 7:30 a. m. — 2:00 p.
-                                        m.
+                                        {t('home.contact.hoursValue')}
                                     </p>
                                 </div>
                             </div>
@@ -1438,7 +1461,7 @@ const LaColmena = () => {
                                 style={{ backgroundColor: '#25D366' }}
                             >
                                 <PiWhatsappLogoDuotone className="text-lg" />
-                                Escribir por WhatsApp
+                                {t('common.whatsappCta')}
                             </a>
                         </Reveal>
                     </div>
@@ -1459,23 +1482,23 @@ const LaColmena = () => {
                             {SCHOOL.address} · {SCHOOL.addressLine2}
                         </p>
                         <p className="mt-1 text-sm text-white/40">
-                            Año lectivo {SCHOOL.schoolYear}
+                            {t('home.footer.schoolYear')}
                         </p>
                     </div>
                     <p
                         className="text-sm font-bold italic"
                         style={{ color: 'var(--lc-gold)' }}
                     >
-                        «{SCHOOL.motto}»
+                        {t('common.motto')}
                     </p>
                 </div>
 
                 <div className="border-t border-white/10">
                     <nav
-                        aria-label="Enlaces del sitio"
+                        aria-label={t('home.footer.linksLabel')}
                         className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4 lg:px-12 xl:px-4 py-5 text-sm sm:justify-start"
                     >
-                        {NAV.map((item) => (
+                        {nav.map((item) => (
                             <a
                                 key={item.href}
                                 href={item.href}
@@ -1488,28 +1511,36 @@ const LaColmena = () => {
                             to="/historia"
                             className="text-white/55 transition hover:text-white"
                         >
-                            Nuestra historia
+                            {t('home.footer.history')}
                         </Link>
                         <Link
                             to="/reglamento"
                             className="text-white/55 transition hover:text-white"
                         >
-                            Reglamento
+                            {t('home.footer.regulations')}
                         </Link>
                         <Link
                             to={PRE_ENROLLMENT_PATH}
                             className="text-white/55 transition hover:text-white"
                         >
-                            Pre-matrícula en línea
+                            {t('common.onlinePreEnrollment')}
+                        </Link>
+                        <Link
+                            to="/privacidad"
+                            className="text-white/55 transition hover:text-white"
+                        >
+                            {t('home.footer.privacy')}
                         </Link>
                         <a
                             href={SIGN_IN_URL}
                             className="text-white/55 transition hover:text-white"
                         >
-                            Portal del acudiente
+                            {t('home.footer.portal')}
                         </a>
                     </nav>
                 </div>
+
+                <FooterCredits className="max-w-6xl px-4 lg:px-12 xl:px-4" />
             </footer>
 
             <ApplyButton />

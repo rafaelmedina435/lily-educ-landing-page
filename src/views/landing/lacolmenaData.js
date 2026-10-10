@@ -589,3 +589,385 @@ export const ENROLLMENT_STEPS = [
             'Firmas la hoja de inscripción y el contrato escolar, y tu hijo ya es parte de la colmena.',
     },
 ]
+
+/* ------------------------------------------------------------------ *
+ * Aviso de privacidad — vista `/privacidad` y casilla de la pre-matrícula
+ * Sigue la Ley 81 de 2019 y el Decreto Ejecutivo 285 de 2021. Las notas
+ * de dónde viajan los datos y qué falta decidir están en
+ * `docs/aviso-de-privacidad.md`.
+ *
+ * PENDIENTE DE CONFIRMAR con el colegio: el correo para estos temas (hoy
+ * el general) y los plazos para borrar los datos.
+ * ------------------------------------------------------------------ */
+
+export const PRIVACY = {
+    /**
+     * Viaja con cada pre-matrícula para saber qué texto aceptó la familia.
+     * Si el aviso cambia en algo de fondo, se sube la versión.
+     */
+    version: 'v2026-10',
+    updated: 'octubre de 2026',
+    email: SCHOOL.email,
+    intro: 'Cuando llenas la pre-matrícula nos confías tus datos y los de tu hijo. Aquí te contamos, sin letra pequeña, qué hacemos con ellos, conforme a la Ley 81 de 2019 de Protección de Datos Personales de Panamá.',
+    sections: [
+        {
+            id: 'responsable',
+            title: 'Quién cuida tus datos',
+            icon: 'shield',
+            points: [
+                `El ${SCHOOL.name}, en ${SCHOOL.address}, ${SCHOOL.city}, es el responsable de tus datos.`,
+                `Para cualquier tema de privacidad escríbenos a ${SCHOOL.email} o llámanos al ${SCHOOL.phones[0]}.`,
+            ],
+        },
+        {
+            id: 'datos',
+            title: 'Qué datos pedimos',
+            icon: 'card',
+            points: [
+                'Del estudiante: nombre, apellido, fecha de nacimiento, grado al que aplica y, si quieres, el colegio de donde viene.',
+                'Tuyos: nombre, apellido, correo y teléfono.',
+                'Si quieres: cómo nos conociste y tus comentarios.',
+                'No pedimos datos de salud ni otros datos delicados.',
+            ],
+        },
+        {
+            id: 'uso',
+            title: 'Para qué los usamos',
+            icon: 'target',
+            points: [
+                'Para contactarte, confirmar el cupo y resolver tus dudas.',
+                'Para agendar tu visita al colegio.',
+                'Para preparar la matrícula si decides continuar.',
+                'No los usamos para publicidad, no los vendemos y no los compartimos con otros colegios ni empresas.',
+            ],
+        },
+        {
+            id: 'autorizacion',
+            title: 'Tu autorización',
+            icon: 'check',
+            points: [
+                'Al marcar la casilla del formulario nos das permiso, como padre, madre o acudiente del estudiante, para usar estos datos.',
+                'Puedes retirar ese permiso cuando quieras: basta con escribirnos.',
+            ],
+        },
+        {
+            id: 'donde',
+            title: 'Dónde se guardan',
+            icon: 'cloud',
+            points: [
+                'Nuestro sitio web funciona con Netlify, una empresa de Estados Unidos que guarda los formularios y los revisa con un filtro contra el spam.',
+                'Cada solicitud también llega por correo a la secretaría del colegio.',
+                'Por eso tus datos se guardan fuera de Panamá. Al marcar la casilla también lo aceptas.',
+                'Solo el personal que atiende la admisión puede verlos.',
+            ],
+        },
+        {
+            id: 'tiempo',
+            title: 'Cuánto tiempo los guardamos',
+            icon: 'hourglass',
+            points: [
+                'Solo mientras dura el proceso de matrícula del año al que aplicas.',
+                'Si el estudiante no se matricula, los borramos cuando termina ese período.',
+                'Si se matricula, pasan a su expediente escolar, que se rige por el contrato y el reglamento del colegio.',
+            ],
+        },
+        {
+            id: 'derechos',
+            title: 'Tus derechos',
+            icon: 'user',
+            points: [
+                'Puedes pedirnos ver tus datos, corregirlos, dejar de usarlos o recibir una copia. También en nombre del estudiante.',
+                'Es gratis. Te respondemos en un máximo de 10 días hábiles, y las correcciones las hacemos en 5.',
+                'Si no te respondemos, puedes acudir a la Autoridad Nacional de Transparencia y Acceso a la Información (ANTAI).',
+            ],
+        },
+        {
+            id: 'cookies',
+            title: 'Cookies y cambios',
+            icon: 'cookie',
+            points: [
+                'Este sitio no usa cookies de seguimiento ni de publicidad.',
+                'Si cambiamos este aviso, publicaremos aquí la nueva versión con su fecha.',
+            ],
+        },
+    ],
+    /** Cierra la página: lo más importante es que se puede borrar todo. */
+    erase: {
+        title: 'Puedes pedir que borremos tus datos',
+        description:
+            'En cualquier momento puedes pedirnos que borremos tus datos y los del estudiante. Escríbenos desde el correo que usaste en el formulario, o llámanos, y los borramos de todos nuestros registros: del formulario y del correo de secretaría. Te avisamos cuando esté hecho.',
+    },
+}
+
+/* ------------------------------------------------------------------ *
+ * Textos de la interfaz — catálogo ES
+ * Los componentes los leen con `t('clave')` (ver `language.jsx`). La
+ * versión en inglés está en `lacolmenaData.en.js` con las mismas claves;
+ * `npm run check:i18n` avisa si falta alguna.
+ * ------------------------------------------------------------------ */
+
+export const UI = {
+    meta: { locale: 'es_PA' },
+    language: { label: 'Idioma' },
+    common: {
+        motto: `«${SCHOOL.motto}»`,
+        crestAlt: `Escudo del ${SCHOOL.name}`,
+        startPreEnrollment: 'Iniciar pre-matrícula',
+        requestInfo: 'Pedir más información',
+        onlinePreEnrollment: 'Pre-matrícula en línea',
+        whatsappCta: 'Escribir por WhatsApp',
+        backToSite: 'Volver al sitio',
+        privacyNotice: 'Aviso de privacidad',
+        // El año se actualiza solo cada enero
+        copyright: `© ${new Date().getFullYear()} ${SCHOOL.name}. Todos los derechos reservados.`,
+        developedBy: 'Desarrollado por',
+        emailUsAt: 'Escríbenos a',
+        orCallUsAt: 'o llámanos al',
+    },
+    contact: {
+        copied: 'Copiado',
+        copy: 'Copiar',
+        copyValue: (value) => `Copiar ${value}`,
+        emailValue: (value) => `Escribir a ${value}`,
+        callOrCopy: (value) => `${value} — pulsa para llamar o copiar`,
+    },
+    apply: {
+        kicker: 'Únete a la colmena',
+        label: 'Aplicar ahora',
+    },
+    home: {
+        seoDescription: `Colegio bilingüe en ${SCHOOL.city}, ${SCHOOL.province}. Pre-escolar, primaria, pre-media y bachiller en ciencias. Pre-matrícula en línea y portal para acudientes.`,
+        whatsappMessage: `Hola, quisiera información sobre la matrícula en el ${SCHOOL.name}.`,
+        openMenu: 'Abrir menú',
+        nav: {
+            about: 'Nosotros',
+            levels: 'Niveles',
+            schoolLife: 'Vida escolar',
+            admissions: 'Admisión',
+            contact: 'Contacto',
+        },
+        hero: {
+            badge: `Matrícula abierta ${SCHOOL.enrollmentYear}`,
+            intro: `Colegio bilingüe en ${SCHOOL.city}, ${SCHOOL.province}. Veinte años formando estudiantes con valores, criterio y dominio del inglés — desde pre-escolar hasta bachillerato.`,
+            whatsapp: 'Escríbenos',
+            founded: `Fundado en ${SCHOOL.foundedYear} · ${SCHOOL.city}, ${SCHOOL.province}`,
+        },
+        stats: [
+            { value: '20', label: 'años de experiencia' },
+            { value: '4', label: 'niveles académicos' },
+            { value: '100%', label: 'programa bilingüe' },
+            { value: '2', label: 'idiomas en el aula' },
+        ],
+        about: {
+            eyebrow: 'Sobre nosotros',
+            title: 'Una educación con valores, inteligente y creativa',
+            checks: [
+                'Formación bilingüe',
+                'Ambiente de aprendizaje propicio',
+                'Acompañamiento personalizado',
+                'Plan de estudios completo',
+            ],
+            historyLink: 'Conocer nuestra historia',
+        },
+        benefits: {
+            eyebrow: 'Por qué La Colmena',
+            title: 'Lo que distingue a nuestros estudiantes',
+        },
+        campus: {
+            eyebrow: 'Nuestra sede',
+            directions: 'Cómo llegar',
+        },
+        levels: {
+            eyebrow: 'Oferta académica',
+            title: 'Cuatro niveles, un mismo estándar',
+            description:
+                'Cada nivel tiene su horario y su plan de materias. Toca un nivel para ver el detalle completo.',
+            showSubjects: 'Ver materias',
+            hideSubjects: 'Ocultar materias',
+            subjectCount: (count) => `Materias (${count})`,
+        },
+        schoolLife: {
+            eyebrow: 'Vida escolar',
+            title: 'Aprender también pasa fuera del aula',
+            description:
+                'Folclore, banda de guerra, idiomas, emprendimiento y deporte: actividades que forman en disciplina, creatividad y trabajo en equipo.',
+            learnMore: 'Ver más',
+            allActivities: 'Conocer toda la vida escolar',
+        },
+        platform: {
+            eyebrow: 'Plataforma',
+            cta: 'Entrar al portal',
+        },
+        admissions: {
+            eyebrow: 'Admisión',
+            title: 'Matricularse es sencillo',
+            description:
+                'Reúne los documentos, envía tu solicitud en línea y nuestra secretaría te contacta.',
+            requirements: 'Requisitos',
+            regulationsLink: 'Conocer el reglamento del colegio',
+            formLink: 'Llenar formulario de pre-matrícula',
+            paymentTitle: 'Formas de pago aceptadas',
+            paymentDescription:
+                'Paga como te quede más cómodo. Cada pago queda registrado en el portal del acudiente.',
+        },
+        contact: {
+            eyebrow: 'Contáctanos',
+            title: 'Estamos para atenderte',
+            description:
+                'Toca cualquier dato: desde el celular llama, abre el correo o Instagram; desde la computadora copia el teléfono al portapapeles.',
+            address: 'Dirección',
+            phones: 'Teléfonos',
+            email: 'Correo',
+            hours: 'Horario de atención',
+            hoursValue: 'Lunes a viernes · 7:30 a. m. — 2:00 p. m.',
+        },
+        footer: {
+            schoolYear: `Año lectivo ${SCHOOL.schoolYear}`,
+            linksLabel: 'Enlaces del sitio',
+            history: 'Nuestra historia',
+            regulations: 'Reglamento',
+            privacy: 'Privacidad',
+            portal: 'Portal del acudiente',
+        },
+    },
+    video: {
+        progress: 'Avance del video',
+        position: (current, total) => `${current} de ${total}`,
+        play: 'Reproducir video',
+        pause: 'Pausar video',
+        unmute: 'Activar sonido',
+        mute: 'Silenciar',
+        volume: 'Volumen',
+        playLabel: `Reproducir video: ${SCHOOL.name}, 20 años`,
+        title: '20 años sembrando el néctar de la sabiduría',
+        meta: 'Video · 2:22',
+    },
+    history: {
+        seoTitle: `Nuestra historia — ${SCHOOL.name}`,
+        seoDescription: `Desde ${SCHOOL.foundedYear}, el ${SCHOOL.name} forma a la niñez y juventud de ${SCHOOL.city}, ${SCHOOL.province}. Conoce sus orígenes y sus hitos.`,
+        eyebrow: 'Nuestra historia',
+        title: `Desde ${SCHOOL.foundedYear}, sembrando el néctar de la sabiduría`,
+        intro: `Lo que empezó con 25 estudiantes en ${SCHOOL.city} es hoy una comunidad educativa que acompaña a sus «Colmenitas» desde Preescolar hasta Media.`,
+        howWeBegan: 'Cómo empezamos',
+        drivesUs: 'Lo que nos mueve hoy',
+    },
+    timeline: {
+        eyebrow: 'Momentos que nos definen',
+        title: 'El vuelo que nos trajo hasta aquí',
+        // La frase va partida para poner «celda a celda» en negrita
+        introBefore: 'Una colmena se construye',
+        introStrong: 'celda a celda',
+        introAfter:
+            ', y nuestra historia también. Cada generación ha dejado algo que nos permite seguir creciendo juntos.',
+        today: 'Hoy',
+        onwardEyebrow: 'Y el vuelo continúa',
+        onwardTitle: 'Una celda se convierte en otra.',
+        onwardText:
+            'Lo que comenzó con 25 estudiantes hoy es una comunidad que sigue construyendo futuro. Nuestra historia todavía tiene muchas celdas por llenar.',
+    },
+    schoolLife: {
+        seoTitle: `Vida escolar — ${SCHOOL.name}`,
+        seoDescription: `Folclore, banda de guerra, clases de alemán, ferias de emprendimiento y deporte en el ${SCHOOL.name} de ${SCHOOL.city}, ${SCHOOL.province}.`,
+        eyebrow: 'Vida escolar',
+        title: 'Aprender también pasa fuera del aula',
+        intro: 'Actividades que forman en disciplina, creatividad y trabajo en equipo, y que dan a cada estudiante un espacio para descubrir sus talentos.',
+    },
+    regulations: {
+        seoTitle: `Reglamento interno — ${SCHOOL.name}`,
+        seoDescription: `Normas de convivencia, asistencia, uniforme y seguridad del ${SCHOOL.name} en ${SCHOOL.city}, ${SCHOOL.province}.`,
+        eyebrow: 'Reglamento interno',
+        title: 'Cómo convivimos en La Colmena',
+        disclaimer:
+            'Este resumen es orientativo. El reglamento interno completo y el contrato de servicios educativos se entregan y se firman en secretaría al momento de la matrícula, y son los documentos que rigen.',
+        questions: '¿Alguna duda? Escríbenos a',
+        requirementsLink: 'Ver requisitos de admisión',
+    },
+    privacy: {
+        seoTitle: `Aviso de privacidad — ${SCHOOL.name}`,
+        seoDescription: `Qué datos pide la pre-matrícula del ${SCHOOL.name}, para qué los usa, dónde se guardan y cómo pedir que se borren.`,
+        eyebrow: 'Aviso de privacidad',
+        title: 'Cómo cuidamos tus datos',
+        updated: `Actualizado en ${PRIVACY.updated} · Versión ${PRIVACY.version}`,
+        emailSubject: 'Protección de datos',
+        cta: 'Ir a la pre-matrícula',
+    },
+    preEnrollment: {
+        seoTitle: `Pre-matrícula ${SCHOOL.enrollmentYear} — ${SCHOOL.name}`,
+        seoDescription: `Formulario de pre-matrícula del ${SCHOOL.name} en ${SCHOOL.city}, ${SCHOOL.province}. Pre-escolar, primaria, pre-media y bachiller en ciencias.`,
+        eyebrow: `Pre-matrícula ${SCHOOL.enrollmentYear}`,
+        title: 'Únete a La Colmena',
+        intro: 'Déjanos tus datos y el grado que te interesa. Secretaría te contacta para confirmar el cupo, agendar una visita y explicarte los pasos de la matrícula.',
+        processTitle: 'Nuestro proceso de admisión',
+        documentsTitle: 'Documentos para la matrícula',
+        documentsNote:
+            'No hace falta enviarlos ahora: se entregan en secretaría.',
+        talkToUs: '¿Prefieres hablar con nosotros?',
+        form: {
+            optional: '(opcional)',
+            botField: 'No llenes este campo:',
+            studentTitle: 'Datos del estudiante',
+            requiredNote:
+                'Todos los campos son obligatorios salvo los marcados como opcionales.',
+            studentFirstName: 'Nombre',
+            studentLastName: 'Apellido',
+            birthDate: 'Fecha de nacimiento',
+            birthDatePlaceholder: 'dd/mm/aaaa',
+            // Nombres accesibles de las flechas del calendario
+            calendar: {
+                previousMonth: 'Mes anterior',
+                nextMonth: 'Mes siguiente',
+                previousYear: 'Año anterior',
+                nextYear: 'Año siguiente',
+                previousDecade: 'Década anterior',
+                nextDecade: 'Década siguiente',
+            },
+            grade: 'Grado al que aplica',
+            gradePlaceholder: 'Selecciona el grado',
+            noResults: 'Sin resultados',
+            previousSchool: 'Colegio de procedencia',
+            siblingsNote:
+                'Si inscribes a más de un hijo, cuéntanos de los demás en comentarios.',
+            guardianTitle: 'Datos del acudiente',
+            guardianFirstName: 'Nombre del acudiente',
+            guardianLastName: 'Apellido del acudiente',
+            email: 'Correo electrónico',
+            emailPlaceholder: 'nombre@correo.com',
+            phone: 'Teléfono o WhatsApp',
+            source: '¿Cómo nos conociste?',
+            sourcePlaceholder: 'Selecciona una opción',
+            comments: 'Comentarios o preguntas',
+            commentsPlaceholder:
+                'Por ejemplo: otros hijos que quieras inscribir o cualquier duda.',
+            healthNote:
+                'No incluyas información de salud. Si el estudiante tiene alguna necesidad especial, lo conversamos en la visita.',
+            consent: `Soy el padre, la madre o el acudiente del estudiante y autorizo al ${SCHOOL.name} a usar estos datos solo para la pre-matrícula. Sé que se guardan fuera de Panamá y que puedo pedir que se borren cuando quiera.`,
+            privacyLink: 'Leer el aviso de privacidad',
+            failed: 'No pudimos enviar el formulario. Inténtalo de nuevo o escríbenos por',
+            failedWhatsappMessage:
+                'Hola, quisiera información sobre la pre-matrícula.',
+            sending: 'Enviando…',
+            submit: 'Enviar pre-matrícula',
+            disclaimer:
+                'La pre-matrícula no reserva el cupo: la matrícula se formaliza en secretaría con los documentos y el contrato firmado.',
+        },
+        errors: {
+            studentFirstName: 'Escribe el nombre del estudiante.',
+            studentLastName: 'Escribe el apellido del estudiante.',
+            birthDate: 'Indica la fecha de nacimiento.',
+            grade: 'Marca el grado al que aplica.',
+            guardianFirstName: 'Escribe tu nombre.',
+            guardianLastName: 'Escribe tu apellido.',
+            emailMissing: 'Escribe tu correo.',
+            emailInvalid: 'Revisa el correo: parece incompleto.',
+            phone: 'Escribe un teléfono de al menos 7 dígitos.',
+            consent: 'Para enviar la solicitud necesitamos tu autorización.',
+        },
+        sent: {
+            thanks: (name) => `¡Gracias, ${name}!`,
+            received: (student) =>
+                `Recibimos la solicitud de pre-matrícula de ${student}. Secretaría te contactará en los próximos días hábiles para confirmar el cupo y los pasos siguientes.`,
+            whatsappMessage: (name, student) =>
+                `Hola, soy ${name} y acabo de enviar la pre-matrícula en línea de ${student}.`,
+        },
+    },
+}

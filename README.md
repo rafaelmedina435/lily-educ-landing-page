@@ -15,6 +15,25 @@ de `lily-educ-front-end` para trabajarlo por separado.
 Los datos del colegio (niveles, contacto, reglamento, historia) están en
 `src/views/landing/lacolmenaData.js` y las fotos en `public/img/lacolmena/`.
 
+## Idiomas
+
+El sitio está en español e inglés. Al entrar se usa, en este orden: `?lang=en`
+o `?lang=es` en la URL, lo que la persona eligió antes con el botón ES/EN, el
+idioma del dispositivo (si es español o inglés) y, si no, español. Solo se
+recuerda lo que la persona elige, no lo detectado. Los buscadores (Google
+renderiza en inglés) ven siempre la versión en español. Cada idioma tiene un solo catálogo con todo el texto del sitio:
+`src/views/landing/lacolmenaData.js` (español) y `lacolmenaData.en.js`
+(inglés), con las mismas exportaciones. El contenido del colegio son las
+exportaciones de siempre (`LEVELS`, `ACTIVITIES`…) y los textos de la interfaz
+están en `UI`; los componentes los leen con `t('clave')` (ver
+`src/views/landing/language.jsx`). Si cambias un catálogo, cambia el otro y
+corre `npm run check:i18n`: avisa si falta una clave, si una lista quedó con
+otro largo o si un texto quedó sin traducir. El video de los 20 años queda en
+español, sin subtítulos.
+
+La pre-matrícula envía siempre los grados y opciones en español y agrega el
+campo `idioma`, para que secretaría sepa en qué idioma responder.
+
 ## Portal
 
 El botón «Portal» lleva a Académica Net (`https://www.academicanet.com/`),
@@ -28,6 +47,7 @@ npm install
 npm run dev       # desarrollo
 npm run build     # genera build/
 npm run preview   # sirve build/ localmente
+npm run check:i18n  # revisa que los catálogos ES y EN coincidan
 ```
 
 ## Despliegue en Netlify
