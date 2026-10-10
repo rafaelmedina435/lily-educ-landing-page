@@ -718,6 +718,9 @@ export const UI = {
         whatsappCta: 'Escribir por WhatsApp',
         backToSite: 'Volver al sitio',
         privacyNotice: 'Aviso de privacidad',
+        // El año se actualiza solo cada enero
+        copyright: `© ${new Date().getFullYear()} ${SCHOOL.name}. Todos los derechos reservados.`,
+        developedBy: 'Desarrollado por',
         emailUsAt: 'Escríbenos a',
         orCallUsAt: 'o llámanos al',
     },

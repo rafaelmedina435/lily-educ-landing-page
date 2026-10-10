@@ -4,3 +4,12 @@
  * vive en la landing (/pre-matricula).
  */
 export const SIGN_IN_URL = 'https://www.academicanet.com/'
+
+/**
+ * Crédito del pie de página en todas las vistas. Sin «www»: ese
+ * subdominio no existe.
+ */
+export const DEVELOPER = {
+    name: 'lumaph.com',
+    url: 'https://lumaph.com/',
+}

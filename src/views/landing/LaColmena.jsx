@@ -44,6 +44,7 @@ import { ContactValue, useContactAction } from './ContactAction'
 import ApplyButton, { PRE_ENROLLMENT_PATH } from './ApplyButton'
 import { ActivityMedia, activityHref } from './activities'
 import { LanguageSwitch, useLanguage } from './language'
+import { FooterCredits } from './Subpage'
 import Seo from '@/components/shared/Seo'
 import { SIGN_IN_URL } from '@/configs/platform.config'
 
@@ -1538,6 +1539,8 @@ const LaColmena = () => {
                         </a>
                     </nav>
                 </div>
+
+                <FooterCredits className="max-w-6xl px-4 lg:px-12 xl:px-4" />
             </footer>
 
             <ApplyButton />

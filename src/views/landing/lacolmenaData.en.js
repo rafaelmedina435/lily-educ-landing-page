@@ -698,6 +698,8 @@ export const UI = {
         whatsappCta: 'Message us on WhatsApp',
         backToSite: 'Back to site',
         privacyNotice: 'Privacy notice',
+        copyright: `© ${new Date().getFullYear()} ${SCHOOL.name}. All rights reserved.`,
+        developedBy: 'Developed by',
         emailUsAt: 'Email us at',
         orCallUsAt: 'or call us at',
     },

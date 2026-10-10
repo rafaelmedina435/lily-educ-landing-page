@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { PiArrowLeftBold } from 'react-icons/pi'
 import { BrandMark, Crest, HoneycombLayer } from './brand'
 import { LanguageSwitch, useLanguage } from './language'
+import { DEVELOPER } from '@/configs/platform.config'
 
 /**
  * Encabezado y pie de las páginas secundarias (reglamento, vida
@@ -71,6 +72,37 @@ export const SubpageFooter = () => {
                     {t('common.motto')}
                 </p>
             </div>
+            <FooterCredits />
         </footer>
+    )
+}
+
+/**
+ * Última franja del pie, en todas las vistas: los derechos reservados y
+ * el crédito de quien desarrolló el sitio. `className` lleva el ancho y
+ * los márgenes del pie donde va, para que quede alineada con él.
+ */
+export const FooterCredits = ({ className = 'max-w-5xl px-4' }) => {
+    const { t } = useLanguage()
+
+    return (
+        <div className="relative border-t border-white/10">
+            <div
+                className={`mx-auto flex flex-col items-center gap-1 py-4 text-center text-xs text-white/40 sm:flex-row sm:justify-between sm:text-left ${className}`}
+            >
+                <p>{t('common.copyright')}</p>
+                <p>
+                    {t('common.developedBy')}{' '}
+                    <a
+                        href={DEVELOPER.url}
+                        target="_blank"
+                        rel="noopener"
+                        className="font-semibold text-white/60 underline-offset-2 transition hover:text-white hover:underline"
+                    >
+                        {DEVELOPER.name}
+                    </a>
+                </p>
+            </div>
+        </div>
     )
 }
