@@ -699,7 +699,7 @@ const PreMatricula = () => {
                             className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
                             style={{ color: 'var(--lc-gold)' }}
                         >
-                            {t('preEnrollment.eyebrow')} {SCHOOL.enrollmentYear}
+                            {t('preEnrollment.eyebrow')}
                         </p>
                         <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
                             {t('preEnrollment.title')}
