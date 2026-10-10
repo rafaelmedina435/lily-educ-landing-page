@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import classNames from 'classnames'
+import { useLanguage } from './language'
 
 /** Vista con el formulario de pre-matrícula; a ella lleva este botón. */
 export const PRE_ENROLLMENT_PATH = '/pre-matricula'
@@ -136,6 +137,7 @@ const useRevealOnIntent = (ref) => {
 const ApplyButton = () => {
     const ref = useRef(null)
     const revealed = useRevealOnIntent(ref)
+    const { t } = useLanguage()
 
     return (
         <Link
@@ -180,9 +182,9 @@ const ApplyButton = () => {
             <span className="sr-only sm:not-sr-only">
                 <span className="relative flex flex-col items-center text-center leading-tight">
                     <span className="text-[9px] font-bold tracking-[0.16em] uppercase opacity-75">
-                        Únete a la colmena
+                        {t('apply.kicker')}
                     </span>
-                    <span className="text-base">Aplicar ahora</span>
+                    <span className="text-base">{t('apply.label')}</span>
                 </span>
             </span>
         </Link>

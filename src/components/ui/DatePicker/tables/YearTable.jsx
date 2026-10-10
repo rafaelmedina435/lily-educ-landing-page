@@ -12,6 +12,8 @@ const YearTable = (props) => {
         maxYear,
         preventFocus,
         yearLabelFormat = 'YYYY',
+        previousLabel,
+        nextLabel,
         ...rest
     } = props
 
@@ -57,8 +59,8 @@ const YearTable = (props) => {
                         ? maxYear > range[range.length - 1]
                         : true
                 }
-                nextLabel={'Década siguiente'}
-                previousLabel={'Década anterior'}
+                nextLabel={nextLabel}
+                previousLabel={previousLabel}
                 preventFocus={preventFocus}
                 onNext={() => setDecade((current) => current + 10)}
                 onPrevious={() => setDecade((current) => current - 10)}

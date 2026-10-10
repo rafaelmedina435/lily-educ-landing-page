@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { HISTORY } from './lacolmenaData'
 import { Hexagon, Reveal } from './brand'
+import { useLanguage } from './language'
 import { Bee } from './ApplyButton'
 
 /** La abeja se posa sobre la última celda en lugar de tapar su «Hoy». */
@@ -221,6 +221,8 @@ const useFlight = () => {
 const HistoryTimeline = () => {
     const { listRef, routeRef, trailRef, beeRef, headingRef, reached } =
         useFlight()
+    const { t, content } = useLanguage()
+    const { HISTORY } = content
     const total = HISTORY.milestones.length
 
     return (
@@ -235,22 +237,21 @@ const HistoryTimeline = () => {
                             className="h-px w-8"
                             style={{ backgroundColor: 'currentColor' }}
                         />
-                        Momentos que nos definen
+                        {t('timeline.eyebrow')}
                     </p>
                     <h2
                         className="text-3xl font-bold leading-tight sm:text-4xl"
                         style={{ color: 'var(--lc-green)' }}
                     >
-                        El vuelo que nos trajo hasta aquí
+                        {t('timeline.title')}
                     </h2>
                 </div>
                 <p className="text-base leading-relaxed sm:text-lg text-[#5b665e]">
-                    Una colmena se construye{' '}
+                    {t('timeline.introBefore')}{' '}
                     <strong style={{ color: 'var(--lc-green)' }}>
-                        celda a celda
+                        {t('timeline.introStrong')}
                     </strong>
-                    , y nuestra historia también. Cada generación ha dejado algo
-                    que nos permite seguir creciendo juntos.
+                    {t('timeline.introAfter')}
                 </p>
             </div>
 
@@ -366,24 +367,25 @@ const HistoryTimeline = () => {
 
                 {/* Última celda: la historia sigue */}
                 <li className="relative mt-14 pl-20 md:pl-0 md:pt-20 md:text-center">
-                    <Cell label="Hoy" filled={reached > total} />
+                    <Cell
+                        label={t('timeline.today')}
+                        filled={reached > total}
+                    />
                     <Reveal className="pt-1 md:pt-0">
                         <p
                             className="text-xs font-extrabold uppercase tracking-[0.2em]"
                             style={{ color: '#b08a00' }}
                         >
-                            Y el vuelo continúa
+                            {t('timeline.onwardEyebrow')}
                         </p>
                         <p
                             className="mt-2 text-3xl font-bold leading-tight sm:text-4xl"
                             style={{ color: 'var(--lc-green)' }}
                         >
-                            Una celda se convierte en otra.
+                            {t('timeline.onwardTitle')}
                         </p>
                         <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed sm:text-lg text-[#5b665e]">
-                            Lo que comenzó con 25 estudiantes hoy es una
-                            comunidad que sigue construyendo futuro. Nuestra
-                            historia todavía tiene muchas celdas por llenar.
+                            {t('timeline.onwardText')}
                         </p>
                     </Reveal>
                 </li>

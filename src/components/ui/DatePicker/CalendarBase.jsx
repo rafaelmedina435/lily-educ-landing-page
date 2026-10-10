@@ -6,6 +6,20 @@ import DateTable from './tables/DateTable'
 import MonthTable from './tables/MonthTable'
 import YearTable from './tables/YearTable'
 
+/**
+ * Nombres accesibles de las flechas del calendario. Quien use el
+ * DatePicker puede pasar los suyos en `navigationLabels` (p. ej. en
+ * inglés); los que falten quedan en español.
+ */
+const NAVIGATION_LABELS = {
+    previousMonth: 'Mes anterior',
+    nextMonth: 'Mes siguiente',
+    previousYear: 'Año anterior',
+    nextYear: 'Año siguiente',
+    previousDecade: 'Década anterior',
+    nextDecade: 'Década siguiente',
+}
+
 const CalendarBase = (props) => {
     const {
         className,
@@ -33,6 +47,7 @@ const CalendarBase = (props) => {
         minDate,
         month,
         monthLabelFormat = 'MMM',
+        navigationLabels,
         onChange,
         onDayMouseEnter,
         onMonthChange,
@@ -54,6 +69,8 @@ const CalendarBase = (props) => {
     const [selectionState, setSelectionState] = useState(defaultView)
 
     const finalLocale = locale || themeLocale
+
+    const labels = { ...NAVIGATION_LABELS, ...navigationLabels }
 
     const daysRefs = useRef(
         Array(dateViewCount)
@@ -168,6 +185,8 @@ const CalendarBase = (props) => {
                     className={className}
                     preventFocus={preventFocus}
                     yearLabelFormat={yearLabelFormat}
+                    previousLabel={labels.previousDecade}
+                    nextLabel={labels.nextDecade}
                     onChange={(year) => {
                         setMonth(new Date(year, monthSelection, 1))
                         if (lockView) {
@@ -194,6 +213,8 @@ const CalendarBase = (props) => {
                     preventFocus={preventFocus}
                     yearLabelFormat={yearLabelFormat}
                     monthLabelFormat={monthLabelFormat}
+                    previousLabel={labels.previousYear}
+                    nextLabel={labels.nextYear}
                     onYearChange={setYearSelection}
                     onNextLevel={() => setSelectionState('year')}
                     onChange={(monthValue) => {
@@ -235,6 +256,8 @@ const CalendarBase = (props) => {
                     isDateFirstInRange={isDateFirstInRange}
                     isDateLastInRange={isDateLastInRange}
                     weekendDays={weekendDays}
+                    previousLabel={labels.previousMonth}
+                    nextLabel={labels.nextMonth}
                     onMonthChange={setMonth}
                     onNextLevel={(view) => setSelectionState(view)}
                     onDayKeyDown={handleDayKeyDown}

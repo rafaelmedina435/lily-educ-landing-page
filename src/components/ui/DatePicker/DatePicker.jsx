@@ -42,6 +42,7 @@ const DatePicker = (props) => {
         maxDate,
         minDate,
         name = 'date',
+        navigationLabels,
         onBlur,
         onChange,
         onFocus,
@@ -253,6 +254,7 @@ const DatePicker = (props) => {
         >
             <Calendar
                 locale={finalLocale}
+                navigationLabels={navigationLabels}
                 month={inputtable ? calendarMonth : undefined}
                 defaultMonth={
                     defaultMonth ||

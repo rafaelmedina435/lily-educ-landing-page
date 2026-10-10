@@ -27,6 +27,8 @@ const DateTable = (props) => {
         weekdayLabelFormat,
         preventFocus,
         renderDay,
+        previousLabel,
+        nextLabel,
         ...rest
     } = props
 
@@ -59,6 +61,8 @@ const DateTable = (props) => {
                             })
                         }
                         className={className}
+                        previousLabel={previousLabel}
+                        nextLabel={nextLabel}
                         onNext={() =>
                             onMonthChange(
                                 dayjs(month).add(paginateBy, 'months').toDate(),
