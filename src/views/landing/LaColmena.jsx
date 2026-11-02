@@ -2,12 +2,6 @@ import { Fragment, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import classNames from 'classnames'
 import {
-    PiMedalDuotone,
-    PiHeartDuotone,
-    PiGlobeHemisphereWestDuotone,
-    PiSparkleDuotone,
-    PiCpuDuotone,
-    PiGraduationCapDuotone,
     PiWhatsappLogoDuotone,
     PiInstagramLogoDuotone,
     PiEnvelopeSimpleDuotone,
@@ -49,15 +43,6 @@ import { LanguageSwitch, useLanguage } from './language'
 import { FooterCredits } from './Subpage'
 import Seo from '@/components/shared/Seo'
 import { SIGN_IN_URL } from '@/configs/platform.config'
-
-const BENEFIT_ICONS = {
-    award: PiMedalDuotone,
-    heart: PiHeartDuotone,
-    globe: PiGlobeHemisphereWestDuotone,
-    sparkles: PiSparkleDuotone,
-    chip: PiCpuDuotone,
-    school: PiGraduationCapDuotone,
-}
 
 const PAYMENT_ICONS = {
     cash: PiMoneyDuotone,
@@ -156,9 +141,12 @@ const jsonLd = ({ SCHOOL, ABOUT }) => ({
  * primera (folclore) ocupa 2×2 y las otras cuatro llenan el resto de la
  * cuadrícula de 4 columnas. Las celdas de 1×1 miden 15rem en
  * escritorio: ahí no cabe el resumen, solo el título y «Ver más».
+ *
+ * En el celular también van de a dos (la grande a lo ancho) y las
+ * pequeñas sin resumen, para no apilar cinco fotos altas.
  */
 const ACTIVITY_TILES = [
-    { span: 'sm:col-span-2 lg:row-span-2', size: 'large' },
+    { span: 'col-span-2 lg:row-span-2', size: 'large' },
     { span: '', size: 'small' },
     { span: '', size: 'small' },
     { span: '', size: 'small' },
@@ -193,7 +181,7 @@ const ActivityTile = ({ activity, size }) => {
             <div
                 className={classNames(
                     'relative mt-auto w-full',
-                    size === 'small' ? 'p-6' : 'p-6 sm:p-7',
+                    size === 'small' ? 'p-4 sm:p-6' : 'p-6 sm:p-7',
                 )}
             >
                 <span
@@ -207,8 +195,10 @@ const ActivityTile = ({ activity, size }) => {
                 </span>
                 <h3
                     className={classNames(
-                        'mt-3 font-bold leading-snug text-white',
-                        size === 'large' ? 'text-2xl sm:text-3xl' : 'text-xl',
+                        'mt-3 font-bold leading-snug break-words text-white',
+                        size === 'large'
+                            ? 'text-2xl sm:text-3xl'
+                            : 'text-base sm:text-xl',
                     )}
                 >
                     {activity.title}
@@ -221,13 +211,18 @@ const ActivityTile = ({ activity, size }) => {
                             className={classNames(
                                 'mt-2 line-clamp-3 text-sm leading-relaxed text-white/75',
                                 size === 'large' && 'max-w-md',
-                                size === 'small' && 'lg:hidden',
+                                size === 'small' && 'max-sm:hidden lg:hidden',
                             )}
                         >
                             {activity.summary}
                         </p>
                         <span
-                            className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-bold"
+                            className={classNames(
+                                'inline-flex items-center gap-2 rounded-full font-bold',
+                                size === 'small'
+                                    ? 'mt-3 px-3 py-1.5 text-xs sm:mt-4 sm:px-5 sm:py-2 sm:text-sm'
+                                    : 'mt-4 px-5 py-2 text-sm',
+                            )}
                             style={{
                                 backgroundColor: 'var(--lc-gold)',
                                 color: 'var(--lc-green-deep)',
@@ -514,7 +509,6 @@ const LaColmena = () => {
         ABOUT,
         ABOUT_HIGHLIGHTS,
         IDENTITY,
-        BENEFITS,
         LEVELS,
         PAYMENT_METHODS,
         REQUIREMENTS,
@@ -837,22 +831,6 @@ const LaColmena = () => {
                                         ),
                                     )}
                                 </p>
-                                <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                                    {t('home.about.checks').map((item) => (
-                                        <div
-                                            key={item}
-                                            className="flex items-center gap-2 text-sm font-medium text-[#3d4a42]"
-                                        >
-                                            <PiCheckCircleDuotone
-                                                className="shrink-0 text-lg"
-                                                style={{
-                                                    color: 'var(--lc-gold)',
-                                                }}
-                                            />
-                                            {item}
-                                        </div>
-                                    ))}
-                                </div>
                                 <Link
                                     to="/historia"
                                     className="mt-8 inline-flex items-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-bold transition hover:bg-white"
@@ -865,7 +843,7 @@ const LaColmena = () => {
                                     <PiArrowRightBold />
                                 </Link>
                             </div>
-                        </div>{' '}
+                        </div>
                     </div>
                 </section>
 
@@ -989,132 +967,6 @@ const LaColmena = () => {
                                 <PiArrowRightBold />
                             </Link>
                         </div>
-                    </div>
-                </section>
-
-                {/* ── Beneficios ─────────────────────────────────────── */}
-                <section
-                    className="relative overflow-hidden"
-                    style={{ backgroundColor: '#fff' }}
-                >
-                    <HoneycombLayer />
-                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
-                        <SectionTitle
-                            eyebrow={t('home.benefits.eyebrow')}
-                            title={t('home.benefits.title')}
-                        />
-                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                            {BENEFITS.map((benefit, index) => {
-                                const Icon =
-                                    BENEFIT_ICONS[benefit.icon] ||
-                                    PiSparkleDuotone
-
-                                return (
-                                    <Reveal
-                                        key={benefit.title}
-                                        delay={index * 80}
-                                        className="rounded-2xl border p-7 transition hover:-translate-y-1 hover:shadow-lg"
-                                        style={{
-                                            borderColor: 'rgba(46,58,51,.1)',
-                                            backgroundColor: 'var(--lc-cream)',
-                                        }}
-                                    >
-                                        <Hexagon
-                                            className="mb-5 h-14 w-14 text-2xl"
-                                            style={{
-                                                backgroundColor:
-                                                    'rgba(245,197,24,.22)',
-                                                color: 'var(--lc-green)',
-                                            }}
-                                        >
-                                            <Icon />
-                                        </Hexagon>
-                                        <h3
-                                            className="mb-2 text-lg font-bold"
-                                            style={{ color: 'var(--lc-green)' }}
-                                        >
-                                            {benefit.title}
-                                        </h3>
-                                        <p className="text-sm leading-relaxed text-[#67726a]">
-                                            {benefit.description}
-                                        </p>
-                                    </Reveal>
-                                )
-                            })}
-                        </div>
-                    </div>
-                </section>
-
-                {/* ── Nuestra sede ───────────────────────────────────── */}
-                <section id="sede" className="relative overflow-hidden">
-                    <div
-                        className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: `url(${PHOTOS.sede})` }}
-                    />
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            background:
-                                'linear-gradient(to right, var(--lc-green) 8%, rgba(46,58,51,.86) 55%, rgba(46,58,51,.35) 100%)',
-                        }}
-                    />
-                    <HoneycombLayer tone="light" />
-                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
-                        <Reveal className="max-w-xl">
-                            <p
-                                className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
-                                style={{ color: 'var(--lc-gold)' }}
-                            >
-                                {t('home.campus.eyebrow')}
-                            </p>
-                            <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                                {CAMPUS.title}
-                            </h2>
-                            <p className="mt-4 text-base leading-relaxed text-white/75">
-                                {CAMPUS.description}
-                            </p>
-
-                            <address className="mt-6 flex items-start gap-3 not-italic text-white/85">
-                                <PiMapPinDuotone
-                                    className="mt-0.5 shrink-0 text-xl"
-                                    style={{ color: 'var(--lc-gold)' }}
-                                />
-                                <span className="text-sm leading-relaxed">
-                                    {SCHOOL.address}
-                                    <br />
-                                    {SCHOOL.addressLine2}
-                                </span>
-                            </address>
-
-                            <div className="mt-6 flex flex-wrap gap-3">
-                                {CAMPUS.highlights.map((item) => (
-                                    <span
-                                        key={item}
-                                        className="rounded-full px-4 py-2 text-sm font-medium text-white/90"
-                                        style={{
-                                            backgroundColor:
-                                                'rgba(255,255,255,.12)',
-                                        }}
-                                    >
-                                        {item}
-                                    </span>
-                                ))}
-                            </div>
-
-                            <a
-                                href={mapsLink}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition hover:brightness-95"
-                                style={{
-                                    backgroundColor: 'var(--lc-gold)',
-                                    color: 'var(--lc-green-deep)',
-                                }}
-                            >
-                                <PiNavigationArrowDuotone className="text-base" />
-                                {t('home.campus.directions')}
-                            </a>
-                        </Reveal>
                     </div>
                 </section>
 
@@ -1244,6 +1096,79 @@ const LaColmena = () => {
                     </div>
                 </section>
 
+                {/* ── Nuestra sede ───────────────────────────────────── */}
+                <section id="sede" className="relative overflow-hidden">
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${PHOTOS.sede})` }}
+                    />
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            background:
+                                'linear-gradient(to right, var(--lc-green) 8%, rgba(46,58,51,.86) 55%, rgba(46,58,51,.35) 100%)',
+                        }}
+                    />
+                    <HoneycombLayer tone="light" />
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
+                        <Reveal className="max-w-xl">
+                            <p
+                                className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
+                                style={{ color: 'var(--lc-gold)' }}
+                            >
+                                {t('home.campus.eyebrow')}
+                            </p>
+                            <h2 className="text-3xl font-bold text-white sm:text-4xl">
+                                {CAMPUS.title}
+                            </h2>
+                            <p className="mt-4 text-base leading-relaxed text-white/75">
+                                {CAMPUS.description}
+                            </p>
+
+                            <address className="mt-6 flex items-start gap-3 not-italic text-white/85">
+                                <PiMapPinDuotone
+                                    className="mt-0.5 shrink-0 text-xl"
+                                    style={{ color: 'var(--lc-gold)' }}
+                                />
+                                <span className="text-sm leading-relaxed">
+                                    {SCHOOL.address}
+                                    <br />
+                                    {SCHOOL.addressLine2}
+                                </span>
+                            </address>
+
+                            <div className="mt-6 flex flex-wrap gap-3">
+                                {CAMPUS.highlights.map((item) => (
+                                    <span
+                                        key={item}
+                                        className="rounded-full px-4 py-2 text-sm font-medium text-white/90"
+                                        style={{
+                                            backgroundColor:
+                                                'rgba(255,255,255,.12)',
+                                        }}
+                                    >
+                                        {item}
+                                    </span>
+                                ))}
+                            </div>
+
+                            <a
+                                href={mapsLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition hover:brightness-95"
+                                style={{
+                                    backgroundColor: 'var(--lc-gold)',
+                                    color: 'var(--lc-green-deep)',
+                                }}
+                            >
+                                <PiNavigationArrowDuotone className="text-base" />
+                                {t('home.campus.directions')}
+                            </a>
+                        </Reveal>
+                    </div>
+                </section>
+
                 {/* ── Vida escolar ───────────────────────────────────── */}
                 <section
                     id="vida"
@@ -1261,14 +1186,17 @@ const LaColmena = () => {
                         {/* Bento: el folclore ocupa el bloque grande; el resto
                             llena las celdas. Cada tarjeta lleva a su sección
                             en /vida-escolar. */}
-                        <div className="grid gap-5 sm:grid-cols-2 lg:auto-rows-[15rem] lg:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:auto-rows-[15rem] lg:grid-cols-4">
                             {ACTIVITIES.map((activity, i) => (
                                 <Reveal
                                     key={activity.id}
                                     delay={i * 100}
                                     className={classNames(
                                         ACTIVITY_TILES[i].span,
-                                        'flex min-h-72 lg:min-h-0',
+                                        'flex lg:min-h-0',
+                                        ACTIVITY_TILES[i].size === 'small'
+                                            ? 'min-h-48 sm:min-h-72'
+                                            : 'min-h-72',
                                     )}
                                 >
                                     <ActivityTile
@@ -1295,48 +1223,6 @@ const LaColmena = () => {
                     </div>
                 </section>
 
-                {/* ── Plataforma: solo se menciona ───────────────────── */}
-                <section
-                    id="plataforma"
-                    className="relative overflow-hidden py-20"
-                >
-                    <HoneycombLayer />
-                    <div
-                        className="relative mx-auto grid max-w-6xl items-center gap-8 rounded-3xl border p-8 sm:p-12 lg:grid-cols-[1fr_auto]"
-                        style={{
-                            borderColor: 'rgba(46,58,51,.12)',
-                            backgroundColor: '#fff',
-                        }}
-                    >
-                        <div>
-                            <p
-                                className="mb-3 text-sm font-bold uppercase tracking-[0.2em]"
-                                style={{ color: 'var(--lc-gold)' }}
-                            >
-                                {t('home.platform.eyebrow')}
-                            </p>
-                            <h2
-                                className="text-2xl font-bold sm:text-3xl"
-                                style={{ color: 'var(--lc-green)' }}
-                            >
-                                {PLATFORM.title}
-                            </h2>
-                            <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#5b665e]">
-                                {PLATFORM.description}
-                            </p>
-                        </div>
-
-                        <a
-                            href={SIGN_IN_URL}
-                            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-7 py-3.5 text-base font-bold text-white transition hover:brightness-110"
-                            style={{ backgroundColor: 'var(--lc-green)' }}
-                        >
-                            {t('home.platform.cta')}
-                            <PiArrowRightBold />
-                        </a>
-                    </div>
-                </section>
-
                 {/* ── Admisión ───────────────────────────────────────── */}
                 <section
                     id="admision"
@@ -1353,7 +1239,7 @@ const LaColmena = () => {
                         />
 
                         <div
-                            className="rounded-2xl p-8"
+                            className="rounded-2xl p-6 sm:p-8"
                             style={{ backgroundColor: 'rgba(255,255,255,.06)' }}
                         >
                             <h3 className="mb-5 text-lg font-bold text-white">
@@ -1400,52 +1286,82 @@ const LaColmena = () => {
                             </div>
                         </div>
 
-                        {/* Formas de pago */}
+                        {/* Formas de pago y portal: los pagos quedan en el
+                            portal, por eso van juntos (antes el portal era
+                            una sección aparte) */}
                         <div
-                            className="mt-6 rounded-2xl p-8"
+                            className="mt-6 rounded-2xl p-6 sm:p-8"
                             style={{ backgroundColor: 'rgba(255,255,255,.06)' }}
                         >
                             <h3 className="mb-2 text-lg font-bold text-white">
                                 {t('home.admissions.paymentTitle')}
                             </h3>
-                            <p className="mb-6 text-sm text-white/60">
+                            <p className="mb-5 text-sm text-white/60">
                                 {t('home.admissions.paymentDescription')}
                             </p>
 
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            <ul className="flex flex-wrap gap-2">
                                 {PAYMENT_METHODS.map((method) => {
                                     const Icon =
                                         PAYMENT_ICONS[method.icon] ||
                                         PiMoneyDuotone
 
                                     return (
-                                        <div
+                                        <li
                                             key={method.title}
-                                            className="rounded-xl p-5"
+                                            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white"
                                             style={{
                                                 backgroundColor:
-                                                    'rgba(255,255,255,.06)',
+                                                    'rgba(255,255,255,.08)',
                                             }}
                                         >
-                                            <Hexagon
-                                                className="mb-3 h-10 w-10 text-lg"
+                                            <Icon
+                                                className="shrink-0 text-lg"
                                                 style={{
-                                                    backgroundColor:
-                                                        'rgba(245,197,24,.18)',
                                                     color: 'var(--lc-gold)',
                                                 }}
-                                            >
-                                                <Icon />
-                                            </Hexagon>
-                                            <p className="text-sm font-bold text-white">
-                                                {method.title}
-                                            </p>
-                                            <p className="mt-1 text-xs leading-relaxed text-white/60">
-                                                {method.description}
-                                            </p>
-                                        </div>
+                                            />
+                                            {method.title}
+                                        </li>
                                     )
                                 })}
+                            </ul>
+
+                            <div
+                                id="plataforma"
+                                className="mt-6 flex flex-col gap-4 border-t pt-6 sm:flex-row sm:items-center sm:justify-between"
+                                style={{ borderColor: 'rgba(255,255,255,.12)' }}
+                            >
+                                <div className="flex gap-4">
+                                    <Hexagon
+                                        className="h-10 w-10 shrink-0 text-lg"
+                                        style={{
+                                            backgroundColor:
+                                                'rgba(245,197,24,.18)',
+                                            color: 'var(--lc-gold)',
+                                        }}
+                                    >
+                                        <PiDeviceMobileDuotone />
+                                    </Hexagon>
+                                    <div>
+                                        <h3 className="text-base font-bold text-white">
+                                            {PLATFORM.title}
+                                        </h3>
+                                        <p className="mt-1 max-w-2xl text-sm leading-relaxed text-white/60">
+                                            {PLATFORM.description}
+                                        </p>
+                                    </div>
+                                </div>
+                                <a
+                                    href={SIGN_IN_URL}
+                                    className="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border-2 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
+                                    style={{
+                                        borderColor: 'rgba(255,255,255,.3)',
+                                    }}
+                                >
+                                    {t('home.platform.cta')}
+                                    <PiArrowRightBold />
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1461,14 +1377,17 @@ const LaColmena = () => {
                             description={t('home.contact.description')}
                         />
 
-                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                        {/* En el celular cada tarjeta es una fila (ícono al
+                            lado); desde 640px vuelven a ser tarjetas, de a dos
+                            hasta 1280px para que quepa el correo */}
+                        <div className="grid gap-3 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
                             {contactCards(content, t).map((card, index) => {
                                 const Icon = card.icon
 
                                 const contenido = (
                                     <>
                                         <Hexagon
-                                            className="mb-5 h-14 w-14 text-2xl"
+                                            className="h-11 w-11 shrink-0 text-xl sm:mb-5 sm:h-14 sm:w-14 sm:text-2xl"
                                             style={{
                                                 backgroundColor:
                                                     'rgba(245,197,24,.22)',
@@ -1478,52 +1397,56 @@ const LaColmena = () => {
                                             <Icon />
                                         </Hexagon>
 
-                                        <h3
-                                            className="mb-3 text-sm font-bold uppercase tracking-wide"
-                                            style={{ color: 'var(--lc-green)' }}
-                                        >
-                                            {card.title}
-                                        </h3>
+                                        <div className="min-w-0 sm:contents">
+                                            <h3
+                                                className="mb-1 text-sm font-bold uppercase tracking-wide sm:mb-3"
+                                                style={{
+                                                    color: 'var(--lc-green)',
+                                                }}
+                                            >
+                                                {card.title}
+                                            </h3>
 
-                                        <div className="flex flex-col items-center gap-0.5">
-                                            {card.values.map((value) =>
-                                                card.href ? (
-                                                    <span
-                                                        key={value.text}
-                                                        className="rounded-lg px-2 py-1 text-sm text-[#4a554d] transition group-hover:underline"
-                                                    >
-                                                        {value.text}
-                                                    </span>
-                                                ) : card.external ? (
-                                                    <a
-                                                        key={value.text}
-                                                        href={value.href}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className="rounded-lg px-2 py-1 text-sm text-[#4a554d] transition hover:bg-[rgba(46,58,51,.06)]"
-                                                    >
-                                                        {value.text}
-                                                    </a>
-                                                ) : (
-                                                    <ContactValue
-                                                        key={value.text}
-                                                        value={value.text}
-                                                        href={value.href}
-                                                        itemKey={`${card.title}-${value.text}`}
-                                                        copiado={copiado}
-                                                        onActivate={activar}
-                                                        copyButton={
-                                                            card.copyButton
-                                                        }
-                                                    />
-                                                ),
-                                            )}
+                                            <div className="-mx-2 flex flex-col items-start gap-0.5 sm:mx-0 sm:items-center">
+                                                {card.values.map((value) =>
+                                                    card.href ? (
+                                                        <span
+                                                            key={value.text}
+                                                            className="rounded-lg px-2 py-1 text-sm text-[#4a554d] transition group-hover:underline"
+                                                        >
+                                                            {value.text}
+                                                        </span>
+                                                    ) : card.external ? (
+                                                        <a
+                                                            key={value.text}
+                                                            href={value.href}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            className="rounded-lg px-2 py-1 text-sm text-[#4a554d] transition hover:bg-[rgba(46,58,51,.06)]"
+                                                        >
+                                                            {value.text}
+                                                        </a>
+                                                    ) : (
+                                                        <ContactValue
+                                                            key={value.text}
+                                                            value={value.text}
+                                                            href={value.href}
+                                                            itemKey={`${card.title}-${value.text}`}
+                                                            copiado={copiado}
+                                                            onActivate={activar}
+                                                            copyButton={
+                                                                card.copyButton
+                                                            }
+                                                        />
+                                                    ),
+                                                )}
+                                            </div>
                                         </div>
                                     </>
                                 )
 
                                 const cardClassName =
-                                    'flex h-full flex-col items-center justify-center rounded-2xl border bg-white p-7 text-center transition hover:-translate-y-1 hover:shadow-lg'
+                                    'flex h-full items-start gap-4 rounded-2xl border bg-white p-5 text-left transition sm:flex-col sm:items-center sm:justify-center sm:gap-0 sm:p-7 sm:text-center hover:-translate-y-1 hover:shadow-lg'
                                 const cardStyle = {
                                     borderColor: 'rgba(46,58,51,.1)',
                                 }

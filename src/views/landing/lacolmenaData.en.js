@@ -186,43 +186,6 @@ export const IDENTITY = {
     commitment: `At ${SCHOOL.shortName}, every student is an opportunity to transform the future. As a school community, we commit to teaching with dedication, learning with enthusiasm, living together with respect and acting with values, true to our essence:`,
 }
 
-export const BENEFITS = [
-    {
-        title: 'Academic excellence',
-        description: 'A demanding curriculum and close support at every level.',
-        icon: 'award',
-    },
-    {
-        title: 'Values-based education',
-        description:
-            'Education with character, built on ethics, respect and responsibility.',
-        icon: 'heart',
-    },
-    {
-        title: 'Leadership in English',
-        description:
-            'Bilingual teaching from preschool, with subjects taught in English.',
-        icon: 'globe',
-    },
-    {
-        title: 'Well-rounded growth',
-        description: 'Sports, arts and culture as part of school life.',
-        icon: 'sparkles',
-    },
-    {
-        title: 'Technology and innovation',
-        description:
-            'Robotics and computing built into learning from primary school.',
-        icon: 'chip',
-    },
-    {
-        title: 'A proven track record',
-        description:
-            'Twenty years educating students in Aguadulce, in our own facilities.',
-        icon: 'school',
-    },
-]
-
 /**
  * Las materias que en español se dictan en los dos idiomas (Matemática y
  * Mathematics) llevan el idioma entre paréntesis para no repetirse.
@@ -463,23 +426,18 @@ export const PLATFORM = {
 export const PAYMENT_METHODS = [
     {
         title: 'Cash at the school office',
-        description: 'Monday to Friday, during office hours.',
         icon: 'cash',
     },
     {
         title: 'Yappy',
-        description:
-            'Instant payment from your phone through the Yappy directory.',
         icon: 'phone',
     },
     {
         title: 'ACH / bank transfer',
-        description: "To the school's account; just send us the receipt.",
         icon: 'bank',
     },
     {
         title: 'Credit or debit card',
-        description: 'Visa and Mastercard at the school office.',
         icon: 'card',
     },
 ]
@@ -818,22 +776,12 @@ export const UI = {
         about: {
             eyebrow: 'About us',
             title: 'A values-based, smart and creative education',
-            checks: [
-                'Bilingual education',
-                'A supportive learning environment',
-                'Personalized support',
-                'A complete curriculum',
-            ],
             historyLink: 'Discover our story',
         },
         identity: {
             eyebrow: 'What guides us',
             title: 'Mission, vision and values',
             readMore: 'Read the full text',
-        },
-        benefits: {
-            eyebrow: 'Why La Colmena',
-            title: 'What sets our students apart',
         },
         campus: {
             eyebrow: 'Our location',
@@ -857,7 +805,6 @@ export const UI = {
             allActivities: 'Explore all of school life',
         },
         platform: {
-            eyebrow: 'Platform',
             cta: 'Go to the portal',
         },
         admissions: {

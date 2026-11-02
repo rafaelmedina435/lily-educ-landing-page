@@ -194,44 +194,6 @@ export const IDENTITY = {
     commitment: `En ${SCHOOL.shortName}, cada estudiante representa una oportunidad para transformar el futuro. Como comunidad educativa, nos comprometemos a enseñar con vocación, aprender con entusiasmo, convivir con respeto y actuar con valores, haciendo honor a nuestra esencia:`,
 }
 
-export const BENEFITS = [
-    {
-        title: 'Excelencia académica',
-        description:
-            'Un plan de estudios exigente y un acompañamiento cercano en cada nivel.',
-        icon: 'award',
-    },
-    {
-        title: 'Formación en valores',
-        description:
-            'Educación con carácter: ética, respeto y responsabilidad como base.',
-        icon: 'heart',
-    },
-    {
-        title: 'Liderazgo en inglés',
-        description:
-            'Enseñanza bilingüe desde preescolar, con materias dictadas en inglés.',
-        icon: 'globe',
-    },
-    {
-        title: 'Desarrollo integral',
-        description: 'Deporte, arte y cultura como parte de la vida escolar.',
-        icon: 'sparkles',
-    },
-    {
-        title: 'Tecnología e innovación',
-        description:
-            'Robótica e informática integradas al aprendizaje desde primaria.',
-        icon: 'chip',
-    },
-    {
-        title: 'Trayectoria comprobada',
-        description:
-            'Veinte años formando estudiantes en Aguadulce, con instalaciones propias.',
-        icon: 'school',
-    },
-]
-
 export const LEVELS = [
     {
         id: 'preescolar',
@@ -479,22 +441,18 @@ export const PLATFORM = {
 export const PAYMENT_METHODS = [
     {
         title: 'Efectivo en secretaría',
-        description: 'Lunes a viernes, en horario de atención.',
         icon: 'cash',
     },
     {
         title: 'Yappy',
-        description: 'Pago inmediato desde el celular con el directorio Yappy.',
         icon: 'phone',
     },
     {
         title: 'ACH / transferencia bancaria',
-        description: 'A la cuenta del colegio, enviando el comprobante.',
         icon: 'bank',
     },
     {
         title: 'Tarjeta de crédito o débito',
-        description: 'Visa y Mastercard en la secretaría del plantel.',
         icon: 'card',
     },
 ]
@@ -857,12 +815,6 @@ export const UI = {
         about: {
             eyebrow: 'Sobre nosotros',
             title: 'Una educación con valores, inteligente y creativa',
-            checks: [
-                'Formación bilingüe',
-                'Ambiente de aprendizaje propicio',
-                'Acompañamiento personalizado',
-                'Plan de estudios completo',
-            ],
             historyLink: 'Conocer nuestra historia',
         },
         // Resumen de IDENTITY; el texto completo está en /historia
@@ -870,10 +822,6 @@ export const UI = {
             eyebrow: 'Lo que nos guía',
             title: 'Misión, visión y valores',
             readMore: 'Leer el texto completo',
-        },
-        benefits: {
-            eyebrow: 'Por qué La Colmena',
-            title: 'Lo que distingue a nuestros estudiantes',
         },
         campus: {
             eyebrow: 'Nuestra sede',
@@ -897,7 +845,6 @@ export const UI = {
             allActivities: 'Conocer toda la vida escolar',
         },
         platform: {
-            eyebrow: 'Plataforma',
             cta: 'Entrar al portal',
         },
         admissions: {
