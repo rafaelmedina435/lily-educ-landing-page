@@ -108,8 +108,90 @@ export const HISTORY = {
             icon: 'heart',
         },
     ],
-    closing:
+    /** Abre la sección de misión y visión (ver IDENTITY). */
+    renewal:
         'Cada aniversario renovamos nuestra misión y visión, y ratificamos la vocación que nos dio origen: formar ciudadanos de calidad para Aguadulce y para Panamá.',
+}
+
+/**
+ * Misión, visión, valores institucionales y compromiso, tal como los
+ * redactó el colegio (`docs/mision_y_vision.md`). Se muestran en
+ * /historia. `tagline` es la frase que cierra la misión y la visión.
+ */
+export const IDENTITY = {
+    mission: {
+        paragraphs: [
+            'Brindar una educación integral, inclusiva, bilingüe e innovadora, centrada en el desarrollo de las capacidades intelectuales, emocionales, sociales y éticas de nuestros estudiantes, desde maternal hasta la educación media.',
+            'Promovemos el aprendizaje significativo, el pensamiento crítico, la creatividad, la investigación, el uso responsable de la tecnología y la práctica de valores y principios que favorezcan la convivencia y el respeto por la diversidad.',
+            'A través de un equipo docente comprometido, competente y proactivo, fomentamos la autonomía, el liderazgo, la responsabilidad y el amor por el aprendizaje, formando niños, niñas y jóvenes felices, seguros de sí mismos y preparados para afrontar los desafíos de la vida.',
+        ],
+        tagline:
+            'Educamos para la vida, cultivamos valores y formamos para el futuro.',
+    },
+    vision: {
+        paragraphs: [
+            'Ser una institución educativa bilingüe de referencia en Panamá, reconocida por su excelencia académica, innovación pedagógica, formación en valores y compromiso con el desarrollo integral de sus estudiantes.',
+            'Aspiramos a consolidar una comunidad educativa que inspire a aprender, crear, investigar, emprender y transformar, desarrollando competencias lingüísticas, científicas, tecnológicas, sociales y emocionales que permitan a nuestros estudiantes desenvolverse con éxito en un mundo globalizado.',
+            'Nos proyectamos como un colegio que evoluciona constantemente, reconoce el potencial de cada estudiante y forma ciudadanos íntegros, críticos, creativos, solidarios y líderes, capaces de generar soluciones y contribuir positivamente al progreso de su comunidad y de la sociedad panameña.',
+        ],
+        tagline:
+            'Crecer con cada generación, innovar con propósito y transformar vidas a través de la educación.',
+    },
+    valuesIntro: `En el ${SCHOOL.name} creemos que la educación trasciende la adquisición de conocimientos. Por ello, promovemos valores que orientan las acciones, las decisiones y las relaciones de toda nuestra comunidad educativa.`,
+    values: [
+        {
+            title: 'Respeto',
+            description:
+                'Reconocemos la dignidad de cada persona, valoramos las diferencias y fomentamos la tolerancia, la empatía y la sana convivencia.',
+        },
+        {
+            title: 'Responsabilidad',
+            description:
+                'Asumimos nuestros deberes y compromisos con conciencia, puntualidad, dedicación y disposición para responder por nuestras acciones.',
+        },
+        {
+            title: 'Honestidad e integridad',
+            description:
+                'Actuamos con verdad, transparencia, coherencia y rectitud, fortaleciendo la confianza en todas nuestras relaciones.',
+        },
+        {
+            title: 'Solidaridad',
+            description:
+                'Desarrollamos la sensibilidad ante las necesidades de los demás, la cooperación y el compromiso con el bienestar colectivo.',
+        },
+        {
+            title: 'Excelencia',
+            description:
+                'Promovemos la mejora continua, el esfuerzo y la perseverancia, procurando alcanzar el máximo potencial de cada estudiante y de nuestro equipo educativo.',
+        },
+        {
+            title: 'Creatividad e innovación',
+            description:
+                'Estimulamos la curiosidad, el pensamiento crítico, la investigación y la búsqueda de nuevas soluciones para los desafíos del presente y del futuro.',
+        },
+        {
+            title: 'Compromiso',
+            description:
+                'Trabajamos con vocación, sentido de pertenencia y responsabilidad compartida para alcanzar los objetivos educativos de nuestra institución.',
+        },
+        {
+            title: 'Autonomía',
+            description:
+                'Fomentamos la capacidad de tomar decisiones conscientes, actuar con criterio propio y asumir las consecuencias de nuestras elecciones.',
+        },
+        {
+            title: 'Identidad y ciudadanía',
+            description:
+                'Fortalecemos el amor por Panamá, el respeto por nuestra cultura, la participación ciudadana y la apertura hacia otras culturas y lenguas.',
+        },
+        {
+            title: 'Empatía y bienestar',
+            description:
+                'Promovemos la inteligencia emocional, la escucha activa, el manejo pacífico de los conflictos y el desarrollo de estudiantes felices, seguros y emocionalmente saludables.',
+        },
+    ],
+    /** Termina en «nuestra esencia:»: la página lo completa con el lema. */
+    commitment: `En ${SCHOOL.shortName}, cada estudiante representa una oportunidad para transformar el futuro. Como comunidad educativa, nos comprometemos a enseñar con vocación, aprender con entusiasmo, convivir con respeto y actuar con valores, haciendo honor a nuestra esencia:`,
 }
 
 export const BENEFITS = [
@@ -542,17 +624,30 @@ export const REGULATIONS = [
 
 /**
  * Grados que se pueden marcar en el formulario, agrupados por nivel
- * (los `id` coinciden con LEVELS). Se permite marcar varios para quien
- * inscribe a más de un hijo.
- *
- * PENDIENTE DE CONFIRMAR con el colegio: qué grados abre pre-escolar.
+ * (los `id` coinciden con LEVELS) y en orden de edad: ENROLLMENT_AGE
+ * cuenta un año por cada grado de esta lista. Maternal abre en 2027.
  */
 export const ENROLLMENT_GRADES = [
-    { level: 'preescolar', grades: ['Pre-kínder', 'Kínder'] },
+    { level: 'preescolar', grades: ['Maternal', 'Pre-kínder', 'Kínder'] },
     { level: 'primaria', grades: ['1.º', '2.º', '3.º', '4.º', '5.º', '6.º'] },
     { level: 'premedia', grades: ['7.º', '8.º', '9.º'] },
     { level: 'bachiller', grades: ['10.º', '11.º', '12.º'] },
 ]
+
+/**
+ * Edad de ingreso según el MEDUCA: cuentan los años cumplidos al 22 de
+ * marzo del año lectivo al que se aplica (`SCHOOL.enrollmentYear`).
+ * Maternal, el primer grado de ENROLLMENT_GRADES, es a los 3 años; de
+ * ahí sube un año por grado (4 → Pre-kínder, 5 → Kínder, 6 → 1.º…
+ * 17 → 12.º). Para Maternal se usa la misma fecha de corte.
+ *
+ * Con esto el formulario sugiere el grado y deja marcar uno menos o uno
+ * más. Revisar la fecha de corte cuando el MEDUCA anuncie cada matrícula.
+ */
+export const ENROLLMENT_AGE = {
+    cutoff: { month: 3, day: 22 },
+    firstGrade: 3,
+}
 
 /** Opciones de «¿Cómo nos conociste?». */
 export const ENROLLMENT_SOURCES = [
@@ -743,6 +838,7 @@ export const UI = {
             about: 'Nosotros',
             levels: 'Niveles',
             schoolLife: 'Vida escolar',
+            identity: 'Misión y valores',
             admissions: 'Admisión',
             contact: 'Contacto',
         },
@@ -768,6 +864,12 @@ export const UI = {
                 'Plan de estudios completo',
             ],
             historyLink: 'Conocer nuestra historia',
+        },
+        // Resumen de IDENTITY; el texto completo está en /historia
+        identity: {
+            eyebrow: 'Lo que nos guía',
+            title: 'Misión, visión y valores',
+            readMore: 'Leer el texto completo',
         },
         benefits: {
             eyebrow: 'Por qué La Colmena',
@@ -844,12 +946,17 @@ export const UI = {
     },
     history: {
         seoTitle: `Nuestra historia — ${SCHOOL.name}`,
-        seoDescription: `Desde ${SCHOOL.foundedYear}, el ${SCHOOL.name} forma a la niñez y juventud de ${SCHOOL.city}, ${SCHOOL.province}. Conoce sus orígenes y sus hitos.`,
+        seoDescription: `Desde ${SCHOOL.foundedYear}, el ${SCHOOL.name} forma a la niñez y juventud de ${SCHOOL.city}, ${SCHOOL.province}. Conoce sus orígenes, sus hitos, su misión, su visión y sus valores.`,
         eyebrow: 'Nuestra historia',
         title: `Desde ${SCHOOL.foundedYear}, sembrando el néctar de la sabiduría`,
         intro: `Lo que empezó con 25 estudiantes en ${SCHOOL.city} es hoy una comunidad educativa que acompaña a sus «Colmenitas» desde Preescolar hasta Media.`,
         howWeBegan: 'Cómo empezamos',
+        missionVision: 'Misión y visión',
+        mission: 'Misión',
+        vision: 'Visión',
+        values: 'Nuestros valores',
         drivesUs: 'Lo que nos mueve hoy',
+        commitment: 'Nuestro compromiso',
     },
     timeline: {
         eyebrow: 'Momentos que nos definen',
@@ -923,6 +1030,16 @@ export const UI = {
             },
             grade: 'Grado al que aplica',
             gradePlaceholder: 'Selecciona el grado',
+            gradeNeedsBirthDate: 'Primero indica la fecha de nacimiento',
+            recommended: 'Recomendado',
+            // La fecha de corte del MEDUCA, como se lee en `gradeHint`
+            cutoffDateFormat: 'D [de] MMMM [de] YYYY',
+            // `others`: los demás grados que puede marcar, unidos con `gradeOr`
+            gradeHint: (age, date, ideal, others) =>
+                ideal
+                    ? `Con ${age} años cumplidos al ${date} le corresponde ${ideal}. También puede aplicar a ${others}.`
+                    : `Con ${age} años cumplidos al ${date} puede aplicar a ${others}.`,
+            gradeOr: 'o',
             noResults: 'Sin resultados',
             previousSchool: 'Colegio de procedencia',
             siblingsNote:
