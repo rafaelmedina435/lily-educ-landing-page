@@ -11,6 +11,7 @@
 import {
     SCHOOL as SCHOOL_ES,
     ENROLLMENT_GRADES,
+    ENROLLMENT_AGE,
     ENROLLMENT_SOURCES,
     PRIVACY as PRIVACY_ES,
 } from './lacolmenaData'
@@ -106,8 +107,83 @@ export const HISTORY = {
             icon: 'heart',
         },
     ],
-    closing:
+    renewal:
         'With every anniversary we renew our mission and vision, and reaffirm the calling that brought us into being: to form outstanding citizens for Aguadulce and for Panama.',
+}
+
+export const IDENTITY = {
+    mission: {
+        paragraphs: [
+            "To provide a well-rounded, inclusive, bilingual and innovative education focused on developing our students' intellectual, emotional, social and ethical abilities, from nursery through high school.",
+            'We promote meaningful learning, critical thinking, creativity, research, the responsible use of technology and the practice of values and principles that support living together in harmony and respect for diversity.',
+            "Through a committed, skilled and proactive teaching team, we foster autonomy, leadership, responsibility and a love of learning, raising happy, self-confident children and young people who are ready to face life's challenges.",
+        ],
+        tagline:
+            'We educate for life, nurture values and prepare students for the future.',
+    },
+    vision: {
+        paragraphs: [
+            'To be a leading bilingual school in Panama, recognized for its academic excellence, innovative teaching, values-based education and commitment to the well-rounded development of its students.',
+            'We aspire to build a school community that inspires everyone to learn, create, research, take initiative and bring about change, developing the language, scientific, technological, social and emotional skills our students need to succeed in a globalized world.',
+            "We see ourselves as a school that keeps evolving, recognizes each student's potential and forms upright, critical, creative and caring citizens and leaders, able to find solutions and contribute positively to the progress of their community and of Panamanian society.",
+        ],
+        tagline:
+            'Growing with every generation, innovating with purpose and transforming lives through education.',
+    },
+    valuesIntro: `At ${SCHOOL.name} we believe education goes beyond acquiring knowledge. That is why we promote values that guide the actions, decisions and relationships of our entire school community.`,
+    values: [
+        {
+            title: 'Respect',
+            description:
+                'We recognize the dignity of every person, value our differences and foster tolerance, empathy and living together in harmony.',
+        },
+        {
+            title: 'Responsibility',
+            description:
+                'We take on our duties and commitments with awareness, punctuality and dedication, ready to answer for our actions.',
+        },
+        {
+            title: 'Honesty and integrity',
+            description:
+                'We act with truthfulness, transparency, consistency and uprightness, building trust in all our relationships.',
+        },
+        {
+            title: 'Solidarity',
+            description:
+                'We develop sensitivity to the needs of others, cooperation and a commitment to the common good.',
+        },
+        {
+            title: 'Excellence',
+            description:
+                'We promote continuous improvement, effort and perseverance, striving to reach the full potential of every student and of our teaching team.',
+        },
+        {
+            title: 'Creativity and innovation',
+            description:
+                'We spark curiosity, critical thinking, research and the search for new solutions to the challenges of today and tomorrow.',
+        },
+        {
+            title: 'Commitment',
+            description:
+                "We work with a sense of vocation, belonging and shared responsibility to achieve our school's educational goals.",
+        },
+        {
+            title: 'Autonomy',
+            description:
+                'We build the ability to make conscious decisions, use sound judgment and accept the consequences of our choices.',
+        },
+        {
+            title: 'Identity and citizenship',
+            description:
+                'We strengthen love for Panama, respect for our culture, civic participation and openness to other cultures and languages.',
+        },
+        {
+            title: 'Empathy and well-being',
+            description:
+                'We promote emotional intelligence, active listening, peaceful conflict resolution and the growth of happy, confident and emotionally healthy students.',
+        },
+    ],
+    commitment: `At ${SCHOOL.shortName}, every student is an opportunity to transform the future. As a school community, we commit to teaching with dedication, learning with enthusiasm, living together with respect and acting with values, true to our essence:`,
 }
 
 export const BENEFITS = [
@@ -531,9 +607,10 @@ export const REGULATIONS = [
  * inglés, para que secretaría reciba siempre los mismos valores: aquí
  * solo cambia lo que se lee en pantalla.
  */
-export { ENROLLMENT_GRADES, ENROLLMENT_SOURCES }
+export { ENROLLMENT_GRADES, ENROLLMENT_AGE, ENROLLMENT_SOURCES }
 
 export const ENROLLMENT_GRADE_LABELS = {
+    Maternal: 'Nursery',
     'Pre-kínder': 'Pre-K',
     Kínder: 'Kindergarten',
     '1.º': '1st grade',
@@ -722,6 +799,7 @@ export const UI = {
             about: 'About',
             levels: 'Academics',
             schoolLife: 'School life',
+            identity: 'Mission & values',
             admissions: 'Admissions',
             contact: 'Contact',
         },
@@ -747,6 +825,11 @@ export const UI = {
                 'A complete curriculum',
             ],
             historyLink: 'Discover our story',
+        },
+        identity: {
+            eyebrow: 'What guides us',
+            title: 'Mission, vision and values',
+            readMore: 'Read the full text',
         },
         benefits: {
             eyebrow: 'Why La Colmena',
@@ -824,12 +907,17 @@ export const UI = {
     },
     history: {
         seoTitle: `Our story — ${SCHOOL.name}`,
-        seoDescription: `Since ${SCHOOL.foundedYear}, ${SCHOOL.name} has educated the children and young people of ${SCHOOL.city}, ${SCHOOL.province}. Learn about its origins and milestones.`,
+        seoDescription: `Since ${SCHOOL.foundedYear}, ${SCHOOL.name} has educated the children and young people of ${SCHOOL.city}, ${SCHOOL.province}. Learn about its origins, milestones, mission, vision and values.`,
         eyebrow: 'Our story',
         title: `Since ${SCHOOL.foundedYear}, sowing the nectar of wisdom`,
         intro: `What began with 25 students in ${SCHOOL.city} is now a school community that guides its “Colmenitas” from Preschool through High School.`,
         howWeBegan: 'How we began',
+        missionVision: 'Mission and vision',
+        mission: 'Mission',
+        vision: 'Vision',
+        values: 'Our values',
         drivesUs: 'What drives us today',
+        commitment: 'Our commitment',
     },
     timeline: {
         eyebrow: 'Moments that define us',
@@ -900,6 +988,14 @@ export const UI = {
             },
             grade: 'Grade applying to',
             gradePlaceholder: 'Select a grade',
+            gradeNeedsBirthDate: 'Enter the date of birth first',
+            recommended: 'Recommended',
+            cutoffDateFormat: 'MMMM D, YYYY',
+            gradeHint: (age, date, ideal, others) =>
+                ideal
+                    ? `At ${age} years old on ${date}, the recommended grade is ${ideal}. They can also apply to ${others}.`
+                    : `At ${age} years old on ${date}, they can apply to ${others}.`,
+            gradeOr: 'or',
             noResults: 'No results',
             previousSchool: 'Previous school',
             siblingsNote:

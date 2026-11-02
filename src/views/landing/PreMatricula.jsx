@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
@@ -47,19 +47,67 @@ const EMPTY = {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+/** El nombre del grado en el idioma activo (en español es el mismo valor). */
+const gradeLabel = ({ ENROLLMENT_GRADE_LABELS }, grade) =>
+    ENROLLMENT_GRADE_LABELS?.[grade] ?? grade
+
 /**
- * Grados agrupados por nivel, en el formato de opciones de `Select`. El
- * valor que se envía es siempre el grado en español; en inglés solo
- * cambia la etiqueta (ver `lacolmenaData.en.js`).
+ * Los grados que se pueden marcar, agrupados por nivel, en el formato de
+ * opciones de `Select`. El valor que se envía es siempre el grado en
+ * español; en inglés solo cambia la etiqueta (ver `lacolmenaData.en.js`).
  */
-const gradeOptions = ({ LEVELS, ENROLLMENT_GRADES, ENROLLMENT_GRADE_LABELS }) =>
-    ENROLLMENT_GRADES.map(({ level, grades }) => ({
-        label: LEVELS.find((item) => item.id === level).name,
-        options: grades.map((grade) => ({
-            value: grade,
-            label: ENROLLMENT_GRADE_LABELS?.[grade] ?? grade,
-        })),
-    }))
+const gradeOptions = (content, allowed) =>
+    content.ENROLLMENT_GRADES.map(({ level, grades }) => ({
+        label: content.LEVELS.find((item) => item.id === level).name,
+        options: grades
+            .filter((grade) => allowed.includes(grade))
+            .map((grade) => ({
+                value: grade,
+                label: gradeLabel(content, grade),
+            })),
+    })).filter((group) => group.options.length > 0)
+
+/**
+ * Qué grado corresponde según la fecha de nacimiento (ver ENROLLMENT_AGE):
+ *
+ * - `cutoff`: la fecha de corte del MEDUCA en el año lectivo al que se
+ *   aplica; la edad se cuenta a esa fecha.
+ * - `maxDate` / `minDate`: lo que deja marcar el calendario. El más joven
+ *   tiene la edad del primer grado (Maternal); el mayor, un año más que la
+ *   de 12.º, para que todavía le quede 12.º como «un grado menos».
+ * - `suggest(fecha)`: la edad, el grado que le corresponde (`ideal`, nulo
+ *   si se pasa de 12.º) y los que puede marcar: ese, uno menos y uno más.
+ */
+const gradeRules = ({ SCHOOL, ENROLLMENT_AGE, ENROLLMENT_GRADES }) => {
+    const grades = ENROLLMENT_GRADES.flatMap((level) => level.grades)
+    const { cutoff: day, firstGrade } = ENROLLMENT_AGE
+    const cutoff = dayjs(
+        new Date(Number(SCHOOL.enrollmentYear), day.month - 1, day.day),
+    )
+    const oldest = firstGrade + grades.length
+
+    return {
+        cutoff,
+        maxDate: cutoff.subtract(firstGrade, 'year').toDate(),
+        minDate: cutoff
+            .subtract(oldest + 1, 'year')
+            .add(1, 'day')
+            .toDate(),
+        suggest: (birthDate) => {
+            if (!birthDate) return null
+
+            const age = cutoff.diff(dayjs(birthDate), 'year')
+            const index = age - firstGrade
+            const allowed = grades.filter(
+                (_, position) => Math.abs(position - index) <= 1,
+            )
+
+            if (allowed.length === 0) return null
+
+            return { age, ideal: grades[index] ?? null, allowed }
+        },
+    }
+}
 
 const validate = (values, t) => {
     const errors = {}
@@ -76,7 +124,8 @@ const validate = (values, t) => {
         errors.estudiante_nacimiento = t('preEnrollment.errors.birthDate')
     }
 
-    if (!values.grado) {
+    // Sin fecha el grado está bloqueado: basta con el error de la fecha
+    if (values.estudiante_nacimiento && !values.grado) {
         errors.grado = t('preEnrollment.errors.grade')
     }
 
@@ -126,7 +175,7 @@ const inputClass = (invalid) =>
             : 'border-[rgba(46,58,51,.18)] focus:border-[#2E3A33] focus:ring-[#F5C518]/40',
     )
 
-const Field = ({ id, label, optional, error, className, children }) => {
+const Field = ({ id, label, optional, error, hint, className, children }) => {
     const { t } = useLanguage()
 
     return (
@@ -145,6 +194,20 @@ const Field = ({ id, label, optional, error, className, children }) => {
             </label>
             {children}
             {error && <FieldError id={`${id}-error`}>{error}</FieldError>}
+            {hint !== undefined && (
+                // Siempre presente para que el lector de pantalla anuncie
+                // el texto cuando aparece o cambia
+                <p
+                    id={`${id}-hint`}
+                    aria-live="polite"
+                    className={classNames(
+                        'text-xs leading-relaxed text-[#5b665e]',
+                        hint && 'mt-1.5',
+                    )}
+                >
+                    {hint}
+                </p>
+            )}
         </div>
     )
 }
@@ -221,8 +284,30 @@ const PreEnrollmentForm = () => {
     const { lang, t, content } = useLanguage()
     const { SCHOOL, ENROLLMENT_SOURCES, ENROLLMENT_SOURCE_LABELS, PRIVACY } =
         content
-    const gradeGroups = gradeOptions(content)
+    const rules = useMemo(() => gradeRules(content), [content])
+    const suggestion = rules.suggest(values.estudiante_nacimiento)
+    const gradeGroups = gradeOptions(content, suggestion?.allowed ?? [])
     const allGrades = gradeGroups.flatMap((group) => group.options)
+    // Se envía en español; en inglés solo cambia la etiqueta
+    const sourceOptions = ENROLLMENT_SOURCES.map((source) => ({
+        value: source,
+        label: ENROLLMENT_SOURCE_LABELS?.[source] ?? source,
+    }))
+
+    const gradeHint = suggestion
+        ? t(
+              'preEnrollment.form.gradeHint',
+              suggestion.age,
+              rules.cutoff
+                  .locale(lang)
+                  .format(t('preEnrollment.form.cutoffDateFormat')),
+              suggestion.ideal && gradeLabel(content, suggestion.ideal),
+              suggestion.allowed
+                  .filter((grade) => grade !== suggestion.ideal)
+                  .map((grade) => gradeLabel(content, grade))
+                  .join(` ${t('preEnrollment.form.gradeOr')} `),
+          )
+        : ''
 
     const set = (field) => (eventOrValue) => {
         const value = eventOrValue?.target
@@ -235,6 +320,31 @@ const PreEnrollmentForm = () => {
         if (errors[field]) {
             setErrors(({ [field]: _, ...rest }) => rest)
         }
+    }
+
+    /**
+     * Con la fecha se marca el grado que corresponde por edad. Si la edad
+     * no cambió (se volvió a elegir la misma fecha o una cercana), se
+     * respeta el grado que la familia ya había escogido.
+     */
+    const onBirthDateChange = (date) => {
+        const next = rules.suggest(date)
+
+        setValues((current) => {
+            const sameAge =
+                rules.suggest(current.estudiante_nacimiento)?.age === next?.age
+            const keep = sameAge && next?.allowed.includes(current.grado)
+
+            return {
+                ...current,
+                estudiante_nacimiento: date,
+                grado: keep
+                    ? current.grado
+                    : (next?.ideal ?? next?.allowed.at(-1) ?? ''),
+            }
+        })
+
+        setErrors(({ estudiante_nacimiento: _, grado: __, ...rest }) => rest)
     }
 
     const onSubmit = async (event) => {
@@ -372,10 +482,14 @@ const PreEnrollmentForm = () => {
                             navigationLabels={t('preEnrollment.form.calendar')}
                             // Para una fecha de nacimiento: primero el año
                             defaultView="year"
-                            maxDate={new Date()}
+                            // De la edad de Maternal hacia atrás, y abre
+                            // en la década del más joven
+                            minDate={rules.minDate}
+                            maxDate={rules.maxDate}
+                            defaultMonth={rules.maxDate}
                             clearable={false}
                             value={values.estudiante_nacimiento}
-                            onChange={set('estudiante_nacimiento')}
+                            onChange={onBirthDateChange}
                         />
                     </FormItemContextProvider>
                 </Field>
@@ -383,11 +497,19 @@ const PreEnrollmentForm = () => {
                     id="grado"
                     label={t('preEnrollment.form.grade')}
                     error={errors.grado}
+                    hint={gradeHint}
                 >
                     <Select
                         inputId="grado"
                         name="grado"
-                        placeholder={t('preEnrollment.form.gradePlaceholder')}
+                        // Solo el grado que corresponde por edad, uno menos
+                        // y uno más: hasta tener la fecha no hay opciones
+                        isDisabled={!suggestion}
+                        placeholder={t(
+                            suggestion
+                                ? 'preEnrollment.form.gradePlaceholder'
+                                : 'preEnrollment.form.gradeNeedsBirthDate',
+                        )}
                         noOptionsMessage={() =>
                             t('preEnrollment.form.noResults')
                         }
@@ -398,9 +520,31 @@ const PreEnrollmentForm = () => {
                             ) ?? null
                         }
                         onChange={(option) => set('grado')(option.value)}
+                        formatOptionLabel={(option) =>
+                            option.value === suggestion?.ideal ? (
+                                <span className="inline-flex items-center gap-2">
+                                    {option.label}
+                                    <span
+                                        className="rounded-full px-2 py-0.5 text-[11px] leading-none font-bold"
+                                        style={{
+                                            backgroundColor: 'var(--lc-gold)',
+                                            color: 'var(--lc-green-deep)',
+                                        }}
+                                    >
+                                        {t('preEnrollment.form.recommended')}
+                                    </span>
+                                </span>
+                            ) : (
+                                option.label
+                            )
+                        }
                         invalid={!!errors.grado}
                         aria-invalid={!!errors.grado}
-                        aria-describedby={describedBy('grado')}
+                        aria-describedby={
+                            [describedBy('grado'), suggestion && 'grado-hint']
+                                .filter(Boolean)
+                                .join(' ') || undefined
+                        }
                     />
                 </Field>
                 <Field
@@ -510,30 +654,26 @@ const PreEnrollmentForm = () => {
             </div>
 
             <Field id="fuente" label={t('preEnrollment.form.source')} optional>
-                <select
-                    id="fuente"
+                {/* El mismo selector que el del grado, en vez del nativo */}
+                <Select
+                    inputId="fuente"
                     name="fuente"
-                    value={values.fuente}
-                    onChange={set('fuente')}
-                    className={classNames(
-                        inputClass(false),
-                        !values.fuente && 'text-[#a3aca5]',
-                    )}
-                >
-                    <option value="">
-                        {t('preEnrollment.form.sourcePlaceholder')}
-                    </option>
-                    {/* Se envía en español; en inglés solo cambia la etiqueta */}
-                    {ENROLLMENT_SOURCES.map((source) => (
-                        <option
-                            key={source}
-                            value={source}
-                            className="text-[#2E3A33]"
-                        >
-                            {ENROLLMENT_SOURCE_LABELS?.[source] ?? source}
-                        </option>
-                    ))}
-                </select>
+                    // Pocas opciones: sin buscador, que en el celular abre
+                    // el teclado
+                    isSearchable={false}
+                    // Es opcional: se puede volver a dejar vacío
+                    isClearable
+                    // Alto para que se vean todas, «Otro» incluido
+                    maxMenuHeight={360}
+                    placeholder={t('preEnrollment.form.sourcePlaceholder')}
+                    options={sourceOptions}
+                    value={
+                        sourceOptions.find(
+                            (option) => option.value === values.fuente,
+                        ) ?? null
+                    }
+                    onChange={(option) => set('fuente')(option?.value ?? '')}
+                />
             </Field>
 
             <Field

@@ -29,6 +29,8 @@ import {
     PiSpeakerHighFill,
     PiSpeakerLowFill,
     PiSpeakerXFill,
+    PiTargetDuotone,
+    PiBinocularsDuotone,
 } from 'react-icons/pi'
 import {
     THEME,
@@ -118,6 +120,7 @@ const contactCards = ({ SCHOOL, CAMPUS }, t) => {
 
 const navItems = (t) => [
     { href: '#nosotros', label: t('home.nav.about') },
+    { href: '#mision', label: t('home.nav.identity') },
     { href: '#niveles', label: t('home.nav.levels') },
     { href: '#vida', label: t('home.nav.schoolLife') },
     { href: '#admision', label: t('home.nav.admissions') },
@@ -510,6 +513,7 @@ const LaColmena = () => {
         SCHOOL,
         ABOUT,
         ABOUT_HIGHLIGHTS,
+        IDENTITY,
         BENEFITS,
         LEVELS,
         PAYMENT_METHODS,
@@ -862,6 +866,129 @@ const LaColmena = () => {
                                 </Link>
                             </div>
                         </div>{' '}
+                    </div>
+                </section>
+
+                {/* ── Misión, visión y valores ───────────────────────── */}
+                {/* Resumen: la primera frase de cada una y los nombres de
+                    los valores; el texto completo está en /historia */}
+                <section
+                    id="mision"
+                    className="relative overflow-hidden"
+                    style={{ backgroundColor: 'var(--lc-green)' }}
+                >
+                    <HoneycombLayer tone="light" opacity={0.07} />
+                    <div className="relative mx-auto max-w-6xl px-4 lg:px-12 xl:px-4 py-20">
+                        <SectionTitle
+                            light
+                            eyebrow={t('home.identity.eyebrow')}
+                            title={t('home.identity.title')}
+                        />
+
+                        <div className="grid gap-5 md:grid-cols-2">
+                            {[
+                                {
+                                    title: t('history.mission'),
+                                    Icon: PiTargetDuotone,
+                                    ...IDENTITY.mission,
+                                },
+                                {
+                                    title: t('history.vision'),
+                                    Icon: PiBinocularsDuotone,
+                                    ...IDENTITY.vision,
+                                },
+                            ].map(
+                                (
+                                    { title, Icon, paragraphs, tagline },
+                                    index,
+                                ) => (
+                                    <Reveal
+                                        key={title}
+                                        delay={index * 80}
+                                        className="flex flex-col rounded-2xl border p-7 sm:p-8"
+                                        style={{
+                                            backgroundColor:
+                                                'rgba(255,255,255,.05)',
+                                            borderColor: 'rgba(245,197,24,.25)',
+                                        }}
+                                    >
+                                        <div className="mb-5 flex items-center gap-4">
+                                            <Hexagon
+                                                className="h-14 w-14 shrink-0 text-2xl"
+                                                style={{
+                                                    backgroundColor:
+                                                        'var(--lc-gold)',
+                                                    color: 'var(--lc-green-deep)',
+                                                }}
+                                            >
+                                                <Icon />
+                                            </Hexagon>
+                                            <h3 className="text-2xl font-bold text-white">
+                                                {title}
+                                            </h3>
+                                        </div>
+                                        <p className="text-base leading-relaxed text-white/80">
+                                            {paragraphs[0]}
+                                        </p>
+                                        <p
+                                            className="mt-auto pt-6 text-base font-bold italic leading-relaxed sm:text-lg"
+                                            style={{ color: 'var(--lc-gold)' }}
+                                        >
+                                            {tagline}
+                                        </p>
+                                    </Reveal>
+                                ),
+                            )}
+                        </div>
+
+                        <h3 className="mb-6 mt-14 text-center text-xl font-bold text-white sm:text-2xl">
+                            {t('history.values')}
+                        </h3>
+                        <ol className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                            {IDENTITY.values.map((value, index) => (
+                                <li key={value.title}>
+                                    <Reveal
+                                        // Por filas de cinco, como en escritorio
+                                        delay={(index % 5) * 60}
+                                        className="flex h-full flex-col items-center gap-2 rounded-xl border px-2 py-3 text-center sm:flex-row sm:gap-3 sm:px-3 sm:text-left"
+                                        style={{
+                                            backgroundColor:
+                                                'rgba(255,255,255,.04)',
+                                            borderColor:
+                                                'rgba(255,255,255,.12)',
+                                        }}
+                                    >
+                                        <Hexagon
+                                            className="h-9 w-9 shrink-0 text-sm font-bold"
+                                            style={{
+                                                backgroundColor:
+                                                    'var(--lc-gold)',
+                                                color: 'var(--lc-green-deep)',
+                                            }}
+                                        >
+                                            {index + 1}
+                                        </Hexagon>
+                                        <span className="min-w-0 break-words text-sm font-semibold leading-snug text-white">
+                                            {value.title}
+                                        </span>
+                                    </Reveal>
+                                </li>
+                            ))}
+                        </ol>
+
+                        <div className="mt-10 text-center">
+                            <Link
+                                to="/historia#mision-vision"
+                                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition hover:brightness-95"
+                                style={{
+                                    backgroundColor: 'var(--lc-gold)',
+                                    color: 'var(--lc-green-deep)',
+                                }}
+                            >
+                                {t('home.identity.readMore')}
+                                <PiArrowRightBold />
+                            </Link>
+                        </div>
                     </div>
                 </section>
 
